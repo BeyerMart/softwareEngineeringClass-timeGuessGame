@@ -4,9 +4,9 @@
 
 # TODOs
 
-* [x] (First TODO)
-* [x] (Second TODO)
-  * [x] (Second TODO)
+* [ ] (First TODO)
+* [ ] (Second TODO)
+  * [ ] (Second TODO)
 
 # Additional Information
 
