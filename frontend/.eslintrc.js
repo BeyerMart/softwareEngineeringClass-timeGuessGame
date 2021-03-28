@@ -14,14 +14,8 @@ module.exports = {
         'airbnb-base',
         'plugin:import/recommended',
     ],
-    settings: {
-        'import/resolver': {
-            alias: {
-                map: [
-                    ['@', `${__dirname}/resources`],
-                ],
-            },
-        },
+    parserOptions: {
+        parser: 'babel-eslint',
     },
     rules: {
         indent: ['error', 4],
@@ -38,15 +32,16 @@ module.exports = {
 
         }],
         'import/no-extraneous-dependencies': 'off',
-		'no-param-reassign': [
-			"error",
-			{
-				"props": true,
-				"ignorePropertyModificationsFor": [
-					"state"
-				]
-			}
-		],
-        'prefer-promise-reject-errors': 'off'
+        'no-param-reassign': [
+            'error',
+            {
+                props: true,
+                ignorePropertyModificationsFor: [
+                    'state',
+                ],
+            },
+        ],
+        'prefer-promise-reject-errors': 'off',
+        'import/no-unresolved': 'off',
     },
 };
