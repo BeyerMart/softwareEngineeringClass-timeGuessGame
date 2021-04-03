@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-gray-900 mb-12">
+    <div class="bg-gray-900">
         <!-- main menu -->
         <div class="max-w-8xl mx-auto px-3 sm:px-6 lg:px-9">
             <div class="relative flex justify-between items-center h-16">
