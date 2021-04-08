@@ -16,7 +16,7 @@ The message structure looks like this:
     'timestamp' => '2019-07-04T13:33:03.969Z'
 }
 ```
-The `type` property contains the message type (e.g. `USER_JOINED_GAME`) - clients may call actions according to this type. The `data` property contains associated data (e.g. the user which joins a game). The `timestamp` property contains the timestamp when the message was created.
+The `type` property contains the message type (e.g. `USER_JOINED_GAME`) - clients may call actions according to this type. The `data` property contains associated data (e.g. the user which joins a game) and can therefore be a JSON object or array. The `timestamp` property contains the timestamp when the message was created.
 
 ## Message types
 
