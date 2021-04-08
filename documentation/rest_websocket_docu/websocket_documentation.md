@@ -4,6 +4,8 @@ This documentation describes websocket communication. Contained data follows a s
 ## Hint
 In general, REST requests are performed. If realtime-updates are required, the webapp pushes websocket-messages to users. This is useful as realtime-updates can be realized (e.g. if a player joins a team), without the time- and performance-overhead using [long-polling](https://ably.com/blog/websockets-vs-long-polling).  
 
+In this project **half-duplex** web-sockets are used. All websocket messages (*except for connection setup or similar*) are initiated by the server, as their purpose is to update data in real time at each desired recipient. A client may initiate REST requests which lead to websocket messages.
+
 ## Structure
 
 The message structure looks like this:
