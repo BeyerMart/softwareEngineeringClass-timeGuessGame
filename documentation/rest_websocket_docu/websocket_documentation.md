@@ -24,7 +24,7 @@ Below is a table containing all available message types. `TYPE` equals the messa
 |---------------------|-----------------------------------|-----------------------------|
 | ROOM_CREATED        | A room was created                | All players                 |
 | ROOM_DELETED        | A room was deleted                | All players                 |
-| ROOM_NAME_CHANGED   | The room name was updated         | All players of current room |
+| ROOM_NAME_CHANGED   | The room name was updated         | All players                 |
 | GAME_CREATED        | The room is started               | All players of current room |
 | ROOM_TOPIC_CHANGED  | The room topic has been updated   | All players of current room |
 | GAME_OVER           | The game is over                  | All players of current room |
