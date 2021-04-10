@@ -1,11 +1,17 @@
 import App from '@/pages/App.vue';
 import Error404 from '@/pages/errors/404';
 import Error500 from '@/pages/errors/500';
+import GameSelection from '@/pages/game/GameSelection';
 
 const routes = [
     {
         path: '/',
         component: App,
+    },
+    {
+        path: '/game/GameSelection',
+        name: 'GameSelection',
+        component: GameSelection,
     },
 
     /* Errors */
@@ -25,5 +31,6 @@ const routes = [
             name: 'error404',
         },
     },
+
 ];
 export default routes;
