@@ -3,8 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>at.ac.uibk</groupId>
-	<artifactId>spring-vue-library</artifactId>
-	<version>0.2.0</version>
+	<artifactId>timeguess-game</artifactId>
+	<version>0.3.0</version>
 	<packaging>pom</packaging>
 
 	<name>spring-vue-library</name>
@@ -20,6 +20,7 @@
 	<modules>
         <module>frontend</module>
         <module>backend</module>
+		<module>cube</module>
     </modules>
 
 	<build>
