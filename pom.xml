@@ -20,7 +20,7 @@
 	<modules>
         <module>frontend</module>
         <module>backend</module>
-		<module>bluetooth</module>
+		<module>cube</module>
     </modules>
 
 	<build>

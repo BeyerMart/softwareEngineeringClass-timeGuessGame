@@ -14,6 +14,8 @@ import java.util.Set;
 import static org.mockito.Mockito.when;
 
 public class FindDevicesManagerTest {
+    
+	//To test this class one needs to follow the readme.md and make sure your tinyb.jar is in the cube/lib folder.
 
     @Test
     public void testFindDevices() throws InterruptedException {

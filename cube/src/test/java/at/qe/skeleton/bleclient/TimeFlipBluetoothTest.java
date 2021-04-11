@@ -14,6 +14,8 @@ import static org.mockito.Mockito.when;
 
 public class TimeFlipBluetoothTest {
 
+	//To test this class one needs to follow the readme.md and make sure your tinyb.jar is in the cube/lib folder.
+
 	@Test
 	public void testGetBatteryLevel() {
 		BluetoothGattCharacteristic batteryCharacteristic = Mockito.mock(BluetoothGattCharacteristic.class);
