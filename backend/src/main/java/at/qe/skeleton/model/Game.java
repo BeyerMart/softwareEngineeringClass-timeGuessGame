@@ -24,8 +24,7 @@ public class Game {
     private String name;
 
     @ManyToOne()
-    @NotNull()
-    @JoinColumn(name = "winning_team_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "winning_team_id", referencedColumnName = "id")
     private Team team;
 
     @OneToMany(targetEntity = Team.class, mappedBy = "game")
