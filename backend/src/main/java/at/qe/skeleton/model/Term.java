@@ -27,11 +27,13 @@ public class Term {
     @Column
     private Long appearances;
 
+    @ManyToOne()
+    @JoinColumn(name = "topic_id", referencedColumnName = "id", nullable = false)
+    private Topic topic;
+
     @CreationTimestamp
     private Timestamp created_at;
 
     @UpdateTimestamp
     private Timestamp updated_at;
-
-
 }

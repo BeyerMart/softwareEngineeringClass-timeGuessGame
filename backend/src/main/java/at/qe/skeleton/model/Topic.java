@@ -34,6 +34,9 @@ public class Topic {
     @OneToMany(targetEntity = Game.class, mappedBy = "topic")
     private Set<Game> games;
 
+    @OneToMany(targetEntity = Term.class, mappedBy = "topic")
+    private Set<Term> terms;
+
     @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User creator;
