@@ -1,30 +1,26 @@
-# Bluetooth Low Energy auf dem Raspberry Pi
+# Bluetooth Low Energy on a Raspberry Pi
 
-### Voraussetzungen
-* Die Installation von `tinyb` war erfolgreich
-* Ein bluetooth-fähiges Gerät befindet sich in der Nähe
-* Im Ordner `lib` befindet sich die gebuildete Datei `tinyb.jar` von der Installation (`tinyb/build/java/tinyb.jar`)
+### Requirements
+* Successful installation of `tinyb`
+* Bluetooth device in proximity
+* The file `tinyb.jar` (from the tinyb installation (`tinyb/build/java/tinyb.jar`)) is in the folder `lib`.
 
-## Builden
+## Building
 
-Zuerst müssen wir das JAR builden, damit wir `bleclient.jar` im `target`-Verzeichnis bekommen.
-Zusätzlich werden alle Dependencies im `pom.xml` in `target/dependencies` abgelegt. Wir erreichen dies durch die Plugins 
-`maven-install-plugin` und `maven-dependency-plugin`.
+First build the JAR so `bleclient.jar` gets placed in the `target` directory.
+Additionally, all Dependencies in `pom.xml` will get placed in `target/dependencies`. This is achieved through the plugins `maven-install-plugin` and `maven-dependency-plugin`.
 
-### Builden
+### Building by hand
 
      mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
 
-### Builden mit Tests und Javadoc
+### Building with tests and Javadoc
 
      mvn clean install
 
-## Ausführen
+## Executing
 
-Ausführung des Programms `bleclient.jar` mit `tinyb.jar` und den Dependencies in `target/dependencies/*`.
-Auch Angabe des `fully-qualified name` der auszuführenden Java-Klasse:
+Execute the program `bleclient.jar` with `tinyb.jar` and the dependencies in `target/dependencies/*`.
+Use the fully qualified name of the to be executed class:
 
-     sudo java -cp target/bleclient.jar:./lib/tinyb.jar:./target/dependencies/* at.qe.skeleton.bleclient.Main
-
-
-        
+     sudo java -cp target/bleclient.jar:./lib/tinyb.jar:./target/dependencies/* at.qe.skeleton.bleclient.Main       
