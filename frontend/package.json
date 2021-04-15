@@ -16,7 +16,8 @@
     "vue": "^2.6.11",
     "vue-i18n": "^8.24.2",
     "vue-router": "^3.5.1",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss7-compat": "^2.0.4",
@@ -32,7 +33,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-vue": "^6.2.2",
     "postcss": "^7.0.35",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.4",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [

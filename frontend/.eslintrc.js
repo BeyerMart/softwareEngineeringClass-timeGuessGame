@@ -43,5 +43,6 @@ module.exports = {
         ],
         'prefer-promise-reject-errors': 'off',
         'import/no-unresolved': 'off',
+        'vue/no-v-html': 'off',
     },
 };
