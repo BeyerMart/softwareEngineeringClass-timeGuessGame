@@ -7,15 +7,15 @@ let connected = false;
 
 export function initSocket() {
     return new Promise((resolve, reject) => {
-        socket = new SockJS('http://localhost:8080/websocket');
+        socket = new SockJS(`${process.env.VUE_APP_BASE_URL}/websocket`);
         stompClient = Stomp.over(socket);
-        // stompClient.debug = () => {};
+        if (!process.env.VUE_APP_DEBUG.toLocaleLowerCase() !== 'true') stompClient.debug = () => {};
         stompClient.connect({}, () => {
             connected = true;
             resolve();
-        }, () => {
+        }, (error) => {
             connected = false;
-            reject();
+            reject(error);
             throw new Error('[WEBSOCKET] Error initializing socket!');
         });
     });
@@ -25,7 +25,6 @@ export function subChannel(channel, handler) {
     if ((stompClient === null) || (socket === null)) throw new Error('[WEBSOCKET] Socket is not initialized!');
 
     stompClient.subscribe(channel, (packet) => {
-        console.log(packet);
         handler(packet.body);
     });
 }
