@@ -21,7 +21,25 @@
 	</properties>
 
 	<dependencies>
+		<!-- Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
 		<!-- TinyB -->
+		<dependency>
+			<groupId>intel-iot-devkit</groupId>
+			<artifactId>tinyb</artifactId>
+			<version>0.5.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.sputnikdev</groupId>
 			<artifactId>bluetooth-manager-tinyb</artifactId>
@@ -54,7 +72,7 @@
 				<executions>
 					<execution>
 						<id>install-tinyb</id>
-						<phase>package</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -62,7 +80,7 @@
 							<file>lib/tinyb.jar</file>
 							<groupId>intel-iot-devkit</groupId>
 							<artifactId>tinyb</artifactId>
-							<version>0.6.0</version>
+							<version>0.5.1</version>
 							<packaging>jar</packaging>
 						</configuration>
 					</execution>
@@ -88,6 +106,11 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- Set up Spring Boot -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<!-- Enable jacoco analysis -->
 			<plugin>

@@ -1,5 +1,6 @@
 package at.qe.skeleton.bleclient;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothException;
 import tinyb.BluetoothGattCharacteristic;
@@ -15,7 +16,8 @@ import java.util.Set;
 /**
  * Entry point for program to search for Bluetooth devices and communicate with them
  */
-public final class Main {
+@SpringBootApplication
+public class Main {
 
 	private static final boolean running = true;
 	private static BluetoothGattService informationService;
@@ -23,9 +25,6 @@ public final class Main {
 	private static BluetoothGattService timeFlipService;
 	private static BluetoothGattCharacteristic facetCharacteristic;
 	private static BluetoothGattCharacteristic batteryCharacteristic;
-
-	private Main() {
-	}
 
 	/**
 	 * This program should connect to TimeFlip devices and read the facet characteristic exposed by the devices
@@ -36,6 +35,8 @@ public final class Main {
 	 * @see <a href="https://github.com/DI-GROUP/TimeFlip.Docs/blob/master/Hardware/BLE_device_commutication_protocol_v3.0_en.md" target="_top">BLE device communication protocol v3.0</a>
 	 */
 	public static void main(String[] args) throws Exception {
+		//SpringBootApplication.run(Main.class, args);
+		
 		Set<BluetoothDevice> foundDevices = findTimeFlips();
 		BluetoothDevice device = connectToTimeFlipWithBestSignal(foundDevices);
 		initializeServicesAndCharacteristics(device);
