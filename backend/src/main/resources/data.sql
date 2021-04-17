@@ -1,17 +1,12 @@
-INSERT INTO user_role (name, created_at, updated_at) VALUES
-    ('USER', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    ('MANAGER', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()),
-    ('ADMIN', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
-
 -- USERS
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'admin.istrator@gmail.com', 'administ', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='ADMIN'));
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'man.ager@gmail.com', 'manager', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='MANAGER'));
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'susik@gmail.com', 'susiK', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='USER'));
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'hansp@gmail.com', 'hansP', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='USER'));
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'johannG@gmail.com', 'johannG', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='USER'));
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'jamesJBaites@gmail.com', 'jamesJB', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='USER'));
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'lisa.ritter@hotmail.com', 'lisaRitt', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='USER'));
-INSERT INTO user (created_at, updated_at, email, username, password, role_id) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'makusFass@gmx.net', 'makkiF', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', (SELECT id from user_role WHERE name='USER'));
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'admin.istrator@gmail.com', 'administ', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_ADMIN');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'man.ager@gmail.com', 'manager', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_MANAGER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'susik@gmail.com', 'susiK', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'hansp@gmail.com', 'hansP', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'johannG@gmail.com', 'johannG', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'jamesJBaites@gmail.com', 'jamesJB', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'lisa.ritter@hotmail.com', 'lisaRitt', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'makusFass@gmx.net', 'makkiF', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
 
 -- TOPIC
 INSERT INTO topic (created_at, name, updated_at, user_id) VALUES (CURRENT_TIMESTAMP(), 'Biologie', CURRENT_TIMESTAMP(), (SELECT id from user WHERE username='administ'));
@@ -27,9 +22,9 @@ INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, to
 INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (30, 20, CURRENT_TIMESTAMP(), 'Wien', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geographie'));
 INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (20, 5, CURRENT_TIMESTAMP(), 'Österreich', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geographie'));
 
-INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (20, 12, CURRENT_TIMESTAMP(), '2. Weltkrieg', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geschichte'));
-INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (59, 15, CURRENT_TIMESTAMP(), '1. Weltkrieg', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geschichte'));
-INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (30, 20, CURRENT_TIMESTAMP(), 'Anne Frank', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geschichte'));
+INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (20, 12, CURRENT_TIMESTAMP(), 'Angela Merkel', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geschichte'));
+INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (59, 15, CURRENT_TIMESTAMP(), 'Cäsar', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geschichte'));
+INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (30, 20, CURRENT_TIMESTAMP(), 'Andreas Hofer', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geschichte'));
 
 -- GAME
 INSERT INTO game (created_at, name, updated_at, winning_team_id, topic_id) VALUES (CURRENT_TIMESTAMP(), 'Game 1', CURRENT_TIMESTAMP(), NULL, (SELECT id FROM topic WHERE name='Geschichte'));

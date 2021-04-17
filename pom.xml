@@ -7,7 +7,7 @@
 	<version>0.3.0</version>
 	<packaging>pom</packaging>
 
-	<name>spring-vue-library</name>
+	<name>timeguess-game</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
