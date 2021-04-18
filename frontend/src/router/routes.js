@@ -1,12 +1,24 @@
 import App from '@/pages/App.vue';
 import Error404 from '@/pages/errors/404';
 import Error500 from '@/pages/errors/500';
+import Signup from '@/pages/Signup';
+import Login from '@/pages/Login';
 import WSDebug from '@/pages/WSDebug';
 
 const routes = [
     {
         path: '/',
         component: App,
+    },
+    {
+        path: '/signup',
+        name: 'signup',
+        component: Signup,
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
     },
 
     /* Errors */
