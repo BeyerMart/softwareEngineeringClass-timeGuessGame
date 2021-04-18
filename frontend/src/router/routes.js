@@ -3,6 +3,7 @@ import Error404 from '@/pages/errors/404';
 import Error500 from '@/pages/errors/500';
 import Signup from '@/pages/Signup';
 import Login from '@/pages/Login';
+import WSDebug from '@/pages/WSDebug';
 
 const routes = [
     {
@@ -30,6 +31,11 @@ const routes = [
         path: '/errors/500',
         name: 'error500',
         component: Error500,
+    },
+    {
+        path: '/wsdebug',
+        name: 'wsdebug',
+        component: WSDebug,
     },
     {
         path: '*',

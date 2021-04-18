@@ -21,7 +21,7 @@ public class ErrorResponse {
             e.printStackTrace();
         }
 
-        this.error = "{\"status\":" + status + ",\"error\":" + error + ",\"data\":null,\"timestamp\":\"" + Instant.now().toString().substring(0, 23) + "Z\"}";
+        this.error = "{\"status\":" + status + ",\"error\":" + error + ",\"data\":null,\"timestamp\":\"" + Instant.now().toString() + "\"}";
     }
 
     public ErrorResponse(Object input) {

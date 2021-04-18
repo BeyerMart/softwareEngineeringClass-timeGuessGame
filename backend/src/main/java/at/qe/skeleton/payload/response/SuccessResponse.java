@@ -21,7 +21,7 @@ public class SuccessResponse {
             e.printStackTrace();
         }
 
-        this.result = "{\"status\":" + status + ",\"error\":null,\"data\":" + result + ",\"timestamp\":\"" + Instant.now().toString().substring(0, 23) + "Z\"}";
+        this.result = "{\"status\":" + status + ",\"error\":null,\"data\":" + result + ",\"timestamp\":\"" + Instant.now().toString() + "\"}";
     }
 
     public SuccessResponse(Object input) {

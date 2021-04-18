@@ -7,6 +7,7 @@ import '@/assets/app.css';
 import i18n from '@/i18n';
 import Vuelidate from 'vuelidate';
 import Notifications from 'vue-notification';
+import { initSocket } from '@/services/websocket.service';
 
 Vue.use(Vuelidate);
 Vue.use(Notifications);
@@ -14,14 +15,18 @@ Vue.use(Notifications);
 Vue.config.productionTip = true;
 Vue.config.devtools = true;
 
+// Set auth token
 const token = localStorage.getItem('token');
-axios.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
+axios.defaults.headers.common.Authorization = token ? `Bearer ${token}` : '';
 
+// Skip currently unused data
 axios.interceptors.response.use((response) => {
     /* eslint-disable-next-line no-param-reassign */
     response.data = response.data.data;
     return response;
 }, (error) => Promise.reject(error));
+
+initSocket();
 
 const app = new Vue({
     el: '#app',

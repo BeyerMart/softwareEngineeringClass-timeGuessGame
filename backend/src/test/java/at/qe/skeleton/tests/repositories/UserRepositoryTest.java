@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserRepositoryTest {
     private String username;
     private String password;
-    private String token;
     private String email;
     private User user = null;
     @Autowired
