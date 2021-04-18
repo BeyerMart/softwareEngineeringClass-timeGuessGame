@@ -88,8 +88,9 @@ export default {
         subscribeChannel() {
             if (!isConnected || this.channel === '') return;
             subChannel(this.channel, (message) => {
-                this.output = `[${(new Date()).toLocaleTimeString()}] ${message}<br/>${this.output}`;
+                this.output = `[${(new Date()).toLocaleTimeString()}] ${JSON.stringify(message)}<br/>${this.output}`;
             });
+
             this.output = `<span class='font-bold'>Channel '${this.channel}' subscribed</span><br/>${this.output}`;
         },
     },
