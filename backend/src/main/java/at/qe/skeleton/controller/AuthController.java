@@ -90,6 +90,6 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
         User currentUser = userService.getAuthenticatedUser().get();
-        return ResponseEntity.ok(mapper.map(currentUser, UserDto.class));
+        return ResponseEntity.ok((new SuccessResponse(mapper.map(currentUser, UserDto.class))).toString());
     }
 }
