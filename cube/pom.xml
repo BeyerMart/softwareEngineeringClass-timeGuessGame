@@ -5,13 +5,14 @@
 
 	<name>timeguess-bleclient</name>
 	<artifactId>cube</artifactId>
+	<groupId>at.ac.uibk</groupId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
-
-	<parent>
-		<groupId>at.ac.uibk</groupId>
-		<artifactId>timeguess-game</artifactId>
-		<version>0.3.0</version>
+		<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.1</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -30,14 +31,17 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<version>2.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
+			<version>2.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-websocket</artifactId>
+			<version>2.4.1</version>
 		</dependency>
 		<!-- TinyB -->
 		<dependency>
