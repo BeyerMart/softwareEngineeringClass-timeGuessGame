@@ -1,9 +1,9 @@
 package at.qe.skeleton.bleclient;
 
-import org.sputnikdev.bluetooth.manager.BluetoothFatalException;
-import tinyb.*;
+import tinyb.BluetoothDevice;
+import tinyb.BluetoothGattCharacteristic;
+import tinyb.BluetoothGattService;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -20,8 +20,19 @@ public class TimeCubeService {
     /**
      * Entry point for program to search for Bluetooth devices and communicate with them
      */
-    public TimeCubeService(){
-        Set<BluetoothDevice> foundDevices = BluetoothService.findTimeFlips();
+
+
+    /**
+     * This program should connect to TimeFlip devices and read the facet characteristic exposed by the devices
+     * over Bluetooth Low Energy.
+     *
+     * @see <a href="https://github.com/DI-GROUP/TimeFlip.Docs/blob/master/Hardware/BLE_device_commutication_protocol_v3.0_en.md" target="_top">BLE device communication protocol v3.0</a>
+     */
+
+    public TimeCubeService() {
+        Set<BluetoothDevice> foundDevices;
+        foundDevices = BluetoothService.findTimeFlips();
+
         BluetoothDevice device = BluetoothService.connectToTimeFlipWithBestSignal(foundDevices);
         timecube = device;
         informationService = device.find("0000180a-0000-1000-8000-00805f9b34fb");
@@ -39,47 +50,19 @@ public class TimeCubeService {
         batteryCharacteristic = batteryService.find("00002a19-0000-1000-8000-00805f9b34fb");
     }
 
-    public TimeCubeService(BluetoothDevice timecube, BluetoothGattService informationService, BluetoothGattService batteryService, BluetoothGattService timeFlipService, BluetoothGattCharacteristic facetCharacteristic, BluetoothGattCharacteristic batteryCharacteristic){
+    public TimeCubeService(BluetoothDevice timecube, BluetoothGattService informationService, BluetoothGattService batteryService, BluetoothGattService timeFlipService, BluetoothGattCharacteristic facetCharacteristic, BluetoothGattCharacteristic batteryCharacteristic) {
         this.timecube = timecube;
         this.informationService = informationService;
         this.batteryService = batteryService;
         this.timeFlipService = timeFlipService;
         this.facetCharacteristic = facetCharacteristic;
-        this.batteryCharacteristic  = batteryCharacteristic;
+        this.batteryCharacteristic = batteryCharacteristic;
     }
 
-    /**
-     * This program should connect to TimeFlip devices and read the facet characteristic exposed by the devices
-     * over Bluetooth Low Energy.
-     *
-     * @param args the program arguments
-     * @throws InterruptedException if finding devices gets int        initializeServicesAndCharacteristics(device);
-    errupted
-     * @see <a href="https://github.com/DI-GROUP/TimeFlip.Docs/blob/master/Hardware/BLE_device_commutication_protocol_v3.0_en.md" target="_top">BLE device communication protocol v3.0</a>
-     */
     public void main(String[] args) {
-        //SpringBootApplication.run(Main.class, args);
-
-
-
-        //int batteryLevel = getBatteryLevel();
-
         facetCharacteristic.enableValueNotifications(new ValueNotification());
         facetCharacteristic.disableValueNotifications();
-        //printAllServicesAndCharacteristics(device);
-
-        //get current facet
-        //int facet = getCurrentFacet();
-        //batteryCharacteristic.enableValueNotifications(new ValueNotification());
-
-        //device.disconnect();
-        //System.exit(-1);
     }
-
-    //     * @throws InterruptedException if finding devices gets interrupted
-
-
-
 
     public boolean setPassword() {
         BluetoothGattCharacteristic passwordCharacteristic = timeFlipService.find("f1196f57-71a4-11e6-bdf4-0800200c9a66");
@@ -116,17 +99,5 @@ public class TimeCubeService {
         String hex = String.format("%02x", batteryRaw[0]);
         int value = Integer.parseInt(hex, 16);
         return value;
-        /*for (byte b : batteryRaw) {
-            String hex = String.format("%02x", b);
-            int value = Integer.parseInt(hex, 16);
-            System.out.print(String.format("%02x", b));
-            System.out.print("Battery value in percentage: " + value + "%.");
-        }
-        System.out.print("}\n");*/
     }
-
-
-
-
-
 }

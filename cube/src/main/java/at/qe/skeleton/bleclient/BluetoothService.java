@@ -6,11 +6,12 @@ import tinyb.BluetoothException;
 import tinyb.BluetoothManager;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 
 public class BluetoothService {
 
-    public static Set<BluetoothDevice> findTimeFlips() {
+    public static Set<BluetoothDevice> findTimeFlips() throws RuntimeException{
         BluetoothManager manager = BluetoothManager.getBluetoothManager();
 
         final String findDeviceName = "TimeFlip";
@@ -37,15 +38,15 @@ public class BluetoothService {
         manager.getDevices().forEach(d -> System.out.println(d.getAddress() + " - " + d.getName() + " (" + d.getRSSI() + ")"));
 
         if (!findDevicesSuccess) {
-            System.err.println("No " + findDeviceName + " devices found during discovery.");
+            throw new RuntimeException("No " + findDeviceName + " devices found during discovery.");
             //System.exit(-1);
         }
         return findDevicesManager.getFoundDevices();
     }
 
     public static BluetoothDevice connectToTimeFlipWithBestSignal(Set<BluetoothDevice> timeflipSet) {
-        System.out.println(timeflipSet.stream().findFirst().get().getName());
-        BluetoothDevice device = timeflipSet.stream().max(Comparator.comparing(BluetoothDevice::getRSSI)).get();
+        Optional<BluetoothDevice> optionalBluetoothDevice = timeflipSet.stream().max(Comparator.comparing(BluetoothDevice::getRSSI));
+        BluetoothDevice device = optionalBluetoothDevice.get();
         device.enableConnectedNotifications(new ConnectedNotification());
         if (device.connect()) {
             /*
