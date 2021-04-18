@@ -43,3 +43,4 @@ Below is a table containing all available message types. `TYPE` equals the messa
 | VIRTUAL_USER_LEFT   | A virtual user left a team        | All players of current room |
 | USER_JOINED_TEAM    | A user joined a team              | All players of current room |
 | USER_LEFT_TEAM      | A user left a team                | All players of current room |
+| VERSION             | Current game version              | All players                 |

@@ -1,8 +1,13 @@
 package at.qe.skeleton;
 
+import at.qe.skeleton.configs.WebSecurityConfig;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
+
 /**
  * Spring boot application. Execute maven with <code>mvn spring-boot:run</code>
  * to start this web application.
@@ -23,5 +28,15 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 public class Main extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
+    }
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(new Class[]{Main.class,  WebSecurityConfig.class});
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }
