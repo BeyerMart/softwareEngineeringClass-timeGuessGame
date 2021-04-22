@@ -85,6 +85,56 @@
                         </div>
                     </section>
                 </div>
+                <div class="grid grid-cols-1 gap-4">
+                    <section>
+                        <div class="rounded-lg bg-gray-100 overflow-hidden shadow">
+                            <div class="p-6">
+                                <h2
+                                    id="announcements-title"
+                                    class="text-base font-medium text-gray-900"
+                                >
+                                    Last played with
+                                </h2>
+                                <div class="flow-root mt-6">
+                                    <ul class="-my-5 divide-y divide-gray-200">
+                                        <li class="py-5">
+                                            <div class="relative focus-within:ring-2 focus-within:ring-cyan-500">
+                                                <h3 class="text-sm font-semibold text-gray-800">
+                                                    <a
+                                                        href="#"
+                                                        class="hover:underline focus:outline-none"
+                                                    >
+                                                        <span
+                                                            class="absolute inset-0"
+                                                            aria-hidden="true"
+                                                        />
+                                                        Hansp
+                                                    </a>
+                                                </h3>
+                                            </div>
+                                        </li>
+                                        <li class="py-5">
+                                            <div class="relative focus-within:ring-2 focus-within:ring-cyan-500">
+                                                <h3 class="text-sm font-semibold text-gray-800">
+                                                    <a
+                                                        href="#"
+                                                        class="hover:underline focus:outline-none"
+                                                    >
+                                                        <span
+                                                            class="absolute inset-0"
+                                                            aria-hidden="true"
+                                                        />
+                                                        jamesJB
+                                                    </a>
+                                                </h3>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     </div>
