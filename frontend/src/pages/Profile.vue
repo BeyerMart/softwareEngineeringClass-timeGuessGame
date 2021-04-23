@@ -1,11 +1,10 @@
 <template>
-    <div class="min-h-screen">
+    <div class="min-h-screen mt-8">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
             <h1 class="mb-8 text-4xl md:text-5xl">
-                {{ $t('generic.Profile') }}
+                {{ $t('generic.profile') }}
             </h1>
             <div class="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8">
-                <!-- Left column -->
                 <div class="grid grid-cols-1 gap-4 lg:col-span-2">
                     <!-- USER CARD -->
                     <section
@@ -90,7 +89,6 @@
                         <div class="rounded-lg bg-gray-100 overflow-hidden shadow">
                             <div class="p-6">
                                 <h2
-                                    id="announcements-title"
                                     class="text-base font-medium text-gray-900"
                                 >
                                     Last played with

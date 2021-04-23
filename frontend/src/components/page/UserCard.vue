@@ -1,6 +1,6 @@
 <template>
     <div class="rounded-lg bg-white overflow-hidden shadow">
-        <div class="bg-gray-100 shadow-xl p-6">
+        <div class="bg-gray-100 shadow-xl p-6 flex justify-between">
             <div class="sm:flex sm:items-center sm:justify-between">
                 <div class="sm:flex sm:space-x-5">
                     <div class="flex-shrink-0">
@@ -10,7 +10,10 @@
                             alt=""
                         >
                     </div>
-                    <div class="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left">
+                    <div
+                        v-show="!isEditing"
+                        class="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left"
+                    >
                         <p class="text-xl font-bold text-gray-900 sm:text-2xl mt-2">
                             {{ user.username }}
                         </p>
@@ -18,17 +21,132 @@
                             {{ user.email }}
                         </p>
                     </div>
+                    <form
+                        v-show="isEditing"
+                        @submit.prevent="handleSubmit"
+                    >
+                        <div class="form-group">
+                            <label
+                                class="block text-gray-700 text-sm mb-2"
+                                for="username"
+                            >{{ $t('signup.username') }}</label>
+                            <div
+                                v-show="submitted && $v.username.$error"
+                                class="has-errors py-1 text-xs"
+                            >
+                                {{ $t('signup.errors.usernameRequired') }}
+                            </div>
+                            <input
+                                id="username"
+                                v-model="username"
+                                type="text"
+                                name="username"
+                                class="form-control block border border-grey-light w-full p-3 rounded mb-4"
+                                :class="{ 'border-red-500': submitted && $v.username.$error }"
+                                :placeholder="$t('signup.username')"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label
+                                class="block text-gray-700 text-sm mb-2"
+                                for="email"
+                            >
+                                {{ $t('signup.email') }}</label>
+                            <div
+                                v-show="submitted && $v.email.$error"
+                                class="has-errors py-1 text-xs"
+                            >
+                                <span v-show="!$v.email.required">{{ $t('signup.errors.emailRequired') }}</span>
+                                <span v-show="!$v.email.email">{{ $t('signup.errors.emailInvalid') }}</span>
+                            </div>
+                            <input
+                                id="email"
+                                v-model="email"
+                                type="text"
+                                name="email"
+                                class="form-control block border border-grey-light w-full p-3 rounded mb-4"
+                                :class="{ 'border-red-500': submitted && $v.email.$error }"
+                                :placeholder="$t('signup.email')"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <button class="w-full text-center py-3 bg-gray-900 rounded text-white hover:bg-gray-700 my-2">
+                                {{ $t('profile.updateUser') }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
+            <font-awesome-icon
+                icon="ellipsis-v"
+                class="text-2xl cursor-pointer"
+                @click="editUser"
+            />
         </div>
     </div>
 </template>
 
 <script>
+import { updateUser } from '@/services/user.service';
+import {
+    required, email,
+} from 'vuelidate/lib/validators';
+
 export default {
     name: 'UserCard',
     props: {
-        user: Object,
+        user: {
+            type: Object,
+            default: () => {},
+        },
+    },
+    data() {
+        return {
+            isEditing: false,
+            submitted: false,
+            username: '',
+            email: '',
+        };
+    },
+    validations: {
+        username: { required },
+        email: { required, email },
+    },
+    mounted() {
+        this.email = this.user.email;
+        this.username = this.user.username;
+    },
+    methods: {
+        handleSubmit() {
+            this.submitted = true;
+
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
+            const userData = {
+                id: this.user.id,
+                username: this.username,
+                email: this.email,
+            };
+            updateUser(userData).then(() => {
+                this.isEditing = false;
+                this.$notify({
+                    title: 'User was updated successfully',
+                    type: 'success',
+                });
+            }).catch((err) => {
+                this.$notify({
+                    title: this.$t('generic.error'),
+                    text: err.response.error,
+                    type: 'error',
+                });
+            });
+        },
+        editUser() {
+            this.isEditing = !this.isEditing;
+            console.log(this.user, this.isEditing);
+        },
     },
 };
 </script>

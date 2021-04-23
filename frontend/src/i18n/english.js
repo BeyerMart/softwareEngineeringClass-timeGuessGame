@@ -2,6 +2,7 @@ export default {
     generic: {
         overview: 'Overview',
         error: 'Error',
+        profile: 'Profile',
     },
     errors: {
         back: 'Go back',

@@ -2,6 +2,7 @@ export default {
     generic: {
         overview: 'Übersicht',
         error: 'Fehler',
+        profile: 'Profil',
     },
     errors: {
         back: 'Zurück',
@@ -27,6 +28,13 @@ export default {
         messages: {
             signupSuccess: 'Registrierung erfolgreich! Bitte anmelden',
         },
+    },
+    game: {
+        team: 'Team',
+        teamName: 'Teamname',
+        enemy: 'Gegner',
+        points: 'Punkte',
+        score: 'Punktestand',
     },
     login: {
         login: 'Einloggen',
