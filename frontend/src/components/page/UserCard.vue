@@ -31,18 +31,18 @@
                                 for="username"
                             >{{ $t('signup.username') }}</label>
                             <div
-                                v-show="submitted && $v.username.$error"
+                                v-show="submitted && $v.form.username.$error"
                                 class="has-errors py-1 text-xs"
                             >
                                 {{ $t('signup.errors.usernameRequired') }}
                             </div>
                             <input
                                 id="username"
-                                v-model="username"
+                                v-model="form.username"
                                 type="text"
                                 name="username"
                                 class="form-control block border border-grey-light w-full p-3 rounded mb-4"
-                                :class="{ 'border-red-500': submitted && $v.username.$error }"
+                                :class="{ 'border-red-500': submitted && $v.form.username.$error }"
                                 :placeholder="$t('signup.username')"
                             >
                         </div>
@@ -53,19 +53,19 @@
                             >
                                 {{ $t('signup.email') }}</label>
                             <div
-                                v-show="submitted && $v.email.$error"
+                                v-show="submitted && $v.form.email.$error"
                                 class="has-errors py-1 text-xs"
                             >
-                                <span v-show="!$v.email.required">{{ $t('signup.errors.emailRequired') }}</span>
-                                <span v-show="!$v.email.email">{{ $t('signup.errors.emailInvalid') }}</span>
+                                <span v-show="!$v.form.email.required">{{ $t('signup.errors.emailRequired') }}</span>
+                                <span v-show="!$v.form.email.email">{{ $t('signup.errors.emailInvalid') }}</span>
                             </div>
                             <input
                                 id="email"
-                                v-model="email"
+                                v-model="form.email"
                                 type="text"
                                 name="email"
                                 class="form-control block border border-grey-light w-full p-3 rounded mb-4"
-                                :class="{ 'border-red-500': submitted && $v.email.$error }"
+                                :class="{ 'border-red-500': submitted && $v.form.email.$error }"
                                 :placeholder="$t('signup.email')"
                             >
                         </div>
@@ -104,17 +104,15 @@ export default {
         return {
             isEditing: false,
             submitted: false,
-            username: '',
-            email: '',
+            form: this.user,
         };
     },
     validations: {
-        username: { required },
-        email: { required, email },
-    },
-    mounted() {
-        this.email = this.user.email;
-        this.username = this.user.username;
+        form: {
+            username: { required },
+            email: { required, email },
+        },
+
     },
     methods: {
         handleSubmit() {
@@ -126,8 +124,8 @@ export default {
             }
             const userData = {
                 id: this.user.id,
-                username: this.username,
-                email: this.email,
+                username: this.form.username,
+                email: this.form.email,
             };
             updateUser(userData).then(() => {
                 this.isEditing = false;
@@ -145,7 +143,6 @@ export default {
         },
         editUser() {
             this.isEditing = !this.isEditing;
-            console.log(this.user, this.isEditing);
         },
     },
 };

@@ -1,6 +1,20 @@
 <template>
     <div class="min-h-screen mt-8">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+        <div
+            v-show="error"
+            class="max-w-xl mx-auto p-5 rounded-lg overflow-hidden shadow-l bg-red-500"
+        >
+            <h1 class="text-xl text-white">
+                <font-awesome-icon
+                    icon="exclamation"
+                    class="text-3xl mr-5"
+                /> {{ $t('errors.userNotFound') }}
+            </h1>
+        </div>
+        <div
+            v-show="!error"
+            class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8"
+        >
             <h1 class="mb-8 text-4xl md:text-5xl">
                 {{ $t('generic.profile') }}
             </h1>
@@ -141,6 +155,7 @@
 <script>
 import UserCard from '@/components/page/UserCard.vue';
 import * as AuthService from '@/services/auth.service';
+import { getUserById } from '@/services/user.service';
 
 export default {
     name: 'Profile',
@@ -150,18 +165,34 @@ export default {
     data() {
         return {
             user: {},
+            error: false,
         };
     },
     mounted() {
-        AuthService.getCurrentUser().then((res) => {
-            this.user = res.data;
-        }).catch((err) => {
-            this.$notify({
-                title: this.$t('generic.error'),
-                text: err.response.error,
-                type: 'error',
+        this.getUser();
+    },
+    methods: {
+        getUser() {
+            let getRequest;
+
+            if (this.$route.params.id) {
+                getRequest = getUserById(this.$route.params.id);
+            } else {
+                getRequest = AuthService.getCurrentUser();
+            }
+
+            getRequest.then((res) => {
+                this.user = res.data;
+            }).catch((err) => {
+                this.error = true;
+                this.$notify({
+                    title: this.$t('generic.error'),
+                    text: err.response.error,
+                    type: 'error',
+                });
+                this.$router.push('/404');
             });
-        });
+        },
     },
 };
 </script>

@@ -26,6 +26,11 @@ const routes = [
         name: 'profile',
         component: Profile,
     },
+    {
+        path: '/profile/:id',
+        name: 'profile',
+        component: Profile,
+    },
     /* Errors */
     {
         path: '/errors/404',

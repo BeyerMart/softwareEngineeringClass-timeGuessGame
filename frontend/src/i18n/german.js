@@ -8,6 +8,7 @@ export default {
         back: 'Zurück',
         notFound: 'Entschuldigung, diese Seite existiert nicht',
         internalserror: 'Ein unerwarteter Fehler ist aufgetreten',
+        userNotFound: 'Benutzer konnte nicht gefunden werden',
     },
     signup: {
         signup: 'Registrieren',
@@ -45,5 +46,9 @@ export default {
         errors: {
             wrongCredentials: 'Falscher Benutzername oder Passwort',
         },
+    },
+    profile: {
+        profile: 'Profile',
+        updateUser: 'Benutzer aktualisieren',
     },
 };

@@ -8,6 +8,7 @@ export default {
         back: 'Go back',
         notFound: 'Sorry, this page was not found',
         internalserror: 'An unexpected server error occurred',
+        userNotFound: 'User not found',
     },
     signup: {
         signup: 'Sign Up',
@@ -29,6 +30,13 @@ export default {
             signupSuccess: 'Signup successful! Please Login',
         },
     },
+    game: {
+        team: 'Team',
+        teamName: 'Teamname',
+        enemy: 'Gegner',
+        points: 'Punkte',
+        score: 'Punktestand',
+    },
     login: {
         login: 'Login',
         noAccountYet: 'Don\'t have an account yet?',
@@ -38,5 +46,9 @@ export default {
         errors: {
             wrongCredentials: 'Wrong username or password',
         },
+    },
+    profile: {
+        profile: 'Profile',
+        updateUser: 'Update user',
     },
 };
