@@ -93,15 +93,15 @@
                             class="absolute right-0 origin-top-right mt-2 w-40 rounded shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                         >
                             <a
-                                href="#"
+                                href="/profile/"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
                                 @click="showProfileDropDown = false"
-                            >Profile</a>
+                            >{{ $t('profile.profile') }}</a>
                             <a
                                 href="#"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                @click="showProfileDropDown = false"
-                            >Logout</a>
+                                @click="logoutUser"
+                            >{{ $t('profile.logout') }}</a>
                         </div>
                     </div>
                 </div>
@@ -132,6 +132,9 @@
     </div>
 </template>
 <script>
+
+import { logout } from '@/services/auth.service';
+
 export default {
     name: 'Navbar',
     data() {
@@ -139,6 +142,18 @@ export default {
             showProfileDropDown: false,
             showItemsDropDown: false,
         };
+    },
+    methods: {
+        logoutUser() {
+            logout();
+            this.showProfileDropDown = false;
+            this.error = true;
+            this.$notify({
+                title: this.$t('profile.logoutSuccess'),
+                type: 'success',
+            });
+            this.$router.push('/');
+        },
     },
 };
 </script>

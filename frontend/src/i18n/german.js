@@ -48,7 +48,9 @@ export default {
         },
     },
     profile: {
-        profile: 'Profile',
+        profile: 'Profil',
         updateUser: 'Benutzer aktualisieren',
+        logout: 'Ausloggen',
+        logoutSuccess: 'Ausloggen erfolgreich',
     },
 };
