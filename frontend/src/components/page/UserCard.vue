@@ -78,6 +78,7 @@
                 </div>
             </div>
             <font-awesome-icon
+                v-if="isAdmin"
                 icon="ellipsis-v"
                 class="text-2xl cursor-pointer"
                 @click="editUser"
@@ -99,20 +100,35 @@ export default {
             type: Object,
             default: () => {},
         },
+        isAdmin: {
+            type: Boolean,
+        },
+        isSelf: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
             isEditing: false,
             submitted: false,
-            form: this.user,
+            form: {
+                email: this.user.email,
+                username: this.user.username,
+            },
         };
+    },
+    watch: {
+        user(newUser) {
+            this.form.email = newUser.email;
+            this.form.username = newUser.username;
+        },
     },
     validations: {
         form: {
             username: { required },
             email: { required, email },
         },
-
     },
     methods: {
         handleSubmit() {
@@ -129,10 +145,20 @@ export default {
             };
             updateUser(userData).then(() => {
                 this.isEditing = false;
-                this.$notify({
-                    title: 'User was updated successfully',
-                    type: 'success',
-                });
+                if (this.isSelf) {
+                    this.$notify({
+                        title: 'User was updated successfully',
+                        text: 'Please login again',
+                        type: 'success',
+                    });
+                    this.$router.push('/login');
+                } else {
+                    this.$notify({
+                        title: 'User was updated successfully',
+                        type: 'success',
+                    });
+                    this.$emit('update-user');
+                }
             }).catch((err) => {
                 this.$notify({
                     title: this.$t('generic.error'),

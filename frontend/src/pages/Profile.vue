@@ -25,7 +25,12 @@
                         aria-labelledby="user-card"
                         class="mb-5"
                     >
-                        <UserCard :user="user" />
+                        <UserCard
+                            :user="user"
+                            :is-admin="isAdmin"
+                            :is-self="isSelf"
+                            @update-user="getUser"
+                        />
                     </section>
                     <section aria-labelledby="games-table">
                         <div class="flex flex-col">
@@ -166,33 +171,63 @@ export default {
         return {
             user: {},
             error: false,
+            isSelf: false,
+            currrentUser: {},
         };
+    },
+    computed: {
+        isAdmin() {
+            return this.currrentUser.role === 'ROLE_ADMIN';
+        },
     },
     mounted() {
         this.getUser();
     },
     methods: {
         getUser() {
-            let getRequest;
-
             if (this.$route.params.id) {
-                getRequest = getUserById(this.$route.params.id);
+                getUserById(this.$route.params.id).then((res) => {
+                    this.user = res.data;
+                }).catch((err) => {
+                    this.error = true;
+                    this.$notify({
+                        title: this.$t('generic.error'),
+                        text: err.response.data.error,
+                        type: 'error',
+                    });
+                    if (err.response.data.status === 404) {
+                        this.$router.push('/404');
+                    } else {
+                        this.$router.push('/500');
+                    }
+                });
             } else {
-                getRequest = AuthService.getCurrentUser();
+                this.isSelf = true;
             }
+            this.getCurrentUser();
+        },
 
-            getRequest.then((res) => {
-                this.user = res.data;
+        getCurrentUser() {
+            AuthService.getCurrentUser().then((res) => {
+                this.currrentUser = res.data;
+                if (this.isSelf) {
+                    this.user = this.currrentUser;
+                }
             }).catch((err) => {
                 this.error = true;
                 this.$notify({
                     title: this.$t('generic.error'),
-                    text: err.response.error,
+                    text: err.response.data.error,
                     type: 'error',
                 });
-                this.$router.push('/404');
+                if (err.response.data.status === 404) {
+                    this.$router.push('/404');
+                } else {
+                    this.$router.push('/500');
+                }
             });
         },
     },
+
 };
 </script>
