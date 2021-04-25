@@ -28,7 +28,7 @@ const routes = [
     },
     {
         path: '/profile/:id',
-        name: 'profile',
+        name: 'userProfile',
         component: Profile,
     },
     /* Errors */
