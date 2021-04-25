@@ -148,14 +148,14 @@ export default {
                 this.isEditing = false;
                 if (this.isSelf) {
                     this.$notify({
-                        title: 'User was updated successfully',
-                        text: 'Please login again',
+                        title: this.$t('profile.userUpdatedSuccess'),
+                        text: this.$t('login.loginAgain'),
                         type: 'success',
                     });
                     this.$router.push('/login');
                 } else {
                     this.$notify({
-                        title: 'User was updated successfully',
+                        title: this.$t('profile.userUpdatedSuccess'),
                         type: 'success',
                     });
                     this.$emit('update-user');

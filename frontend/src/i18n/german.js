@@ -41,6 +41,7 @@ export default {
     login: {
         login: 'Einloggen',
         noAccountYet: 'Sie haben noch kein Benutzerkonto?',
+        loginAgain: 'Bitte erneut einloggen',
         messages: {
             loginSuccess: 'Einloggen erfolgreich',
         },
@@ -53,6 +54,7 @@ export default {
         updateUser: 'Benutzer aktualisieren',
         logout: 'Ausloggen',
         logoutSuccess: 'Ausloggen erfolgreich',
+        userUpdatedSuccess: 'Benutzer wurde erfolgreich aktualisiert',
         lastPlayedWith: 'Zuletzt gespielt mit',
     },
 };

@@ -41,6 +41,7 @@ export default {
     login: {
         login: 'Login',
         noAccountYet: 'Don\'t have an account yet?',
+        loginAgain: 'Please login again',
         messages: {
             loginSuccess: 'Login successful',
         },
@@ -53,6 +54,7 @@ export default {
         updateUser: 'Update user',
         logout: 'Logout',
         logoutSuccess: 'Logout successful',
+        userUpdatedSuccess: 'User was updated successfully',
         lastPlayedWith: 'Last played with',
     },
 };
