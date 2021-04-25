@@ -67,7 +67,7 @@
 			<version>3.7.7</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<!-- Remove version from JAR file to keep execution consistent even when version changes -->
