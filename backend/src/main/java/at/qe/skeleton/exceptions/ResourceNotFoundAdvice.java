@@ -18,4 +18,23 @@ public class ResourceNotFoundAdvice {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
     }
+
+
+    @ResponseBody
+    @ExceptionHandler(TopicNotFoundException.class)
+    ResponseEntity<?> topicNotFoundHandler(TopicNotFoundException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(TermNotFoundException.class)
+    ResponseEntity<?> termNotFoundHandler(TopicNotFoundException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
+    }
+
 }

@@ -124,15 +124,6 @@ public class UserServiceTest {
     }
 
     /**
-     * Tests that obtaining a user as non manager throws an exception
-     * */
-    @Test
-    @WithMockUser(authorities = "ROLE_USER")
-    public void testGetUserAsUser() {
-        assertThrows(AccessDeniedException.class,() -> userService.getUserById(1000L));
-    }
-
-    /**
      * Tests that user can obtain itself without being a manager.
      * */
     @Test

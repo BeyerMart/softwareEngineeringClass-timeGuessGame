@@ -1,49 +1,37 @@
 package at.qe.skeleton.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Set;
 
-@Entity
-@Table(
-        name = "Topic",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "name")
-        }
-)
-public class Topic {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+public class TopicDto {
+
     private Long id;
 
     @NotBlank
     @Size(max = 20)
     private String name;
 
-    @CreationTimestamp
     private Timestamp created_at;
 
-    @UpdateTimestamp
     private Timestamp updated_at;
-
-    @OneToMany(targetEntity = Game.class, mappedBy = "topic")
+    @JsonIgnore
     private Set<Game> games;
-
-    @OneToMany(targetEntity = Term.class, mappedBy = "topic")
+    @JsonIgnore
     private Set<Term> terms;
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User creator;
-
-
-    //  Getter / Setter //
+    private Long creatorId;
 
     public Long getId() {
         return id;
@@ -93,12 +81,11 @@ public class Topic {
         this.terms = terms;
     }
 
-    public User getCreator() {
-        return creator;
+    public Long getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(User creator){
-        this.creator = creator;
+    public void setCreatorId(Long creatorId) {
+        this.creatorId = creatorId;
     }
-
 }

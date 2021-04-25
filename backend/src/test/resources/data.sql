@@ -1,14 +1,9 @@
--- users
-
-INSERT INTO USER (PASSWORD, USERNAME, email) VALUES('$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'admin', 'admin@aimlib.at');
-INSERT INTO USER_USER_ROLE (USER_ID, ROLES) SELECT ID, 'ROLE_USER' FROM user WHERE username = 'admin';
-INSERT INTO USER_USER_ROLE (USER_ID, ROLES) SELECT ID, 'ROLE_MANAGER' FROM user WHERE username = 'admin';
-INSERT INTO USER_USER_ROLE (USER_ID, ROLES) SELECT ID, 'ROLE_ADMIN' FROM user WHERE username = 'admin';
-INSERT INTO USER (PASSWORD, USERNAME, EMAIL) VALUES('$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'user1', 'susi@aimlib.com');
-INSERT INTO USER_USER_ROLE (USER_ID, ROLES) SELECT ID, 'ROLE_USER' FROM user WHERE username = 'user1';
-INSERT INTO USER_USER_ROLE (USER_ID, ROLES) SELECT ID, 'ROLE_MANAGER' FROM user WHERE username = 'user1';
-INSERT INTO USER (PASSWORD, USERNAME, email) VALUES('$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'user2', 'user@aimlib.at');
-INSERT INTO USER_USER_ROLE (USER_ID, ROLES) SELECT ID, 'ROLE_USER' FROM user WHERE username = 'user2';
-INSERT INTO USER (PASSWORD, USERNAME, email) VALUES('$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'user3', 'steve@aimlib.at');
-INSERT INTO USER_USER_ROLE (USER_ID, ROLES) SELECT ID, 'ROLE_USER' FROM user WHERE username = 'user3';
-INSERT INTO USER (PASSWORD, USERNAME, email) VALUES('$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'laura', 'laura@aimlib.at');
+-- USERS
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'admin.istrator@gmail.com', 'administ', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_ADMIN');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'man.ager@gmail.com', 'manager', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_MANAGER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'susik@gmail.com', 'susiK', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'hansp@gmail.com', 'hansP', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'johannG@gmail.com', 'johannG', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'jamesJBaites@gmail.com', 'jamesJB', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'lisa.ritter@hotmail.com', 'lisaRitt', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
+INSERT INTO user (created_at, updated_at, email, username, password, role) VALUES(CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), 'makusFass@gmx.net', 'makkiF', '$2a$10$3Z6v.cUNfLxqpgGanZp.VeBMncNoiP5bW4HDNDvsWeAGf.OFzaKYu', 'ROLE_USER');
