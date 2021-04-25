@@ -148,7 +148,6 @@ export default {
         logoutUser() {
             logout();
             this.showProfileDropDown = false;
-            this.error = true;
             this.$notify({
                 title: this.$t('profile.logoutSuccess'),
                 type: 'success',
