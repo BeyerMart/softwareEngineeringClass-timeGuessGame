@@ -1,6 +1,6 @@
 <template>
     <div class="rounded-lg bg-white overflow-hidden shadow">
-        <div class="bg-gray-100 shadow-xl p-6 flex justify-between">
+        <div class="bg-gray-100 shadow-xl p-6 flex justify-center sm:justify-between">
             <div class="sm:flex sm:items-center sm:justify-between">
                 <div class="sm:flex sm:space-x-5">
                     <div class="flex-shrink-0">
@@ -23,6 +23,7 @@
                     </div>
                     <form
                         v-show="isEditing"
+                        class="mt-5 sm:mt-0"
                         @submit.prevent="handleSubmit"
                     >
                         <div class="form-group">

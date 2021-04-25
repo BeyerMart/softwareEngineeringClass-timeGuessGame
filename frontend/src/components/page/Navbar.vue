@@ -92,11 +92,12 @@
                             v-show="showProfileDropDown"
                             class="absolute right-0 origin-top-right mt-2 w-40 rounded shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                         >
-                            <a
-                                href="/profile/"
+                            <router-link
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                @click="showProfileDropDown = false"
-                            >{{ $t('profile.profile') }}</a>
+                                :to="{ name: 'userProfile' }"
+                            >
+                                {{ $t('profile.profile') }}
+                            </router-link>
                             <a
                                 href="#"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"

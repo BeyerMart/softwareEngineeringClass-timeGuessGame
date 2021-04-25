@@ -36,6 +36,7 @@ export default {
         enemy: 'Gegner',
         points: 'Punkte',
         score: 'Punktestand',
+        topic: 'Themengebiet',
     },
     login: {
         login: 'Einloggen',
@@ -52,5 +53,6 @@ export default {
         updateUser: 'Benutzer aktualisieren',
         logout: 'Ausloggen',
         logoutSuccess: 'Ausloggen erfolgreich',
+        lastPlayedWith: 'Zuletzt gespielt mit',
     },
 };

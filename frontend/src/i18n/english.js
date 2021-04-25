@@ -32,10 +32,11 @@ export default {
     },
     game: {
         team: 'Team',
-        teamName: 'Teamname',
-        enemy: 'Gegner',
-        points: 'Punkte',
-        score: 'Punktestand',
+        teamName: 'Team name',
+        enemy: 'Enemy',
+        points: 'Points',
+        score: 'Score',
+        topic: 'Topic',
     },
     login: {
         login: 'Login',
@@ -49,8 +50,9 @@ export default {
     },
     profile: {
         profile: 'Profile',
-        updateUser: 'Benutzer aktualisieren',
+        updateUser: 'Update user',
         logout: 'Logout',
         logoutSuccess: 'Logout successful',
+        lastPlayedWith: 'Last played with',
     },
 };
