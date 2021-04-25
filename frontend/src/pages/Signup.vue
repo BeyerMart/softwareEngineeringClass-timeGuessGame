@@ -40,7 +40,7 @@
                         for="username"
                     >{{ $t('signup.username') }}</label>
                     <div
-                        v-show="submitted && !$v.user.username.required"
+                        v-show="submitted && $v.user.username.$error"
                         class="has-errors py-1 text-xs"
                     >
                         {{ $t('signup.errors.usernameRequired') }}

@@ -2,11 +2,13 @@ export default {
     generic: {
         overview: 'Übersicht',
         error: 'Fehler',
+        profile: 'Profil',
     },
     errors: {
         back: 'Zurück',
         notFound: 'Entschuldigung, diese Seite existiert nicht',
         internalserror: 'Ein unerwarteter Fehler ist aufgetreten',
+        userNotFound: 'Benutzer konnte nicht gefunden werden',
     },
     signup: {
         signup: 'Registrieren',
@@ -28,14 +30,31 @@ export default {
             signupSuccess: 'Registrierung erfolgreich! Bitte anmelden',
         },
     },
+    game: {
+        team: 'Team',
+        teamName: 'Teamname',
+        enemy: 'Gegner',
+        points: 'Punkte',
+        score: 'Punktestand',
+        topic: 'Themengebiet',
+    },
     login: {
         login: 'Einloggen',
         noAccountYet: 'Sie haben noch kein Benutzerkonto?',
+        loginAgain: 'Bitte erneut einloggen',
         messages: {
             loginSuccess: 'Einloggen erfolgreich',
         },
         errors: {
             wrongCredentials: 'Falscher Benutzername oder Passwort',
         },
+    },
+    profile: {
+        profile: 'Profil',
+        updateUser: 'Benutzer aktualisieren',
+        logout: 'Ausloggen',
+        logoutSuccess: 'Ausloggen erfolgreich',
+        userUpdatedSuccess: 'Benutzer wurde erfolgreich aktualisiert',
+        lastPlayedWith: 'Zuletzt gespielt mit',
     },
 };
