@@ -1,5 +1,7 @@
 package at.qe.skeleton.model;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -7,36 +9,26 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.util.Optional;
+import java.util.Set;
 
-@Entity
-@Table(
-        name = "Term"
-)
-public class Term {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+public class TermDto {
     private Long id;
 
-    @NotBlank
-    @Size(max = 20)
     private String name;
 
-    @Column
     private Long correct_guesses;
 
-    @Column
     private Long appearances;
 
-    @ManyToOne()
-    @JoinColumn(name = "topic_id", referencedColumnName = "id", nullable = false)
-    private Topic topic;
+    private Long topicId;
 
-    @CreationTimestamp
     private Timestamp created_at;
 
-    @UpdateTimestamp
     private Timestamp updated_at;
+
+
+
 
     public Long getId() {
         return id;
@@ -70,12 +62,12 @@ public class Term {
         this.appearances = appearances;
     }
 
-    public Topic getTopic() {
-        return topic;
+    public Long getTopicId() {
+        return topicId;
     }
 
-    public void setTopic(Topic topic) {
-        this.topic = topic;
+    public void setTopicId(Long topicId) {
+        this.topicId = topicId;
     }
 
     public Timestamp getCreated_at() {
