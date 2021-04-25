@@ -3,6 +3,7 @@ import Error404 from '@/pages/errors/404';
 import Error500 from '@/pages/errors/500';
 import Signup from '@/pages/Signup';
 import Login from '@/pages/Login';
+import Profile from '@/pages/Profile';
 import WSDebug from '@/pages/WSDebug';
 
 const routes = [
@@ -20,7 +21,16 @@ const routes = [
         name: 'login',
         component: Login,
     },
-
+    {
+        path: '/profile',
+        name: 'profile',
+        component: Profile,
+    },
+    {
+        path: '/profile/:id',
+        name: 'userProfile',
+        component: Profile,
+    },
     /* Errors */
     {
         path: '/errors/404',

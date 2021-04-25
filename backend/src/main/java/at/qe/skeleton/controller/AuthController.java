@@ -5,8 +5,8 @@ import at.qe.skeleton.model.UserDto;
 import at.qe.skeleton.model.UserRole;
 import at.qe.skeleton.payload.request.LoginRequest;
 import at.qe.skeleton.payload.request.SignupRequest;
-import at.qe.skeleton.payload.response.JwtResponse;
 import at.qe.skeleton.payload.response.ErrorResponse;
+import at.qe.skeleton.payload.response.JwtResponse;
 import at.qe.skeleton.payload.response.SuccessResponse;
 import at.qe.skeleton.security.jwt.JwtUtils;
 import at.qe.skeleton.services.UserDetailsImpl;
@@ -60,7 +60,6 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         User user = new User(signupRequest.getUsername(),
                 passwordEncoder.encode(signupRequest.getPassword()),
@@ -84,7 +83,7 @@ public class AuthController {
                     .body((new ErrorResponse(e.getMessage(), 400)).toString());
         }
 
-        return ResponseEntity.ok((new SuccessResponse(mapper.map(user, UserDto.class))).toString());
+        return new ResponseEntity<>((new SuccessResponse(mapper.map(user, UserDto.class))).toString(), HttpStatus.CREATED);
     }
 
     @GetMapping("/me")

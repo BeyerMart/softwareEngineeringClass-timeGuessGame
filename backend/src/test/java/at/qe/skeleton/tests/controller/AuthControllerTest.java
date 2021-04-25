@@ -2,11 +2,8 @@ package at.qe.skeleton.tests.controller;
 
 import at.qe.skeleton.Main;
 import at.qe.skeleton.model.User;
-import at.qe.skeleton.payload.response.JwtResponse;
 import at.qe.skeleton.repository.UserRepository;
 import at.qe.skeleton.security.jwt.JwtUtils;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +43,7 @@ public class AuthControllerTest {
     public void setup() {
         username = UUID.randomUUID().toString().substring(0,20);
         password = UUID.randomUUID().toString().substring(0,20);
-        email = UUID.randomUUID().toString().substring(0,10) + "@" + UUID.randomUUID().toString().substring(0,6) + ".de";;
+        email = UUID.randomUUID().toString().substring(0,10) + "@" + UUID.randomUUID().toString().substring(0,6) + ".de";
     }
 
     @BeforeEach
@@ -61,7 +58,7 @@ public class AuthControllerTest {
     @Order(1)
     public void testSuccessfulSignup() throws Exception {
         String body = "{\"username\":\"" + username + "\",\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
-        MvcResult result = mvc.perform(post("/api/auth/signup").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        MvcResult result = mvc.perform(post("/api/auth/signup").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
     }
 
     @Test
