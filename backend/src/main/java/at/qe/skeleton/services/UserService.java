@@ -28,7 +28,6 @@ public class UserService {
     public class UsernameExistsException extends Exception {}
     public class EmailExistsException extends Exception {}
 
-
     @Autowired
     private UserRepository userRepository;
 
@@ -38,7 +37,6 @@ public class UserService {
      * Checks if user exists
      *
      */
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public boolean userExitsById(Long id) {
         return userRepository.existsById(id);
     }
@@ -59,7 +57,6 @@ public class UserService {
      * @param username the username to search for
      * @return the user with the given username
      */
-    @PreAuthorize("hasAuthority('ROLE_MANAGER') or principal.username eq #username")
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -71,16 +68,12 @@ public class UserService {
      * @return the user with the given id
      */
 
-    @PostAuthorize("hasAuthority('ROLE_MANAGER') or principal.username eq returnObject.get().getUsername()")
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
-
     /**
      *  Creates a new user saves it in the user repository. The roles are checked because only an admin can create admin users.
-     *
-     *
      *
      * @throws AccessDeniedException
      * @throws UsernameExistsException

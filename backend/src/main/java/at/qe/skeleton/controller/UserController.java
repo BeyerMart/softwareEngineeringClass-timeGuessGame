@@ -28,8 +28,10 @@ public class UserController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
     @Autowired
     ModelMapper modelMapper;
+
     @Autowired
     private UserService userService;
 
@@ -48,14 +50,13 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> newUser(@RequestBody UserDto newUser) throws UserService.UsernameExistsException, UserService.EmailExistsException, ParseException {
         if (newUser.getRole() == null) {
             UserRole defaultUserRoles = UserRole.ROLE_USER;
             newUser.setRole(defaultUserRoles);
         }
         UserDto user = convertToDto(userService.createNewUser(convertToEntity(newUser)));
-        return ResponseEntity.ok((new SuccessResponse(user, 201)).toString());
+        return new ResponseEntity<>((new SuccessResponse(user, 201)).toString(), HttpStatus.CREATED);
     }
 
     @PatchMapping("users/{id}")
@@ -76,11 +77,10 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/users/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(userService.getUserById(id).orElseThrow(() -> new UserNotFoundException(id)));
 
-        return ResponseEntity.ok((new SuccessResponse(null, 204)).toString());
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
     private UserDto convertToDto(User user) {
