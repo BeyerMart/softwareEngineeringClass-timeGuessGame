@@ -23,12 +23,12 @@ const routes = [
     },
     {
         path: '/profile',
-        name: 'profile',
+        name: 'userProfile',
         component: Profile,
     },
     {
         path: '/profile/:id',
-        name: 'userProfile',
+        name: 'profile',
         component: Profile,
     },
     /* Errors */
