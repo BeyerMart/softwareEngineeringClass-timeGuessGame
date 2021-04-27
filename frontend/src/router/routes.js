@@ -1,7 +1,10 @@
 import App from '@/pages/App.vue';
 import Error404 from '@/pages/errors/404';
 import Error500 from '@/pages/errors/500';
-import GameSelection from '@/pages/game/GameSelection';
+import Signup from '@/pages/Signup';
+import Login from '@/pages/Login';
+import Profile from '@/pages/Profile';
+import WSDebug from '@/pages/WSDebug';
 
 const routes = [
     {
@@ -9,11 +12,25 @@ const routes = [
         component: App,
     },
     {
-        path: '/game/GameSelection',
-        name: 'GameSelection',
-        component: GameSelection,
+        path: '/signup',
+        name: 'signup',
+        component: Signup,
     },
-
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: Profile,
+    },
+    {
+        path: '/profile/:id',
+        name: 'userProfile',
+        component: Profile,
+    },
     /* Errors */
     {
         path: '/errors/404',
@@ -26,11 +43,15 @@ const routes = [
         component: Error500,
     },
     {
+        path: '/wsdebug',
+        name: 'wsdebug',
+        component: WSDebug,
+    },
+    {
         path: '*',
         redirect: {
             name: 'error404',
         },
     },
-
 ];
 export default routes;

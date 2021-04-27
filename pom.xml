@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>at.ac.uibk</groupId>
-	<artifactId>spring-vue-library</artifactId>
-	<version>0.2.0</version>
+	<artifactId>timeguess-game</artifactId>
+	<version>0.5.0</version>
 	<packaging>pom</packaging>
 
-	<name>spring-vue-library</name>
+	<name>timeguess-game</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
