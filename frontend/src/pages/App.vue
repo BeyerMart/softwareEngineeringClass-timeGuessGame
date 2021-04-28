@@ -1,14 +1,17 @@
 <template>
     <div>
-        <div class="bg-black text-white">
-            fun
-        </div>
+        <GameSelection />
     </div>
 </template>
 
 <script>
 
+import GameSelection from '@/pages/game/GameSelection';
+
 export default {
     name: 'App',
+    components: {
+        GameSelection,
+    },
 };
 </script>

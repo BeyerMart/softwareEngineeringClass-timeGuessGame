@@ -37,6 +37,11 @@ export default {
         points: 'Points',
         score: 'Score',
         topic: 'Topic',
+        createGame: 'Create game',
+        room: 'Room',
+        numOfPlayers: 'Number of players',
+        numOfTeams: 'Number of teams',
+        games: 'Games',
     },
     login: {
         login: 'Login',

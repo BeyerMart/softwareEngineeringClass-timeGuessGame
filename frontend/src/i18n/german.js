@@ -37,6 +37,11 @@ export default {
         points: 'Punkte',
         score: 'Punktestand',
         topic: 'Themengebiet',
+        createGame: 'Spiel erstellen',
+        room: 'Spielraum',
+        numOfPlayers: 'Anzahl der Spieler',
+        numOfTeams: 'Anzahl der Teams',
+        games: 'Spiele',
     },
     login: {
         login: 'Einloggen',

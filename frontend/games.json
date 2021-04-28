@@ -1,0 +1,27 @@
+{
+  "games": {
+    "data": [
+      {
+        "id": 1,
+        "name": "Spielraum 1",
+        "topic": "Biologie",
+        "numOfPlayers": 24,
+        "numOfTeams": 2
+      },
+      {
+        "id": 2,
+        "name": "History Buffs",
+        "topic": "Geschichte",
+        "numOfPlayers": 12,
+        "numOfTeams": 3
+      },
+      {
+        "id": 3,
+        "name": "Geodudes",
+        "topic": "Geografie",
+        "numOfPlayers": 2,
+        "numOfTeams": 1
+      }
+    ]
+  }
+}
