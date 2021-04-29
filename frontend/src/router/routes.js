@@ -3,6 +3,7 @@ import Error404 from '@/pages/errors/404';
 import Error500 from '@/pages/errors/500';
 import Signup from '@/pages/auth/Signup';
 import Login from '@/pages/auth/Login';
+import Auth from '@/pages/auth/Auth';
 import Profile from '@/pages/Profile';
 import WSDebug from '@/pages/WSDebug';
 
@@ -22,9 +23,17 @@ const routes = [
         component: Login,
     },
     {
+        path: '/auth',
+        name: 'auth',
+        component: Auth,
+    },
+    {
         path: '/profile',
         name: 'profile',
         component: Profile,
+        meta: {
+            auth: true,
+        },
     },
     {
         path: '/profile/:id',
