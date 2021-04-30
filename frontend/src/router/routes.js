@@ -39,6 +39,9 @@ const routes = [
         path: '/profile/:id',
         name: 'userProfile',
         component: Profile,
+        meta: {
+            auth: true,
+        },
     },
     /* Errors */
     {

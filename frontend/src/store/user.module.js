@@ -6,7 +6,6 @@ export const user = {
     getters: {
         /*
          * Returns stored user
-         * @param {object} state
          * @returns {object} user
          */
         getUser(state) {
@@ -14,11 +13,31 @@ export const user = {
         },
         /**
          * Returns if user is logged in
-         * @param {object} state
          * @returns {boolean} isLoggedIn
          */
         isLoggedIn(state) {
             return state.user !== null;
+        },
+        /**
+         * Returns true if user is an admin
+         * @returns {boolean} isAdmin
+         */
+        isAdmin(state) {
+            return state.user.role === 'ROLE_ADMIN';
+        },
+        /**
+         * Returns true if user is a manager
+         * @returns {boolean} isManager
+         */
+        isManager(state) {
+            return state.user.role === 'ROLE_MANAGER';
+        },
+        /**
+         * Returns true if user is a user
+         * @returns {boolean} isUser
+         */
+        isUser(state) {
+            return state.user.role === 'ROLE_USER';
         },
     },
     actions: {

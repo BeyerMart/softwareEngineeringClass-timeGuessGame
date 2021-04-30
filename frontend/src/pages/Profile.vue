@@ -149,7 +149,6 @@
 
 <script>
 import UserCard from '@/components/page/UserCard.vue';
-import * as AuthService from '@/services/auth.service';
 import { getUserById } from '@/services/user.service';
 
 export default {
@@ -161,12 +160,11 @@ export default {
         return {
             user: {},
             isSelf: false,
-            currrentUser: {},
         };
     },
     computed: {
         isAdmin() {
-            return this.currrentUser.role === 'ROLE_ADMIN';
+            return this.$store.getters['user/isAdmin'];
         },
     },
     mounted() {
@@ -184,35 +182,15 @@ export default {
                         type: 'error',
                     });
                     if (err.response.data.status === 404) {
-                        this.$router.push('/404');
+                        this.$router.push({ name: 'error404' });
                     } else {
-                        this.$router.push('/500');
+                        this.$router.push({ name: 'error500' });
                     }
                 });
             } else {
                 this.isSelf = true;
+                this.user = this.$store.getters['user/getUser'];
             }
-            this.getCurrentUser();
-        },
-
-        getCurrentUser() {
-            AuthService.getCurrentUser().then((res) => {
-                this.currrentUser = res.data;
-                if (this.isSelf) {
-                    this.user = this.currrentUser;
-                }
-            }).catch((err) => {
-                this.$notify({
-                    title: this.$t('generic.error'),
-                    text: err.response.data.error,
-                    type: 'error',
-                });
-                if (err.response.data.status === 404) {
-                    this.$router.push('/404');
-                } else {
-                    this.$router.push('/500');
-                }
-            });
         },
     },
 

@@ -45,14 +45,17 @@
                 </div>
                 <!-- logo and links -->
                 <div class="flex flex-1 justify-center items-center sm:items-stretch sm:justify-start">
-                    <div class="flex flex-shrink-0 items-center">
+                    <router-link
+                        to="/"
+                        class="flex flex-shrink-0 items-center"
+                    >
                         <img
                             class="h-8 w-auto"
                             src="@/assets/logo.png"
                         >
                         <span class="hidden sm:block text-white pl-4 font-bold text-lg">TimeGuess</span>
                         <span class="sm:hidden text-white pl-4 font-bold text-lg">TG</span>
-                    </div>
+                    </router-link>
                     <div class="hidden sm:block ml-10">
                         <div class="flex space-x-4 text-gray-300 text-sm font-medium">
                             <router-link
