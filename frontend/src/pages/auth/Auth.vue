@@ -39,8 +39,8 @@ export default {
         if (this.$store.getters['user/isLoggedIn']) {
             this.$router.push((url === null) ? '/' : { path: url }).catch(() => {});
         } else {
-            getCurrentUser().then((user) => {
-                this.$store.dispatch('user/setUser', user).then(() => {
+            getCurrentUser().then((response) => {
+                this.$store.dispatch('user/setUser', response.data).then(() => {
                     this.$router.push((url === null) ? '/' : { path: url }).catch(() => {});
                 });
             }).catch(() => {
