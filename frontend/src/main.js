@@ -7,19 +7,21 @@ import '@/assets/app.css';
 import i18n from '@/i18n';
 import Vuelidate from 'vuelidate';
 import Notifications from 'vue-notification';
+import Multiselect from 'vue-multiselect';
 import { initSocket } from '@/services/websocket.service';
 
 // Icon font
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faEllipsisV, faExclamation } from '@fortawesome/free-solid-svg-icons';
-
+import { faEllipsisV, faExclamation, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add(faEllipsisV);
 library.add(faExclamation);
+library.add(faTimesCircle);
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 // End of icon font
 
+Vue.component('Multiselect', Multiselect);
 Vue.use(Vuelidate);
 Vue.use(Notifications);
 
