@@ -9,6 +9,10 @@ export default {
         notFound: 'Entschuldigung, diese Seite existiert nicht',
         internalserror: 'Ein unerwarteter Fehler ist aufgetreten',
         userNotFound: 'Benutzer konnte nicht gefunden werden',
+        validation: {
+            nameRequired: 'Name ist erforderlich',
+            topicRequired: 'Themengebiet is erforderlich',
+        },
     },
     signup: {
         signup: 'Registrieren',
@@ -37,12 +41,20 @@ export default {
         points: 'Punkte',
         score: 'Punktestand',
         topic: 'Themengebiet',
+        selectTopic: 'Themengebiet auswählen',
         createGame: 'Spiel erstellen',
+        createNewRoom: 'Neuen Raum erstellen',
+        createRoom: 'Raum erstellen',
         room: 'Spielraum',
+        roomName: 'Raumname',
         numOfPlayers: 'Anzahl der Spieler',
         numOfTeams: 'Anzahl der Teams',
         games: 'Spiele',
+        messages: {
+            roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
+        },
     },
+
     login: {
         login: 'Einloggen',
         noAccountYet: 'Sie haben noch kein Benutzerkonto?',

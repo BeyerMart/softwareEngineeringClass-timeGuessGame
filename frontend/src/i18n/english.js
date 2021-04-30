@@ -9,6 +9,10 @@ export default {
         notFound: 'Sorry, this page was not found',
         internalserror: 'An unexpected server error occurred',
         userNotFound: 'User not found',
+        validation: {
+            nameRequired: 'Room is required',
+            topicRequired: 'Topic is required',
+        },
     },
     signup: {
         signup: 'Sign Up',
@@ -37,11 +41,18 @@ export default {
         points: 'Points',
         score: 'Score',
         topic: 'Topic',
+        selectTopic: 'Select topic',
         createGame: 'Create game',
+        createNewRoom: 'Create new room',
+        createRoom: 'Create room',
         room: 'Room',
+        roomName: 'Room name',
         numOfPlayers: 'Number of players',
         numOfTeams: 'Number of teams',
         games: 'Games',
+        messages: {
+            roomCreateSuccess: 'Room was created successfully',
+        },
     },
     login: {
         login: 'Login',

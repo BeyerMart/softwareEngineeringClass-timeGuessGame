@@ -6,11 +6,18 @@
             </h1>
 
             <div class="absolute top-20 right-8 mt-6">
-                <button class="bg-green-600 hover:bg-green-900 text-white font-bold py-3 px-4 border order-gray-900 rounded">
+                <button
+                    class="bg-green-600 hover:bg-green-900 text-white font-bold py-3 px-4 border order-gray-900 rounded"
+                    @click="showModal = true"
+                >
                     {{ $t('game.createGame') }}
                 </button>
             </div>
 
+            <GameCreationForm
+                v-show="showModal"
+                @close="showModal = false"
+            />
             <section aria-labelledby="games-table">
                 <div class="flex flex-col">
                     <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -80,9 +87,18 @@ import {
     mapGetters,
     mapActions,
 } from 'vuex';
+import GameCreationForm from '@/components/page/GameCreationForm';
 
 export default {
     name: 'GameSelection',
+    components: {
+        GameCreationForm,
+    },
+    data() {
+        return {
+            showModal: false,
+        };
+    },
     computed: { ...mapGetters(['gamesList', 'gamesCount']) },
     created() {
         this.fetchGames();
@@ -97,3 +113,14 @@ export default {
 
 };
 </script>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
+}
+</style>
