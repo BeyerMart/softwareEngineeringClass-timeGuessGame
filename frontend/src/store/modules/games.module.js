@@ -9,27 +9,26 @@ export const GamesModule = {
         async fetchGames({ commit }) {
             // const response = await GameService.fetchGames();
             const response = await axios.get('http://localhost:3000/games');
-            console.log('HERRRO', response.data);
-            commit('setGames', response.data);
+            commit('SET_GAMES', response.data);
         },
         async createGame({ commit }, game) {
             const response = await GameService.createGame(game);
-            commit('createNewGame', response.data);
+            commit('CREATE_NEW_GAME', response.data);
+            return response;
         },
         async removeGame({ commit }, gameId) {
             const response = await GameService.removeGame(gameId);
-            commit('removeGame', response.data);
+            commit('REMOVE_GAME', response.data);
         },
     },
     mutations: {
-        setGames: (state, fetchedGames) => {
+        SET_GAMES: (state, fetchedGames) => {
             state.games = fetchedGames;
-            console.log('HERRO', fetchedGames, state.games);
         },
-        createNewGame: (state, game) => {
+        CREATE_NEW_GAME: (state, game) => {
             state.users.unshift(game);
         },
-        removeGame: (state, id) => {
+        REMOVE_GAME: (state, id) => {
             state.games.filter((game) => game.id !== id);
             state.games.splice((game) => game.id, 1);
         },
