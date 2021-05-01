@@ -1,7 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { GamesModule } from './modules/games.module';
-import { TopicsModule } from './modules/topics.module';
+
+import { room } from './modules/room.module';
+import { topic } from './modules/topic.module';
+import { user } from './modules/user.module';
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -9,7 +11,8 @@ export default new Vuex.Store({
     mutations: {},
     actions: {},
     modules: {
-        GamesModule,
-        TopicsModule,
+        room,
+        topic,
+        user,
     },
 });

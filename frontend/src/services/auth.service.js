@@ -1,4 +1,5 @@
 import axios from 'axios';
+import store from '@/store';
 
 const API_URL = '/api/auth';
 
@@ -11,6 +12,7 @@ export function login(loginData) {
             localStorage.setItem('token', response.data.token);
             axios.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
         }
+        store.dispatch('user/setUser', response.data.user);
         return response;
     });
 }
@@ -19,5 +21,6 @@ export function getCurrentUser() {
 }
 
 export function logout() {
+    store.dispatch('user/forgetUser', null);
     localStorage.removeItem('token');
 }
