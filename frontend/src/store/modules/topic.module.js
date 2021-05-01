@@ -5,9 +5,11 @@ export const topicModule = {
         topics: [],
     },
     actions: {
-        async fetchTopics({ commit }) {
-            const response = await TopicsService.fetchTopics();
-            commit('setTopics', response.data);
+        async fetchTopics({ commit, state }, forceFetch = false) {
+            if (state.topics.length === 0 || forceFetch) {
+                const response = await TopicsService.fetchTopics();
+                commit('setTopics', response.data);
+            }
         },
         // async createGame({ commit }, game) {
         //     const response = await GameService.createGame(game);
