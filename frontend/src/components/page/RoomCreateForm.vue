@@ -127,14 +127,14 @@ export default {
         },
     },
     methods: {
-        ...mapActions(['fetchTopics', 'createGame']),
+        ...mapActions(['fetchTopics', 'createRoom']),
         handleSubmit() {
             this.submitted = true;
             this.$v.$touch();
             if (this.$v.$invalid) {
                 return;
             }
-            this.createGame(this.form).then(() => {
+            this.createRoom(this.form).then(() => {
                 this.$notify({
                     title: this.$t('game.messages.roomCreateSuccess'),
                     type: 'success',

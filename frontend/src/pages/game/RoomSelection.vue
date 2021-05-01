@@ -14,7 +14,7 @@
                 </button>
             </div>
 
-            <GameCreationForm
+            <RoomCreateForm
                 v-show="showModal"
                 @close="showModal = false"
             />
@@ -87,40 +87,25 @@ import {
     mapGetters,
     mapActions,
 } from 'vuex';
-import GameCreationForm from '@/components/page/GameCreationForm';
+import RoomCreateForm from '@/components/page/RoomCreateForm';
 
 export default {
-    name: 'GameSelection',
+    name: 'RoomSelection',
     components: {
-        GameCreationForm,
+        RoomCreateForm,
     },
     data() {
         return {
             showModal: false,
         };
     },
-    computed: { ...mapGetters(['gamesList', 'gamesCount']) },
+    computed: { ...mapGetters(['roomList']) },
     created() {
         this.fetchGames();
     },
     methods: {
-        ...mapActions(['fetchGames', 'createGame']),
-        // https://css-tricks.com/snippets/javascript/random-hex-color/
-        setBg() {
-            return `background-color: #${Math.floor(Math.random() * 16777215).toString(16)}`;
-        },
+        ...mapActions(['fetchRooms']),
     },
 
 };
 </script>
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 1s
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0
-}
-</style>

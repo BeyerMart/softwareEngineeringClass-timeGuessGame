@@ -1,13 +1,13 @@
 import * as TopicsService from '@/services/topic.service';
 
-export const TopicsModule = {
+export const topicModule = {
     state: {
         topics: [],
     },
     actions: {
         async fetchTopics({ commit }) {
             const response = await TopicsService.fetchTopics();
-            commit('SET_TOPICS', response.data);
+            commit('setTopics', response.data);
         },
         // async createGame({ commit }, game) {
         //     const response = await GameService.createGame(game);
@@ -23,7 +23,7 @@ export const TopicsModule = {
         // },
     },
     mutations: {
-        SET_TOPICS: (state, fetchedTopics) => {
+        setTopics: (state, fetchedTopics) => {
             state.topics = fetchedTopics;
         },
         // CREATE_NEW_TOPIC: (state, topic) => {

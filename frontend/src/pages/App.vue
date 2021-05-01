@@ -1,17 +1,17 @@
 <template>
     <div>
-        <GameSelection />
+        <RoomSelection />
     </div>
 </template>
 
 <script>
 
-import GameSelection from '@/pages/game/GameSelection';
+import RoomSelection from '@/pages/game/RoomSelection';
 
 export default {
     name: 'App',
     components: {
-        GameSelection,
+        RoomSelection,
     },
 };
 </script>
