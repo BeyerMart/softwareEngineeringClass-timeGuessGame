@@ -37,4 +37,19 @@ public class ResourceNotFoundAdvice {
         return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
     }
 
+    @ResponseBody
+    @ExceptionHandler(GameNotFoundException.class)
+    ResponseEntity<?> gameNotFoundHandler(GameNotFoundException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(TeamNotFoundException.class)
+    ResponseEntity<?> teamNotFoundHandler(TeamNotFoundException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
+    }
 }

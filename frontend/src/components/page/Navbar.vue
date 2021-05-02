@@ -45,14 +45,17 @@
                 </div>
                 <!-- logo and links -->
                 <div class="flex flex-1 justify-center items-center sm:items-stretch sm:justify-start">
-                    <div class="flex flex-shrink-0 items-center">
+                    <router-link
+                        to="/"
+                        class="flex flex-shrink-0 items-center"
+                    >
                         <img
                             class="h-8 w-auto"
                             src="@/assets/logo.png"
                         >
                         <span class="hidden sm:block text-white pl-4 font-bold text-lg">TimeGuess</span>
                         <span class="sm:hidden text-white pl-4 font-bold text-lg">TG</span>
-                    </div>
+                    </router-link>
                     <div class="hidden sm:block ml-10">
                         <div class="flex space-x-4 text-gray-300 text-sm font-medium">
                             <router-link
@@ -76,7 +79,21 @@
                 </div>
                 <!-- profile and dropdown -->
                 <div class="absolute right-0 inset-y-0 flex items-center pr-3 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                    <div class="ml-3 relative">
+                    <div
+                        v-show="!isUserLoggedIn"
+                        class="ml-3 relative"
+                    >
+                        <router-link
+                            :to="{name: 'login'}"
+                            class="px-3 py-2 rounded bg-gray-700 text-white"
+                        >
+                            {{ $t('login.login') }}
+                        </router-link>
+                    </div>
+                    <div
+                        v-show="isUserLoggedIn"
+                        class="ml-3 relative"
+                    >
                         <div>
                             <button
                                 class="bg-gray-900 flex rounded-full focus:outline-none text-sm focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
@@ -94,7 +111,7 @@
                         >
                             <router-link
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                :to="{ name: 'userProfile' }"
+                                :to="{ name: 'profile' }"
                             >
                                 {{ $t('profile.profile') }}
                             </router-link>
@@ -143,6 +160,11 @@ export default {
             showProfileDropDown: false,
             showItemsDropDown: false,
         };
+    },
+    computed: {
+        isUserLoggedIn() {
+            return this.$store.getters['user/isLoggedIn'];
+        },
     },
     methods: {
         logoutUser() {
