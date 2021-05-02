@@ -43,3 +43,18 @@ Below is a table containing all available message types. `TYPE` equals the messa
 | VIRTUAL_USER_LEFT   | A virtual user left a team        | All players of current room |
 | USER_JOINED_TEAM    | A user joined a team              | All players of current room |
 | USER_LEFT_TEAM      | A user left a team                | All players of current room |
+| VERSION             | Current game version              | All players + All Pis       |
+| PI_CONNECTED        | A Pi connected to the backend     | The Backend                 |
+| START_SEARCHING     | The Search for the best Timecube starts                         | The Pi corresponding to a room |
+| FOUND_AND_CONNECTED | A Timeflip Cube was found, connection established               | The Backend                    |
+| NOT_FOUND           | A TimeFlip Cube was not found                                   | The Backend                    |
+| NOT_CONNECTED       | Connection to a Timeflip could not be established               | The Backend                    |
+| START_FACET_NOTIFICATION   | The Backend wants to be informed on facets               | The Pi corresponding to a room |
+| FACET_NOTIFICATION         | Notification with the new facet                          | The Backend                    |
+| STOP_FACET_NOTIFICATION    | The backend does not need any notifications on facets anymore   | The Pi corresponding to a room |
+| START_BATTERY_NOTIFICATION | The Backend wants to be informed on battery levels       | The Pi corresponding to a room |
+| BATTERY_NOTIFICATION       | Notification with the new battery levels                 | The Backend                   |
+| STOP_BATTERY_NOTIFICATION  | The backend does not need any notifications on battery anymore | The Pi corresponding to a room |
+| CUBE_ERROR          | Unhandled Error with the cube     | The Backend                 |
+| CUBE_DISCONNECTED   | TimeFlip disconnected             | The Backend                 |
+| PI_DISCONNECTING    | Pi is disconnecting / shutting down | The Backend               |

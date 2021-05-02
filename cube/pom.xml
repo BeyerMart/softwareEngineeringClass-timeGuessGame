@@ -5,13 +5,14 @@
 
 	<name>timeguess-bleclient</name>
 	<artifactId>cube</artifactId>
+	<groupId>at.ac.uibk</groupId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
-
-	<parent>
-		<groupId>at.ac.uibk</groupId>
-		<artifactId>timeguess-game</artifactId>
-		<version>0.3.0</version>
+		<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.1</version>
+		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -21,7 +22,33 @@
 	</properties>
 
 	<dependencies>
+		<!-- Spring Boot -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+			<version>2.4.1</version>
+		</dependency>
 		<!-- TinyB -->
+		<dependency>
+			<groupId>intel-iot-devkit</groupId>
+			<artifactId>tinyb</artifactId>
+			<version>0.5.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.sputnikdev</groupId>
 			<artifactId>bluetooth-manager-tinyb</artifactId>
@@ -40,7 +67,7 @@
 			<version>3.7.7</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<!-- Remove version from JAR file to keep execution consistent even when version changes -->
@@ -54,7 +81,7 @@
 				<executions>
 					<execution>
 						<id>install-tinyb</id>
-						<phase>package</phase>
+						<phase>compile</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
@@ -62,7 +89,7 @@
 							<file>lib/tinyb.jar</file>
 							<groupId>intel-iot-devkit</groupId>
 							<artifactId>tinyb</artifactId>
-							<version>0.6.0</version>
+							<version>0.5.1</version>
 							<packaging>jar</packaging>
 						</configuration>
 					</execution>
@@ -88,6 +115,11 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<!-- Setting up Spring Boot -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<!-- Enable jacoco analysis -->
 			<plugin>
