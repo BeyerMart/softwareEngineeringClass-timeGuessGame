@@ -12,7 +12,7 @@
     <parent>
 		<groupId>at.ac.uibk</groupId>
 		<artifactId>timeguess-game</artifactId>
-		<version>0.5.0</version>
+		<version>0.6.0</version>
     </parent>
 
     <properties>
