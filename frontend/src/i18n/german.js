@@ -55,6 +55,7 @@ export default {
         players: 'Spieler',
         games: 'Spiele',
         createdBy: 'Erstellt von',
+        termImporter: 'Begriff-importer',
         importTerms: 'Begriffe importieren',
     },
     profile: {

@@ -10,14 +10,18 @@
                 <div class="admin-actions">
                     <button
                         class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded mb-2"
+                        @click="showImporter = !showImporter; fetchTopics();"
                     >
-                        {{ $t('dashboard.importTerms') }}
+                        {{ $t('dashboard.termImporter') }}
                     </button>
                 </div>
-                <TermImporter />
+                <TermImporter
+                    v-show="showImporter"
+                    :topics="topics"
+                />
                 <!-- TABS https://www.creative-tim.com/learning-lab/tailwind-starter-kit/documentation/vue/tabs/text-->
                 <ul class="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row">
-                    <li class="-mb-px mr-2 last:mr-0 flex-auto text-center">
+                    <li class="-mb-px mr-2 last:mr-0 flex-auto text-center cursor-pointer">
                         <a
                             class="text-xs font-bold uppercase px-5 py-3 shadow rounded block leading-normal"
                             :class="{'text-gray-900 bg-white': openTab !== 1, 'bg-gray-100': openTab === 1}"
@@ -26,7 +30,7 @@
                             {{ $t('dashboard.players') }}
                         </a>
                     </li>
-                    <li class="-mb-px mr-2 last:mr-0 flex-auto text-center">
+                    <li class="-mb-px mr-2 last:mr-0 flex-auto text-center cursor-pointer">
                         <a
                             class="text-xs font-bold uppercase px-5 py-3 shadow rounded block leading-normal"
                             :class="{'text-gray-900 bg-white': openTab !== 2, 'bg-gray-100': openTab === 2}"
@@ -35,7 +39,7 @@
                             {{ $t('dashboard.games') }}
                         </a>
                     </li>
-                    <li class="-mb-px mr-2 last:mr-0 flex-auto text-center">
+                    <li class="-mb-px mr-2 last:mr-0 flex-auto text-center cursor-pointer">
                         <a
                             class="text-xs font-bold uppercase px-5 py-3 shadow rounded block leading-normal"
                             :class="{'text-gray-900 bg-white': openTab !== 3, 'bg-gray-100': openTab === 3}"
@@ -131,14 +135,14 @@ export default {
         return {
             topics: [],
             openTab: 1,
+            showImporter: false,
+            fetched: false,
         };
     },
     computed: {
         isAdmin() {
             return this.$store.getters['user/isAdmin'];
         },
-    },
-    mounted() {
 
     },
     methods: {
@@ -147,9 +151,10 @@ export default {
         },
 
         fetchTopics() {
-            if (this.topics.length === 0) {
+            if (!this.fetched) {
                 TopicService.getTopics().then((res) => {
                     this.topics = res.data;
+                    this.fetched = true;
                 }).catch((err) => {
                     this.$notify({
                         title: this.$t('generic.error'),

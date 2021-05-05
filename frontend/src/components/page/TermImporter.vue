@@ -1,16 +1,46 @@
 <template>
-    <div class="my-2 rounded shadow">
-        <h1 class="text-xl">
-            {{ message }}
+    <div class="my-2 rounded shadow p-4 max-w-lg bg-gray-50">
+        <h1 class="text-xl mb-4">
+            {{ $t('dashboard.importTerms') }}
         </h1>
-        <label class="text-reader">
-            Read File
+        <!-- TODO: translate -->
+        <label class="text-l">Themengebiet auswaehlen</label>
+        <multiselect
+            v-model="selectedTopic"
+            track-by="id"
+            label="name"
+            select-label=""
+            deselect-label=""
+            :placeholder="$t('game.selectTopic')"
+            :options="topics"
+            :searchable="true"
+            :allow-empty="false"
+            class="border rounded mb-4 mt-2"
+        />
+
+        <label class="text-reader flex flex-col items-center p-2 bg-white text-blue rounded border cursor-pointer hover:bg-gray-100">
+            <font-awesome-icon
+                icon="upload"
+                class="text-2xl cursor-pointer"
+            />
+            <span class="mt-2 text-base leading-normal">Select a file</span>
             <input
                 type="file"
                 accept="application/json"
+                class="hidden"
                 @change="onFileChange"
             >
         </label>
+        <div class="my-4">
+            {{ message }}
+        </div>
+        <button
+            v-show="fileUploadSuccess"
+            class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded mb-2 w-full"
+            @click="createTerms()"
+        >
+            {{ $t('dashboard.importTerms') }}
+        </button>
     </div>
 </template>
 
@@ -18,10 +48,18 @@
 import { createTerm } from '@/services/topic.service';
 
 export default {
+    name: 'TermImporter',
+    props: {
+        topics: {
+            type: Array,
+        },
+    },
     data() {
         return {
+            selectedTopic: {},
             jsonData: [],
             message: '',
+            fileUploadSuccess: false,
         };
     },
     methods: {
@@ -37,53 +75,27 @@ export default {
 
             reader.onload = (e) => {
                 this.jsonData = JSON.parse(e.target.result);
-                this.createTerms();
+                // TODO: translate + interpolate
+                this.message = `Found ${this.jsonData.length} terms.`;
+                this.fileUploadSuccess = true;
             };
         },
 
         createTerms() {
-            this.jsonData.every((term) => {
-                createTerm(4, { name: term }).then((res) => {
-                    this.message = `Term: ${res.data.name} was added`;
-                }).catch(() => {
-                    this.message = 'Something went wrong';
+            const topicId = this.selectedTopic.id;
+            if (topicId) {
+                this.jsonData.every((term) => {
+                    createTerm(topicId, { name: term }).then((res) => {
+                        // TODO: translate + interpolate
+                        this.message = `Term: ${res.data.name} was added`;
+                    }).catch(() => {
+                        this.message = 'Something went wrong';
+                    });
+                    return true;
                 });
-                return true;
-            });
+            }
         },
 
     },
 };
 </script>
-
-<style>
-.list-item {
-  display: inline-block;
-  margin-right: 10px;
-}
-.list-enter-active, .list-leave-active {
-  transition: all 1s;
-}
-.list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
-  opacity: 0;
-  transform: translateY(30px);
-}
-.text-reader {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-
-  /* Fancy button looking */
-  border: 2px solid black;
-  border-radius: 5px;
-  padding: 8px 12px;
-  cursor: pointer;
-}
-.text-reader input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  opacity: 0;
-}
-</style>
