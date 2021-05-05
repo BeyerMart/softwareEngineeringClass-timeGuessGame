@@ -49,6 +49,14 @@ export default {
             wrongCredentials: 'Falscher Benutzername oder Passwort',
         },
     },
+    dashboard: {
+        dashboard: 'Dashboard',
+        topics: 'Themengebiete',
+        players: 'Spieler',
+        games: 'Spiele',
+        createdBy: 'Erstellt von',
+        importTerms: 'Begriffe importieren',
+    },
     profile: {
         profile: 'Profil',
         updateUser: 'Benutzer aktualisieren',

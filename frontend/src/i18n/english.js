@@ -49,6 +49,14 @@ export default {
             wrongCredentials: 'Wrong username or password',
         },
     },
+    dashboard: {
+        dashboard: 'Dashboard',
+        topics: 'Topics',
+        players: 'Players',
+        games: 'Gamer',
+        createdBy: 'Created by',
+        importTerms: 'Import terms',
+    },
     profile: {
         profile: 'Profile',
         updateUser: 'Update user',
