@@ -57,6 +57,10 @@ export default {
         createdBy: 'Erstellt von',
         termImporter: 'Begriff-importer',
         importTerms: 'Begriffe importieren',
+        foundTerms: '{termCount} Begriffe gefunden. Klicken Sie zum Importieren.',
+        importedTerm: '{termName} wurde erfolgreich importiert.',
+        importSuccess: 'Alle Begriffe wurden erfolgreich importiert.',
+        selectTopic: 'Themengebiert auswählen',
     },
     profile: {
         profile: 'Profil',

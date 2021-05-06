@@ -4,7 +4,7 @@
             {{ $t('dashboard.importTerms') }}
         </h1>
         <!-- TODO: translate -->
-        <label class="text-l">Themengebiet auswaehlen</label>
+        <label class="text-l">{{ $t('dashboard.selectTopic') }}</label>
         <multiselect
             v-model="selectedTopic"
             track-by="id"
@@ -25,18 +25,20 @@
             />
             <span class="mt-2 text-base leading-normal">Select a file</span>
             <input
+                ref="termsInput"
                 type="file"
                 accept="application/json"
-                class="hidden"
                 @change="onFileChange"
             >
         </label>
-        <div class="my-4">
+        <div
+            class="my-4"
+        >
             {{ message }}
         </div>
         <button
             v-show="fileUploadSuccess"
-            class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded mb-2 w-full"
+            class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded my-3 w-full"
             @click="createTerms()"
         >
             {{ $t('dashboard.importTerms') }}
@@ -52,6 +54,7 @@ export default {
     props: {
         topics: {
             type: Array,
+            default: () => [],
         },
     },
     data() {
@@ -75,8 +78,7 @@ export default {
 
             reader.onload = (e) => {
                 this.jsonData = JSON.parse(e.target.result);
-                // TODO: translate + interpolate
-                this.message = `Found ${this.jsonData.length} terms.`;
+                this.message = this.$t('dashboard.foundTerms', { termCount: this.jsonData.length });
                 this.fileUploadSuccess = true;
             };
         },
@@ -86,13 +88,23 @@ export default {
             if (topicId) {
                 this.jsonData.every((term) => {
                     createTerm(topicId, { name: term }).then((res) => {
-                        // TODO: translate + interpolate
-                        this.message = `Term: ${res.data.name} was added`;
-                    }).catch(() => {
-                        this.message = 'Something went wrong';
+                        this.message = this.$t('dashboard.importedTerm', { termName: res.data.name });
+                    }).catch((err) => {
+                        this.$notify({
+                            title: this.$t('dashboard.importSuccess'),
+                            text: err.response.error,
+                            type: 'error',
+                        });
                     });
                     return true;
                 });
+
+                this.$notify({
+                    title: this.$t('dashboard.importSuccess'),
+                    type: 'success',
+                });
+                this.message = '';
+                this.$refs.termsInput.value = null;
             }
         },
 
