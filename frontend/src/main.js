@@ -12,13 +12,16 @@ import { initSocket } from '@/services/websocket.service';
 
 // Icon font
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faEllipsisV, faExclamation, faUpload } from '@fortawesome/free-solid-svg-icons';
+import {
+    faEllipsisV, faExclamation, faUpload, faChevronLeft,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add(faEllipsisV);
 library.add(faExclamation);
 library.add(faUpload);
+library.add(faChevronLeft);
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 // End of icon font
 

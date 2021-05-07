@@ -23,10 +23,11 @@
                 icon="upload"
                 class="text-2xl cursor-pointer"
             />
-            <span class="mt-2 text-base leading-normal">Select a file</span>
+            <span class="mt-2 text-base leading-normal">{{ $t('dashboard.selectFile') }}</span>
             <input
                 ref="termsInput"
                 type="file"
+                class="hidden"
                 accept="application/json"
                 @change="onFileChange"
             >

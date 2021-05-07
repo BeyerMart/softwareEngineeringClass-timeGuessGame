@@ -14,6 +14,13 @@
                     >
                         {{ $t('dashboard.termImporter') }}
                     </button>
+
+                    <button
+                        class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded mb-2"
+                        @click="showTopicForm = !showTopicForm"
+                    >
+                        {{ $t('dashboard.termImporter') }}
+                    </button>
                 </div>
                 <TermImporter
                     v-show="showImporter"
@@ -49,7 +56,7 @@
                         </a>
                     </li>
                 </ul>
-                <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow rounded">
+                <div class="">
                     <div class="flex-auto">
                         <div class="tab-content tab-space">
                             <div :class="{'hidden': openTab !== 1, 'block': openTab === 1}">
@@ -71,47 +78,68 @@
 
                             <div :class="{'hidden': openTab !== 3, 'block': openTab === 3}">
                                 <p>
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th
-                                                    scope="col"
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    <section
+                                        v-show="!showTermTable"
+                                        class="shadow rounded"
+                                    >
+                                        <table class="min-w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50">
+                                                <tr>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        ID
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        {{ $t('game.topic') }}
+                                                    </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        {{ $t('dashboard.createdBy') }}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr
+                                                    v-for="(topic, index) in topics"
+                                                    :key="topic.id"
+                                                    class="cursor-pointer hover:bg-gray-200"
+                                                    :class="{ 'bg-gray-50': index % 2 === 0}"
+                                                    @click="fetchTerms(topic.id);"
                                                 >
-                                                    ID
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                                >
-                                                    {{ $t('game.topic') }}
-                                                </th>
-                                                <th
-                                                    scope="col"
-                                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                                                >
-                                                    {{ $t('dashboard.createdBy') }}
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr
-                                                v-for="(topic, index) in topics"
-                                                :key="topic.id"
-                                                :class="{ 'bg-gray-50': index % 2 === 0}"
-                                            >
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ topic.id }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ topic.name }}
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                    {{ topic.creator_id }}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {{ topic.id }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {{ topic.name }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                        {{ topic.creator_id }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section v-show="showTermTable">
+                                        <button
+                                            class="flex justify-items-center gap-4 py-4"
+                                            @click="showTermTable = false"
+                                        >
+                                            <font-awesome-icon
+                                                icon="chevron-left"
+                                                class="text-2xl cursor-pointer"
+                                            />
+                                            {{ $t('generic.back') }}
+                                        </button>
+                                        <TermTable :terms="terms" />
+                                    </section>
                                 </p>
                             </div>
                         </div>
@@ -125,17 +153,22 @@
 <script>
 import * as TopicService from '@/services/topic.service';
 import TermImporter from '@/components/page/TermImporter.vue';
+import TermTable from '@/components/page/TermTable.vue';
 
 export default {
     name: 'AdminDashboard',
     components: {
         TermImporter,
+        TermTable,
     },
     data() {
         return {
             topics: [],
+            terms: [],
             openTab: 1,
             showImporter: false,
+            showTopicForm: false,
+            showTermTable: false,
             fetched: false,
         };
     },
@@ -163,6 +196,18 @@ export default {
                     });
                 });
             }
+        },
+        fetchTerms(topicId) {
+            TopicService.getTermsForTopic(topicId).then((res) => {
+                this.terms = res.data;
+                this.showTermTable = true;
+            }).catch((err) => {
+                this.$notify({
+                    title: this.$t('generic.error'),
+                    text: err.response.data.error,
+                    type: 'error',
+                });
+            });
         },
     },
 

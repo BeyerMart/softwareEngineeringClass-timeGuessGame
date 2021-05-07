@@ -61,6 +61,7 @@ export default {
         importedTerm: '{termName} wurde erfolgreich importiert.',
         importSuccess: 'Alle Begriffe wurden erfolgreich importiert.',
         selectTopic: 'Themengebiert auswählen',
+        selectFile: 'Datei auswählen',
     },
     profile: {
         profile: 'Profil',
