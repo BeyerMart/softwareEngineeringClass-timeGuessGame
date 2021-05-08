@@ -88,6 +88,7 @@
                                             <CreateTopicForm
                                                 v-show="display.showTopicForm"
                                                 @close="display.showTopicForm = false"
+                                                @fetchTopics="fetchTopics(true)"
                                             />
                                         </div>
                                         <table class="min-w-full divide-y divide-gray-200 shadow rounded">
@@ -159,7 +160,7 @@
                                         <div class="flex justify-between mb-4">
                                             <button
                                                 class="flex justify-items-center gap-4 py-2"
-                                                @click="display.showTermTable = false; selectedTopic = false"
+                                                @click="display.showTermTable = false; selectedTopic = {}"
                                             >
                                                 <font-awesome-icon
                                                     icon="chevron-left"
@@ -181,9 +182,13 @@
                                                 v-show="display.showTermForm"
                                                 :topic="selectedTopic"
                                                 @close="display.showTermForm = false"
+                                                @fetchTerms="fetchTerms(selectedTopic)"
                                             />
                                         </div>
-                                        <TermTable :terms="terms" />
+                                        <TermTable
+                                            :terms="terms"
+                                            @fetchTerms="fetchTerms(selectedTopic)"
+                                        />
                                     </section>
                                 </p>
                             </div>
@@ -236,8 +241,8 @@ export default {
             this.openTab = tabNumber;
         },
 
-        fetchTopics() {
-            if (!this.fetched) {
+        fetchTopics(force = false) {
+            if (!this.fetched || force) {
                 TopicService.getTopics().then((res) => {
                     this.topics = res.data;
                     this.fetched = true;
@@ -251,22 +256,38 @@ export default {
             }
         },
         deleteTopic(topicId) {
-            TopicService.deleteTopic(topicId).then(() => {
-                this.$notify({
-                    title: this.$t('dashboard.messages.deleteTopicSuccess'),
-                    type: 'success',
-                });
-                this.fetched = false;
-                this.fetchTopics();
-            }).catch((err) => {
-                this.$notify({
-                    title: this.$t('generic.error'),
-                    text: err.response.data.error,
-                    type: 'error',
-                });
-            });
+            this.$confirm(
+                {
+                    title: this.$t('generic.confirmTitle'),
+                    message: this.$t('generic.confirmMessage'),
+                    button: {
+
+                        yes: this.$t('generic.yes'),
+                        no: this.$t('generic.no'),
+                    },
+                    callback: (confirm) => {
+                        if (confirm) {
+                            TopicService.deleteTopic(topicId).then(() => {
+                                this.$notify({
+                                    title: this.$t('dashboard.messages.deleteTopicSuccess'),
+                                    type: 'success',
+                                });
+                                this.fetched = false;
+                                this.fetchTopics();
+                            }).catch((err) => {
+                                this.$notify({
+                                    title: this.$t('generic.error'),
+                                    text: err.response.data.error,
+                                    type: 'error',
+                                });
+                            });
+                        }
+                    },
+                },
+            );
         },
         fetchTerms(topic) {
+            console.log('FETCH me ');
             TopicService.getTermsForTopic(topic.id).then((res) => {
                 this.terms = res.data;
                 this.display.showTermTable = true;

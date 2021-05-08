@@ -103,6 +103,7 @@ export default {
             }
 
             if (this.topic.id) {
+                console.log(this.form);
                 createTerm(this.topic.id, this.form.term).then((res) => {
                     this.$notify({
                         title: this.$t('dashboard.messages.termCreateSuccess'),
@@ -110,6 +111,7 @@ export default {
                         type: 'success',
                     });
                     this.$emit('close');
+                    this.$emit('fetchTerms');
                 }).catch((err) => {
                     this.$notify({
                         title: this.$t('generic.error'),

@@ -34,6 +34,16 @@ export function deleteTopic(topicId) {
 export function createTopic(topic) {
     return axios.post(`${API_URL}/`, { name: topic });
 }
+
+/**
+ * Delete term
+ * @param {number} topicId
+ * @param {number} termId
+ * @returns {Promise} response
+ */
+export function deleteTerm(topicId, termId) {
+    return axios.delete(`${API_URL}/${topicId}/terms/${termId}`);
+}
 /**
  * Create term for a topic
  * @param {number} topicId
@@ -41,5 +51,5 @@ export function createTopic(topic) {
  * @returns {Promise} Created term
  */
 export function createTerm(topicId, term) {
-    return axios.post(`${API_URL}/${topicId}/terms`, { topicId, name: term.name });
+    return axios.post(`${API_URL}/${topicId}/terms`, { topicId, name: term });
 }

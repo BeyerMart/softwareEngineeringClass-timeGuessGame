@@ -4,6 +4,10 @@ export default {
         error: 'Error',
         profile: 'Profile',
         name: 'Name',
+        confirmTitle: 'Are you sure?',
+        confirmMessage: 'You can’t undo this action',
+        yes: 'Ja',
+        no: 'Nein',
     },
     errors: {
         back: 'Go back',

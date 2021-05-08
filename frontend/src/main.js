@@ -8,6 +8,7 @@ import i18n from '@/i18n';
 import Vuelidate from 'vuelidate';
 import Notifications from 'vue-notification';
 import Multiselect from 'vue-multiselect';
+import VueConfirmDialog from 'vue-confirm-dialog';
 import { initSocket } from '@/services/websocket.service';
 
 // Icon font
@@ -32,6 +33,8 @@ Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 Vue.component('Multiselect', Multiselect);
 Vue.use(Vuelidate);
 Vue.use(Notifications);
+Vue.use(VueConfirmDialog);
+Vue.component('VueConfirmDialog', VueConfirmDialog.default);
 
 Vue.config.productionTip = true;
 Vue.config.devtools = true;

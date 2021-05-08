@@ -5,6 +5,10 @@ export default {
         profile: 'Profil',
         back: 'Zurück',
         name: 'Name',
+        confirmTitle: 'Sind Sie sicher?',
+        confirmMessage: 'Sie können diese Aktion nicht rückgängig machen',
+        yes: 'Ja',
+        no: 'Nein',
     },
     errors: {
         back: 'Zurück',

@@ -101,6 +101,8 @@ export default {
                     type: 'success',
                 });
                 this.$emit('close');
+                // TODO: remove emit and grad from vuex store
+                this.$emit('fetchTopics');
             }).catch((err) => {
                 this.$notify({
                     title: this.$t('generic.error'),
