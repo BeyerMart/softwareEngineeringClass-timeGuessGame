@@ -97,11 +97,11 @@ public class UserController {
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
-    private UserDto convertToDto(User user) {
+    public UserDto convertToDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
 
-    private User convertToEntity(UserDto userDto) throws ParseException {
+    public User convertToEntity(UserDto userDto) throws ParseException {
         return modelMapper.map(userDto, User.class);
     }
 }
