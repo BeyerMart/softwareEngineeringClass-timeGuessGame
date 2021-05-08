@@ -4,12 +4,17 @@ export default {
         error: 'Fehler',
         profile: 'Profil',
         back: 'Zurück',
+        name: 'Name',
     },
     errors: {
         back: 'Zurück',
         notFound: 'Entschuldigung, diese Seite existiert nicht',
         internalserror: 'Ein unerwarteter Fehler ist aufgetreten',
         userNotFound: 'Benutzer konnte nicht gefunden werden',
+        validation: {
+            nameRequired: 'Name ist erforderlich',
+            termNameRequired: 'Begriffsname ist erforderlich',
+        },
     },
     signup: {
         signup: 'Registrieren',
@@ -53,6 +58,7 @@ export default {
     dashboard: {
         dashboard: 'Dashboard',
         topics: 'Themengebiete',
+        term: 'Begriff',
         players: 'Spieler',
         games: 'Spiele',
         createdBy: 'Erstellt von',
@@ -61,9 +67,17 @@ export default {
         foundTerms: '{termCount} Begriffe gefunden. Klicken Sie zum Importieren.',
         importedTerm: '{termName} wurde erfolgreich importiert.',
         importSuccess: 'Alle Begriffe wurden erfolgreich importiert.',
-        selectTopic: 'Themengebiert auswählen',
+        selectTopic: 'Themengebiet auswählen',
         selectFile: 'Datei auswählen',
-        addTerm: 'Begriff hinzufügen',
+        createNewTopic: 'Neues Themengebiet hinzufügen',
+        createTopic: 'Themengebiet hinzufügen',
+        createTerm: 'Begriff hinzufügen',
+        messages: {
+            topicCreateSuccess: 'Themengebiet hinzugefügt!',
+            topicCreateSuccessMessage: '{topicName} wurde erfolgreich hinzugefügt',
+            termCreateSuccess: 'Begriff hinzugefügt!',
+            termCreateSuccessMessage: '{termName} wurde erfolgreich hinzugefügt',
+        },
     },
     profile: {
         profile: 'Profil',

@@ -83,7 +83,7 @@
                                                     icon="plus"
                                                     class="text-l cursor-pointer"
                                                 />
-                                                {{ $t('dashboard.addTopic') }}
+                                                {{ $t('dashboard.createTopic') }}
                                             </button>
                                             <CreateTopicForm
                                                 v-show="display.showTopicForm"
@@ -119,7 +119,7 @@
                                                     :key="topic.id"
                                                     class="cursor-pointer hover:bg-gray-200"
                                                     :class="{ 'bg-gray-50': index % 2 === 0}"
-                                                    @click="fetchTerms(topic.id);"
+                                                    @click="fetchTerms(topic);"
                                                 >
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                         {{ topic.id }}
@@ -155,10 +155,11 @@
                                                     icon="plus"
                                                     class="text-l cursor-pointer"
                                                 />
-                                                {{ $t('dashboard.addTerm') }}
+                                                {{ $t('dashboard.createTerm') }}
                                             </button>
                                             <CreateTermForm
                                                 v-show="display.showTermForm"
+                                                :topic="selectedTopic"
                                                 @close="display.showTermForm = false"
                                             />
                                         </div>
@@ -198,7 +199,7 @@ export default {
             showTopicForm: false,
             showTermTable: false,
             fetched: false,
-            selectedTopic: false,
+            selectedTopic: {},
             display: {
                 showTopicForm: false,
                 showTermForm: false,
@@ -230,11 +231,11 @@ export default {
                 });
             }
         },
-        fetchTerms(topicId) {
-            TopicService.getTermsForTopic(topicId).then((res) => {
+        fetchTerms(topic) {
+            TopicService.getTermsForTopic(topic.id).then((res) => {
                 this.terms = res.data;
                 this.showTermTable = true;
-                this.selectedTopic = topicId;
+                this.selectedTopic = topic;
             }).catch((err) => {
                 this.$notify({
                     title: this.$t('generic.error'),

@@ -22,7 +22,7 @@
                         id="modal-title"
                         class="text-lg leading-6 font-medium text-gray-900"
                     >
-                        {{ $t('dashboard.createTopic') }}
+                        {{ $t('dashboard.createNewTopic') }}
                     </h3>
                     <div class="mt-2">
                         <form
@@ -33,7 +33,7 @@
                                 <label
                                     class="block text-gray-700 text-sm mb-2"
                                     for="topic"
-                                >{{ $t('game.topicName') }}</label>
+                                >{{ $t('generic.name') }}</label>
                                 <div
                                     v-show="submitted && $v.form.topic.$error"
                                     class="has-errors py-1 text-xs"
@@ -47,7 +47,7 @@
                                     name="topic-name"
                                     class="form-control block border border-grey-light w-full p-3 rounded mb-4"
                                     :class="{ 'border-red-500 !important': submitted && $v.form.topic.$error }"
-                                    :placeholder="$t('dashboard.topicName')"
+                                    :placeholder="$t('generic.name')"
                                 >
                             </div>
                             <div class="form-group mt-5 sm:mt-6">
@@ -96,10 +96,9 @@ export default {
             }
 
             createTopic(this.form.topic).then((res) => {
-                console.log(res.data);
                 this.$notify({
-                    title: this.$t('dashboard.termCreateSuccess'),
-                    text: this.$t('dashboard.termCreateSuccessMessage'),
+                    title: this.$t('dashboard.messages.topicCreateSuccess'),
+                    text: this.$t('dashboard.messages.topicCreateSuccessMessage', { topicName: res.data.name }),
                     type: 'success',
                 });
                 this.$emit('close');

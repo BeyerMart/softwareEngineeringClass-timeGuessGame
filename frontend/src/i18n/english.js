@@ -3,12 +3,17 @@ export default {
         overview: 'Overview',
         error: 'Error',
         profile: 'Profile',
+        name: 'Name',
     },
     errors: {
         back: 'Go back',
         notFound: 'Sorry, this page was not found',
         internalserror: 'An unexpected server error occurred',
         userNotFound: 'User not found',
+        validation: {
+            nameRequired: 'Name is required',
+            termNameRequired: 'Term name is required',
+        },
     },
     signup: {
         signup: 'Sign Up',
@@ -52,6 +57,7 @@ export default {
     dashboard: {
         dashboard: 'Dashboard',
         topics: 'Topics',
+        term: 'Begriff',
         players: 'Players',
         games: 'Gamer',
         createdBy: 'Created by',
@@ -62,6 +68,15 @@ export default {
         importSuccess: 'All terms were imported successfully.',
         selectTopic: 'Themengebiert auswählen',
         selectFile: 'Datei auswählen',
+        createNewTopic: 'Create new term',
+        createTopic: 'Create topic',
+        createTerm: 'Create term',
+        messages: {
+            topicCreateSuccess: 'Topic created!',
+            topicCreateSuccessMessage: '{topicName} was created successfully',
+            termCreateSuccess: 'Term created!',
+            termCreateSuccessMessage: '{termName} was created successfully',
+        },
     },
     profile: {
         profile: 'Profile',

@@ -33,12 +33,12 @@
                                 <label
                                     class="block text-gray-700 text-sm mb-2"
                                     for="term"
-                                >{{ $t('dashBoard.termName') }}</label>
+                                >{{ $t('dashboard.term') }}</label>
                                 <div
                                     v-show="submitted && $v.form.term.$error"
                                     class="has-errors py-1 text-xs"
                                 >
-                                    {{ $t('errors.validation.nameRequired') }}
+                                    {{ $t('errors.validation.termNameRequired') }}
                                 </div>
                                 <input
                                     id="termName"
@@ -47,7 +47,7 @@
                                     name="term-name"
                                     class="form-control block border border-grey-light w-full p-3 rounded mb-4"
                                     :class="{ 'border-red-500 !important': submitted && $v.form.term.$error }"
-                                    :placeholder="$t('dashboard.termName')"
+                                    :placeholder="$t('dashboard.term')"
                                 >
                             </div>
                             <div class="form-group mt-5 sm:mt-6">
@@ -73,6 +73,13 @@ import {
 import { createTerm } from '@/services/topic.service';
 
 export default {
+    name: 'CreateTermForm',
+    props: {
+        topic: {
+            type: Object,
+            default: () => {},
+        },
+    },
     data() {
         return {
             form: {
@@ -95,21 +102,28 @@ export default {
                 return;
             }
 
-            createTerm(2, this.form.term).then((res) => {
-                console.log(res.data);
-                this.$notify({
-                    title: this.$t('dashboard.termCreateSuccess'),
-                    text: this.$t('dashboard.termCreateSuccessMessage'),
-                    type: 'success',
+            if (this.topic.id) {
+                createTerm(this.topic.id, this.form.term).then((res) => {
+                    this.$notify({
+                        title: this.$t('dashboard.messages.termCreateSuccess'),
+                        text: this.$t('dashboard.messages.termCreateSuccessMessage', { termName: res.data.name }),
+                        type: 'success',
+                    });
+                    this.$emit('close');
+                }).catch((err) => {
+                    this.$notify({
+                        title: this.$t('generic.error'),
+                        text: err.response.data.error,
+                        type: 'error',
+                    });
                 });
-                this.$emit('close');
-            }).catch((err) => {
+            } else {
                 this.$notify({
                     title: this.$t('generic.error'),
-                    text: err.response.data.error,
+                    text: this.$t('dashboard.noTopicSelected'),
                     type: 'error',
                 });
-            });
+            }
         },
     },
 
