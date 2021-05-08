@@ -33,5 +33,5 @@ export function createTopic(topic) {
  * @returns {Promise} Created term
  */
 export function createTerm(topicId, term) {
-    return axios.post(`${API_URL}/${topicId}/terms`, { topicId, name: term });
+    return axios.post(`${API_URL}/${topicId}/terms`, { topicId, name: term.name });
 }
