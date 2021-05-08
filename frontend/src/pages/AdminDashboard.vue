@@ -14,13 +14,6 @@
                     >
                         {{ $t('dashboard.termImporter') }}
                     </button>
-
-                    <button
-                        class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded mb-2"
-                        @click="showTopicForm = !showTopicForm"
-                    >
-                        {{ $t('dashboard.termImporter') }}
-                    </button>
                 </div>
                 <TermImporter
                     v-show="showImporter"
@@ -80,9 +73,24 @@
                                 <p>
                                     <section
                                         v-show="!showTermTable"
-                                        class="shadow rounded"
                                     >
-                                        <table class="min-w-full divide-y divide-gray-200">
+                                        <div class="flex justify-end mb-4">
+                                            <button
+                                                class="flex items-center gap-3 p-2 rounded bg-gray-900 hover:bg-gray-600 text-white"
+                                                @click="display.showTopicForm = true"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="plus"
+                                                    class="text-l cursor-pointer"
+                                                />
+                                                {{ $t('dashboard.addTopic') }}
+                                            </button>
+                                            <CreateTopicForm
+                                                v-show="display.showTopicForm"
+                                                @close="display.showTopicForm = false"
+                                            />
+                                        </div>
+                                        <table class="min-w-full divide-y divide-gray-200 shadow rounded">
                                             <thead class="bg-gray-50">
                                                 <tr>
                                                     <th
@@ -128,16 +136,32 @@
                                     </section>
 
                                     <section v-show="showTermTable">
-                                        <button
-                                            class="flex justify-items-center gap-4 py-4"
-                                            @click="showTermTable = false"
-                                        >
-                                            <font-awesome-icon
-                                                icon="chevron-left"
-                                                class="text-2xl cursor-pointer"
+                                        <div class="flex justify-between mb-4">
+                                            <button
+                                                class="flex justify-items-center gap-4 py-2"
+                                                @click="showTermTable = false; selectedTopic = false"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="chevron-left"
+                                                    class="text-2xl cursor-pointer"
+                                                />
+                                                {{ $t('generic.back') }}
+                                            </button>
+                                            <button
+                                                class="flex items-center gap-3 p-2 rounded bg-gray-900 hover:bg-gray-600 text-white"
+                                                @click="display.showTermForm = true"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="plus"
+                                                    class="text-l cursor-pointer"
+                                                />
+                                                {{ $t('dashboard.addTerm') }}
+                                            </button>
+                                            <CreateTermForm
+                                                v-show="display.showTermForm"
+                                                @close="display.showTermForm = false"
                                             />
-                                            {{ $t('generic.back') }}
-                                        </button>
+                                        </div>
                                         <TermTable :terms="terms" />
                                     </section>
                                 </p>
@@ -154,12 +178,16 @@
 import * as TopicService from '@/services/topic.service';
 import TermImporter from '@/components/page/TermImporter.vue';
 import TermTable from '@/components/page/TermTable.vue';
+import CreateTopicForm from '@/components/forms/CreateTopicForm.vue';
+import CreateTermForm from '@/components/forms/CreateTermForm.vue';
 
 export default {
     name: 'AdminDashboard',
     components: {
         TermImporter,
         TermTable,
+        CreateTopicForm,
+        CreateTermForm,
     },
     data() {
         return {
@@ -170,6 +198,11 @@ export default {
             showTopicForm: false,
             showTermTable: false,
             fetched: false,
+            selectedTopic: false,
+            display: {
+                showTopicForm: false,
+                showTermForm: false,
+            },
         };
     },
     computed: {
@@ -201,6 +234,7 @@ export default {
             TopicService.getTermsForTopic(topicId).then((res) => {
                 this.terms = res.data;
                 this.showTermTable = true;
+                this.selectedTopic = topicId;
             }).catch((err) => {
                 this.$notify({
                     title: this.$t('generic.error'),

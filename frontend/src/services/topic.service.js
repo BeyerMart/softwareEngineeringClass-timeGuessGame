@@ -18,7 +18,14 @@ export function getTopics() {
 export function getTermsForTopic(topicId) {
     return axios.get(`${API_URL}/${topicId}/terms`);
 }
-
+/**
+ * Create topic
+ * @param {string} topic
+ * @returns {Promise} Created topic
+ */
+export function createTopic(topic) {
+    return axios.post(`${API_URL}/`, { name: topic });
+}
 /**
  * Create term for a topic
  * @param {number} topicId
@@ -26,5 +33,5 @@ export function getTermsForTopic(topicId) {
  * @returns {Promise} Created term
  */
 export function createTerm(topicId, term) {
-    return axios.post(`${API_URL}/${topicId}/terms`, term);
+    return axios.post(`${API_URL}/${topicId}/terms`, { topicId, name: term });
 }

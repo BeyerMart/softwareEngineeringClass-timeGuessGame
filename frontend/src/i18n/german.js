@@ -3,6 +3,7 @@ export default {
         overview: 'Übersicht',
         error: 'Fehler',
         profile: 'Profil',
+        back: 'Zurück',
     },
     errors: {
         back: 'Zurück',
@@ -62,6 +63,7 @@ export default {
         importSuccess: 'Alle Begriffe wurden erfolgreich importiert.',
         selectTopic: 'Themengebiert auswählen',
         selectFile: 'Datei auswählen',
+        addTerm: 'Begriff hinzufügen',
     },
     profile: {
         profile: 'Profil',
