@@ -75,6 +75,7 @@ export default {
         messages: {
             topicCreateSuccess: 'Themengebiet hinzugefügt!',
             topicCreateSuccessMessage: '{topicName} wurde erfolgreich hinzugefügt',
+            topicDeleteSuccess: 'Themengebiet wurde erfolgreich entfernt',
             termCreateSuccess: 'Begriff hinzugefügt!',
             termCreateSuccessMessage: '{termName} wurde erfolgreich hinzugefügt',
         },

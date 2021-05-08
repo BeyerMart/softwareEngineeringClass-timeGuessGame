@@ -10,13 +10,13 @@
                 <div class="admin-actions">
                     <button
                         class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded mb-2"
-                        @click="showImporter = !showImporter; fetchTopics();"
+                        @click="display.showImporter = !display.showImporter; fetchTopics();"
                     >
                         {{ $t('dashboard.termImporter') }}
                     </button>
                 </div>
                 <TermImporter
-                    v-show="showImporter"
+                    v-show="display.showImporter"
                     :topics="topics"
                 />
                 <!-- TABS https://www.creative-tim.com/learning-lab/tailwind-starter-kit/documentation/vue/tabs/text-->
@@ -72,7 +72,7 @@
                             <div :class="{'hidden': openTab !== 3, 'block': openTab === 3}">
                                 <p>
                                     <section
-                                        v-show="!showTermTable"
+                                        v-show="!display.showTermTable"
                                     >
                                         <div class="flex justify-end mb-4">
                                             <button
@@ -111,6 +111,12 @@
                                                     >
                                                         {{ $t('dashboard.createdBy') }}
                                                     </th>
+                                                    <th
+                                                        scope="col"
+                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                                    >
+                                                        {{ $t('dashboard.options') }}
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -130,16 +136,30 @@
                                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                         {{ topic.creator_id }}
                                                     </td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                                                    >
+                                                        <font-awesome-icon
+                                                            icon="pen"
+                                                            class="text-l cursor-pointer mr-5"
+                                                        />
+
+                                                        <font-awesome-icon
+                                                            icon="trash"
+                                                            class="text-l cursor-pointer"
+                                                            @click.stop="deleteTopic(topic.id)"
+                                                        />
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </section>
 
-                                    <section v-show="showTermTable">
+                                    <section v-show="display.showTermTable">
                                         <div class="flex justify-between mb-4">
                                             <button
                                                 class="flex justify-items-center gap-4 py-2"
-                                                @click="showTermTable = false; selectedTopic = false"
+                                                @click="display.showTermTable = false; selectedTopic = false"
                                             >
                                                 <font-awesome-icon
                                                     icon="chevron-left"
@@ -195,14 +215,13 @@ export default {
             topics: [],
             terms: [],
             openTab: 1,
-            showImporter: false,
-            showTopicForm: false,
-            showTermTable: false,
             fetched: false,
             selectedTopic: {},
             display: {
                 showTopicForm: false,
                 showTermForm: false,
+                showImporter: false,
+                showTermTable: false,
             },
         };
     },
@@ -231,10 +250,26 @@ export default {
                 });
             }
         },
+        deleteTopic(topicId) {
+            TopicService.deleteTopic(topicId).then(() => {
+                this.$notify({
+                    title: this.$t('dashboard.messages.deleteTopicSuccess'),
+                    type: 'success',
+                });
+                this.fetched = false;
+                this.fetchTopics();
+            }).catch((err) => {
+                this.$notify({
+                    title: this.$t('generic.error'),
+                    text: err.response.data.error,
+                    type: 'error',
+                });
+            });
+        },
         fetchTerms(topic) {
             TopicService.getTermsForTopic(topic.id).then((res) => {
                 this.terms = res.data;
-                this.showTermTable = true;
+                this.display.showTermTable = true;
                 this.selectedTopic = topic;
             }).catch((err) => {
                 this.$notify({

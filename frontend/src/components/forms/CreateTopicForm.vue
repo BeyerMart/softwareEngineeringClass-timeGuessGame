@@ -10,7 +10,6 @@
                 class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
                 aria-hidden="true"
             />
-
             <div class="bg-white rounded-lg p-6 shadow-xl transform w-full">
                 <font-awesome-icon
                     icon="times-circle"

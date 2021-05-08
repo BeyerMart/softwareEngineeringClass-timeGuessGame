@@ -19,6 +19,14 @@ export function getTermsForTopic(topicId) {
     return axios.get(`${API_URL}/${topicId}/terms`);
 }
 /**
+ * Delete topic
+ * @param {number} topicId
+ * @returns {Promise} response
+ */
+export function deleteTopic(topicId) {
+    return axios.delete(`${API_URL}/${topicId}/`);
+}
+/**
  * Create topic
  * @param {string} topic
  * @returns {Promise} Created topic
