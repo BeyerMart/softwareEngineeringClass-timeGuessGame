@@ -4,10 +4,7 @@ import at.qe.skeleton.controller.RoomController;
 import at.qe.skeleton.exceptions.RoomNotFoundException;
 import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.exceptions.UserNotFoundException;
-import at.qe.skeleton.model.Room;
-import at.qe.skeleton.model.UserIdVirtualUser;
-import at.qe.skeleton.model.VirtualTeam;
-import at.qe.skeleton.model.VirtualUser;
+import at.qe.skeleton.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
@@ -274,5 +271,32 @@ public class RoomService {
     private void usernameExists(String username, Room room) {
         if (userService.getUserByUsername(username).isPresent() || room.getPlayers().values().stream().anyMatch(userIdVirtualUser -> userIdVirtualUser.getVirtualUsers().values().stream().anyMatch(virtualUser -> virtualUser.getUsername().equals(username))))
             throw new EntityExistsException(username);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public void connectRoomAndPi(Long roomId, String piName) {
+        Long userId = userService.getAuthenticatedUser().get().getId();
+        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
+        if (userId != room.getHost_id()){
+            throw new AccessDeniedException("Only the Host can connect the pi to a room");
+        }
+        room.setPi_name(piName);
+        roomController.roomChanged(room);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public void disconnectRoomAndPi(Long roomId, String piName) {
+        Long userId = userService.getAuthenticatedUser().get().getId();
+        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
+        room.setPi_name(null);
+        roomController.roomChanged(room);
+    }
+
+    public void updateCube(int roomId, Cube cube){
+        Optional<Room> optionalRoom = getRoomById(roomId);
+        if (optionalRoom.isPresent()){
+            optionalRoom.get().setCube(cube);
+            roomController.roomChanged(optionalRoom.get());
+        }
     }
 }
