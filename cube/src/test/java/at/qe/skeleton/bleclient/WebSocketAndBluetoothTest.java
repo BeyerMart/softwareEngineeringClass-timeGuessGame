@@ -2,7 +2,6 @@ package at.qe.skeleton.bleclient;
 
 import at.qe.skeleton.controller.WSResponseType;
 import at.qe.skeleton.controller.WebSocketConnection;
-import at.qe.skeleton.controller.WebsocketResponse;
 import at.qe.skeleton.model.Cube;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,16 +20,28 @@ public class WebSocketAndBluetoothTest {
 
     @Test
     public void askForFacetAndSendCubeToBackendTest() throws ExecutionException, InterruptedException, TimeoutException, JsonProcessingException {
-        TimeCubeService timeCubeService = new TimeCubeService();
-        timeCubeService.setPassword();
-        cube.setName("FacetTest");
-        cube.setFacet(timeCubeService.getCurrentFacet());
         webSocketConnection = new WebSocketConnection();
         webSocketConnection.subscribeToChannel("cube");
-        WebsocketResponse response = webSocketConnection.sendCubeAndGetResponse(cube);
-        JsonNode jsonResult = mapper.readTree(response.toString());
-        WSResponseType wsType = WSResponseType.valueOf(jsonResult.get("type").asText());
-        Assert.assertEquals(WSResponseType.PI_CONNECTED, wsType);
+        try{
+            TimeCubeService timeCubeService = new TimeCubeService();
+            timeCubeService.setPassword();
+            //cube is created after START_SEARCHING
+            cube.setPiName("TestCube");
+            cube.setRoomId(0); // Only used for testing
+            cube.setFacet(timeCubeService.getCurrentFacet());
+
+            String response = webSocketConnection.sendFoundAndConnected(cube);
+            JsonNode jsonResult = mapper.readTree(response);
+            WSResponseType wsType = WSResponseType.valueOf(jsonResult.get("type").asText());
+            Assert.assertEquals(WSResponseType.OK, wsType);
+        }
+        catch (RuntimeException r){
+            String response = webSocketConnection.sendNotFound(0);
+            JsonNode jsonResult = mapper.readTree(response);
+            WSResponseType wsType = WSResponseType.valueOf(jsonResult.get("type").asText());
+            Assert.assertEquals(WSResponseType.OK, wsType);
+        }
+
         webSocketConnection.close();
     }
 }
