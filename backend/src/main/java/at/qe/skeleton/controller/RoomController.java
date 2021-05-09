@@ -42,6 +42,10 @@ public class RoomController {
     @Autowired
     VirtualUserController virtualUserController;
 
+    @Autowired
+    private CubeController cubeController;
+
+
     @PostMapping(value = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<?> createRoom() {
         Room room = roomService.createNewRoom();
@@ -159,6 +163,34 @@ public class RoomController {
 
     public void userLeftTeam(UserIdVirtualUser user, Room room) {
         template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(user, WSResponseType.USER_LEFT_TEAM)).toString());
+    }
+
+    @PostMapping("/rooms/{id}/connect_pi")
+    public void connectPiToRoom(@RequestBody String piName, @PathVariable String id){
+        roomService.connectRoomAndPi(Long.valueOf(id), piName);
+    }
+
+    @PostMapping("/rooms/{id}/disconnect_pi")
+    public void disconnectPiFromRoom(@RequestBody String piName, @PathVariable String id){
+        roomService.disconnectRoomAndPi(Long.valueOf(id), piName);
+    }
+
+    @PostMapping("/rooms/{id}/searchCube")
+    public void searchBlueToothCube(@PathVariable String id){
+        Room room = roomService.getRoomById(Integer.parseInt(id)).get();
+        cubeController.cubeStartSearching(room);
+    }
+
+    //WS Messages to the FrontEnd
+    //TODO FrontEnd shows "Cube not found / not connected. reset battery and retry"
+    public void cubeNotConnected(Room room){
+        room.setConnectedWithPiAndCube(false);
+        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
+    }
+    public void cubeConnected(Room room, Cube cube){
+        room.setConnectedWithPiAndCube(true);
+        room.setCube(cube);
+        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
     }
 
 //    private RoomDto convertToRoomDto(Room room) {

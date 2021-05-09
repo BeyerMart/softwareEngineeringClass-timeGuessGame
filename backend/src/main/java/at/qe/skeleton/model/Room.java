@@ -15,6 +15,8 @@ public class Room {
     private long game_id = -1;
     private String room_name;
     private long topic_id = -1;
+    private Cube cube;
+    private boolean connectedWithPiAndCube = false;
 
     public Room(long room_id, long host_id) {
         this.room_id = room_id;
@@ -110,5 +112,20 @@ public class Room {
 
     public void setTopic_id(long topic_id) {
         this.topic_id = topic_id;
+    }
+
+    public Cube getCube(){
+        return cube;
+    }
+
+    public void setCube(Cube cube){
+        this.cube = cube;
+    }
+    public void setConnectedWithPiAndCube(boolean connectedWithPiAndCube) {
+        this.connectedWithPiAndCube = connectedWithPiAndCube;
+    }
+
+    public boolean isConnectedWithPiAndCube() {
+        return connectedWithPiAndCube;
     }
 }
