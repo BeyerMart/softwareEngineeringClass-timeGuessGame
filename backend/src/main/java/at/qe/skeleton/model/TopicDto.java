@@ -31,7 +31,7 @@ public class TopicDto {
     @JsonIgnore
     private Set<Term> terms;
 
-    private Long creatorId;
+    private Long creator_id;
 
     public Long getId() {
         return id;
@@ -81,11 +81,11 @@ public class TopicDto {
         this.terms = terms;
     }
 
-    public Long getCreatorId() {
-        return creatorId;
+    public Long getCreator_id() {
+        return creator_id;
     }
 
-    public void setCreatorId(Long creatorId) {
-        this.creatorId = creatorId;
+    public void setCreator_id(Long creator_id) {
+        this.created_at = created_at;
     }
 }

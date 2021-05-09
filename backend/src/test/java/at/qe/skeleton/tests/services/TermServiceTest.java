@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,6 +65,7 @@ public class TermServiceTest {
         topic.setId(1000L);
         topic.setUpdated_at(new Timestamp(System.currentTimeMillis()));
         topic.setCreated_at(new Timestamp(System.currentTimeMillis()));
+        topic.setTerms(new HashSet<>());
 
         Mockito.when(topicRepository.save(topic)).thenReturn(topic);
         Mockito.when(topicRepository.existsById(topic.getId())).thenReturn(true);
@@ -90,6 +92,16 @@ public class TermServiceTest {
     @WithMockUser(authorities = "ROLE_USER")
     public void testCreateNewTermAsUser() throws Exception {
         assertThrows(AccessDeniedException.class,() -> termService.addTerm(topic.getId(),term));
+    }
+
+    /**
+     * Test creation of a new term as Admin
+     * @throws AccessDeniedException
+     */
+    @Test
+    @WithMockUser(authorities = "ROLE_MANAGER")
+    public void testCreateNewTermAsManager() throws Exception {
+        assertDoesNotThrow(() -> termService.addTerm(topic.getId(),term));
     }
 
     /**

@@ -24,11 +24,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -64,6 +64,28 @@ public class TopicControllerTest {
 
     @Test
     @WithMockUser(authorities = "ROLE_MANAGER")
+    public void testCreateTopic() throws Exception {
+        Mockito.when(topicService.addTopic(Mockito.any(Topic.class))).thenReturn(testTopic);
+
+        String body = "{\"name\":\"" + testTopic.getName() + "\"}";
+        mvc.perform(post("/api/topics").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_MANAGER")
+    public void testUpdateTopic() throws Exception {
+        Mockito.when(topicService.updateTopic(Mockito.any(Topic.class))).thenReturn(testTopic);
+        Mockito.when(topicService.findTopic(testTopic.getId())).thenReturn(testTopic);
+        String newName = UUID.randomUUID().toString().substring(0,20);
+        String body = "{\"name\":\"" + newName + "\"}";
+
+        MvcResult result = mvc.perform(patch("/api/topics/{id}", testTopic.getId()).contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isOk()).andReturn();
+        String response = result.getResponse().getContentAsString();
+        assertTrue(response.contains(newName));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_MANAGER")
     public void testGetTopicsAsManager() throws Exception {
         List<Topic> topics = new ArrayList<Topic>(Arrays.asList(testTopic));
         Mockito.when(topicService.findAllTopics()).thenReturn(topics);
@@ -76,7 +98,7 @@ public class TopicControllerTest {
     @Test
     @WithMockUser(authorities = "ROLE_MANAGER")
     public void testDeleteTopicAsManager() throws Exception {
-        mvc.perform(delete("/api/topics/{id}", 1337L)).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/topics/{id}", testTopic.getId())).andExpect(status().isNoContent());
     }
 
     @Test
@@ -84,7 +106,7 @@ public class TopicControllerTest {
     public void testSearchTopicAsManager() throws Exception {
         Mockito.when(topicService.findTopic(1337L)).thenReturn(testTopic);
 
-        MvcResult result = mvc.perform(get("/api/topics/{id}",1337L).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        MvcResult result = mvc.perform(get("/api/topics/{id}",testTopic.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         String response = result.getResponse().getContentAsString();
         assertTrue(response.contains(testTopic.getName()));
     }
@@ -114,6 +136,6 @@ public class TopicControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN", "MANAGER"})
     public void testDeleteTopicAsAdmin() throws Exception {
-        mvc.perform(delete("/api/topics/{id}", 1337L)).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/topics/{id}", testTopic.getId())).andExpect(status().isNoContent());
     }
 }

@@ -64,7 +64,7 @@ public class UserController {
 
     @PatchMapping("users/{id}")
     public ResponseEntity<?> updateUser(@RequestBody Map<Object, Object> fields, @PathVariable Long id, UriComponentsBuilder uriComponentsBuilder) throws ParseException {
-        User existingUser = userService.getUserById(id).get();
+        User existingUser = userService.getUserById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         if (fields.containsKey("id") && !Long.valueOf((Integer) fields.get("id")).equals(id)) {
             return ResponseEntity
@@ -97,11 +97,11 @@ public class UserController {
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
-    private UserDto convertToDto(User user) {
+    public UserDto convertToDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
 
-    private User convertToEntity(UserDto userDto) throws ParseException {
+    public User convertToEntity(UserDto userDto) throws ParseException {
         return modelMapper.map(userDto, User.class);
     }
 }
