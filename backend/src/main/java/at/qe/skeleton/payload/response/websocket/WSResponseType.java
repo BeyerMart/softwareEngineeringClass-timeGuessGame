@@ -3,10 +3,8 @@ package at.qe.skeleton.payload.response.websocket;
 public enum WSResponseType {
     ROOM_CREATED,
     ROOM_DELETED,
-    ROOM_NAME_CHANGED,
     GAME_CREATED,
     GAME_DELETED,
-    ROOM_TOPIC_CHANGED,
     GAME_OVER,
     GAME_TOPIC_CHANGED,
     TEAM_CREATED,
@@ -22,5 +20,6 @@ public enum WSResponseType {
     USER_JOINED_TEAM,
     USER_LEFT_TEAM,
     VERSION,
-    PI_CONNECTED
+    PI_CONNECTED,
+    ROOM_CHANGED,
 }
