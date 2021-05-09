@@ -52,4 +52,12 @@ public class ResourceNotFoundAdvice {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
     }
+
+    @ResponseBody
+    @ExceptionHandler(RoomNotFoundException.class)
+    ResponseEntity<?> roomNotFoundHandler(RoomNotFoundException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
+    }
 }

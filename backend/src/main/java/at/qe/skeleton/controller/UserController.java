@@ -64,7 +64,7 @@ public class UserController {
 
     @PatchMapping("users/{id}")
     public ResponseEntity<?> updateUser(@RequestBody Map<Object, Object> fields, @PathVariable Long id, UriComponentsBuilder uriComponentsBuilder) throws ParseException {
-        User existingUser = userService.getUserById(id).get();
+        User existingUser = userService.getUserById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         if (fields.containsKey("id") && !Long.valueOf((Integer) fields.get("id")).equals(id)) {
             return ResponseEntity
