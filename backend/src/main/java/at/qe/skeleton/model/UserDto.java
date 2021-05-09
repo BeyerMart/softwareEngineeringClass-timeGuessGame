@@ -28,9 +28,10 @@ public class UserDto {
 
     private Timestamp created_at;
 
+
     @NotNull
     @NotBlank
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private UserRole role;

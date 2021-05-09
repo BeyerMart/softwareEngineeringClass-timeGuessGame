@@ -4,6 +4,7 @@ import at.qe.skeleton.exceptions.UserNotFoundException;
 import at.qe.skeleton.model.User;
 import at.qe.skeleton.model.UserDto;
 import at.qe.skeleton.model.UserRole;
+import at.qe.skeleton.payload.response.ErrorResponse;
 import at.qe.skeleton.payload.response.SuccessResponse;
 import at.qe.skeleton.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -55,21 +56,34 @@ public class UserController {
             UserRole defaultUserRoles = UserRole.ROLE_USER;
             newUser.setRole(defaultUserRoles);
         }
-        UserDto user = convertToDto(userService.createNewUser(convertToEntity(newUser)));
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        User persistentUser = userService.createNewUser(convertToEntity(newUser));
+        UserDto user = convertToDto(persistentUser);
         return new ResponseEntity<>((new SuccessResponse(user, 201)).toString(), HttpStatus.CREATED);
     }
 
     @PatchMapping("users/{id}")
     public ResponseEntity<?> updateUser(@RequestBody Map<Object, Object> fields, @PathVariable Long id, UriComponentsBuilder uriComponentsBuilder) throws ParseException {
-        User existingUser = userService.getUserById(id).get();
+        User existingUser = userService.getUserById(id).orElseThrow(() -> new UserNotFoundException(id));
 
+        if (fields.containsKey("id") && !Long.valueOf((Integer) fields.get("id")).equals(id)) {
+            return ResponseEntity
+                    .status(422)
+                    .body((new ErrorResponse("Invalid field: id", 422)).toString());
+        }
         fields.forEach((k, v) -> {
-            if (!k.equals("role")) {
-                Field field = ReflectionUtils.findField(User.class, (String) k);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, existingUser, v);
-            } else {
-                existingUser.setRole(UserRole.valueOf((String) v));
+            switch((String) k) {
+                case "role":
+                    existingUser.setRole(UserRole.valueOf((String) v));
+                    break;
+                case "password":
+                    v = passwordEncoder.encode((CharSequence) v);
+                case "id":
+                    break;
+                default:
+                    Field field = ReflectionUtils.findField(User.class, (String) k);
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, existingUser, v);
             }
         });
         UserDto user = convertToDto(userService.updateUser(existingUser));
@@ -83,11 +97,11 @@ public class UserController {
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
-    private UserDto convertToDto(User user) {
+    public UserDto convertToDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
 
-    private User convertToEntity(UserDto userDto) throws ParseException {
+    public User convertToEntity(UserDto userDto) throws ParseException {
         return modelMapper.map(userDto, User.class);
     }
 }

@@ -1,7 +1,6 @@
 package at.qe.skeleton.model;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,15 +10,16 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Set;
 
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class TermDto {
+public class GameDto {
+
     private Long id;
 
     private String name;
 
-    private Long correct_guesses;
+    private Team team;
 
-    private Long appearances;
+    @JsonIgnore
+    private Set<Team> teams;
 
     private Long topic_id;
 
@@ -28,7 +28,7 @@ public class TermDto {
     private Timestamp updated_at;
 
 
-
+    //Getter and Setter
 
     public Long getId() {
         return id;
@@ -46,20 +46,20 @@ public class TermDto {
         this.name = name;
     }
 
-    public Long getCorrect_guesses() {
-        return correct_guesses;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setCorrect_guesses(Long correct_guesses) {
-        this.correct_guesses = correct_guesses;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 
-    public Long getAppearances() {
-        return appearances;
+    public Set<Team> getTeams() {
+        return teams;
     }
 
-    public void setAppearances(Long appearances) {
-        this.appearances = appearances;
+    public void setTeams(Set<Team> teams) {
+        this.teams = teams;
     }
 
     public Long getTopic_id() {

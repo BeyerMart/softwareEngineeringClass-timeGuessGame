@@ -64,13 +64,13 @@ public class TermController {
      */
     private TermDto convertToTermDto(Term term) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.typeMap(Term.class, TermDto.class).addMappings(m -> m.map(src -> src.getTopic().getId(), TermDto::setTopicId));
+        modelMapper.typeMap(Term.class, TermDto.class).addMappings(m -> m.map(src -> src.getTopic().getId(), TermDto::setTopic_id));
         return modelMapper.map(term, TermDto.class);
     }
 
     private Term convertToTermEntity(TermDto termDto) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.typeMap(TermDto.class, Term.class).addMappings(m -> m.map(TermDto::getTopicId, Term::setTopic));
+        modelMapper.typeMap(TermDto.class, Term.class).addMappings(m -> m.map(TermDto::getTopic_id, Term::setTopic));
         return modelMapper.map(termDto, Term.class);
     }
 }

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,7 +45,7 @@ public class UserService {
      *
      * @return
      */
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -120,7 +119,7 @@ public class UserService {
      *
      * @param user the user to delete
      */
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteUser(User user) {
         checkForHigherRoles(user);
         userRepository.delete(user);
@@ -129,12 +128,19 @@ public class UserService {
 
     /**
      * Updates a user.
-     *
+     * Checks correct permissions before updating User.
      * @param user the user to update
      */
-    @PreAuthorize("hasAuthority('ROLE_MANAGER')")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public User updateUser(User user) {
-        checkForHigherRoles(user);
+        User authenticatedUser = getAuthenticatedUser().get();
+        if (authenticatedUser.getId().equals(user.getId()) && authenticatedUser.getRole() == user.getRole())
+            return userRepository.save(user);
+        if (authenticatedUser.getRole() == UserRole.ROLE_USER)
+            throw new AccessDeniedException("Insufficient Authority");
+        User oldUser = userRepository.findById(user.getId()).get();
+        if (authenticatedUser.getRole() == UserRole.ROLE_MANAGER && (oldUser.getRole() != UserRole.ROLE_USER || oldUser.getRole() != user.getRole()))
+            throw new AccessDeniedException("Insufficient Authority");
         return userRepository.save(user);
     }
 

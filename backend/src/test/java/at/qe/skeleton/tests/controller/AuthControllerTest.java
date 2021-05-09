@@ -78,6 +78,12 @@ public class AuthControllerTest {
     public void testDuplicateSignup() throws Exception {
         String body = "{\"username\":\"" + username + "\",\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
         MvcResult result = mvc.perform(post("/api/auth/signup").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
+
+        body = "{\"username\":\"abc\",\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
+        result = mvc.perform(post("/api/auth/signup").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
+
+        body = "{\"username\":\"abc\",\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
+        result = mvc.perform(post("/api/auth/signup").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
     }
 
     @Test
@@ -122,8 +128,9 @@ public class AuthControllerTest {
     @Test
     @Order(3)
     public void testBadCurrentUser() throws Exception {
-        MvcResult result = mvc.perform(get("/api/auth/me").header("Authorization", "Bearer johndoe")).andExpect(status().isUnauthorized()).andReturn();
+        mvc.perform(get("/api/auth/me").header("Authorization", "Bearer johndoe")).andExpect(status().isUnauthorized()).andReturn();
     }
+
 
     @AfterAll
     public void teardown() {
