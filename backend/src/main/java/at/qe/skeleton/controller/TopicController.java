@@ -32,7 +32,6 @@ public class TopicController {
 
     @PostMapping(value = "/topics", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<?> createTopic(@Valid @RequestBody TopicDto newTopic) throws ParseException, TopicService.TopicExistsException {
-
         TopicDto topic = convertToTopicDto(topicService.addTopic(convertToTopicEntity(newTopic)));
         return new ResponseEntity<>((new SuccessResponse(topic, 201)).toString(), HttpStatus.CREATED);
     }
@@ -41,15 +40,10 @@ public class TopicController {
     public ResponseEntity<?> updateTopic(@RequestBody Map<Object, Object> fields, @PathVariable Long id, UriComponentsBuilder uriComponentsBuilder) throws ParseException {
         Topic existingTopic = topicService.findTopic(id);
 
-        fields.forEach((k, v) -> {
-            if (!k.equals("name")) {
-                Field field = ReflectionUtils.findField(Topic.class, (String) k);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, existingTopic, v);
-            } else {
-                existingTopic.setName(((String) v));
-            }
-        });
+        if(fields.containsKey("name")) {
+            existingTopic.setName(((String) fields.get("name")));
+        }
+
         TopicDto topic = convertToTopicDto(topicService.updateTopic(existingTopic));
         return ResponseEntity.ok((new SuccessResponse(topic)).toString());
     }
@@ -82,13 +76,13 @@ public class TopicController {
      */
     private TopicDto convertToTopicDto(Topic topic) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.typeMap(Topic.class, TopicDto.class).addMappings(m -> m.map(src -> src.getCreator().getId(), TopicDto::setCreatorId));
+        modelMapper.typeMap(Topic.class, TopicDto.class).addMappings(m -> m.map(src -> src.getCreator().getId(), TopicDto::setCreator_id));
         return modelMapper.map(topic, TopicDto.class);
     }
 
     private Topic convertToTopicEntity(TopicDto topicDto) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.typeMap(TopicDto.class, Topic.class).addMappings(m -> m.map(TopicDto::getCreatorId, Topic::setCreator));
+        modelMapper.typeMap(TopicDto.class, Topic.class).addMappings(m -> m.map(TopicDto::getCreator_id, Topic::setCreator));
         return modelMapper.map(topicDto, Topic.class);
     }
 }
