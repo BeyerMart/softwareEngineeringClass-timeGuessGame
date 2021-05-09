@@ -217,7 +217,7 @@ public class TeamControllerTest {
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
-    public void testRemoveUserFromTeam() throws Exception {
+    public void testRemoveUserFromEmptyTeam() throws Exception {
         Mockito.when(teamService.findTeam(testTeam.getId())).thenReturn(Optional.of(testTeam));
         Mockito.doAnswer((i) -> null).when(teamService).removeUser(Mockito.any(Team.class), Mockito.any(User.class));
         mvc.perform(delete("/api/teams/{id}/users", testTeam.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent()).andReturn();
@@ -225,9 +225,22 @@ public class TeamControllerTest {
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
+    public void testRemoveUserFromTeam() throws Exception {
+        Mockito.when(teamService.findTeam(testTeam.getId())).thenReturn(Optional.of(testTeam));
+        Mockito.doAnswer((i) -> null).when(teamService).removeUser(Mockito.any(Team.class), Mockito.any(User.class));
+        Mockito.when(teamService.removeUser(Mockito.any(Team.class), Mockito.any(User.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
+        mvc.perform(delete("/api/teams/{id}/users", testTeam.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent()).andReturn();
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
     public void testRemoveVirtualUserFromTeam() throws Exception {
         Mockito.when(teamService.findTeam(testTeam.getId())).thenReturn(Optional.of(testTeam));
-        Mockito.doAnswer((i) -> null).when(teamService).removeVirtualUser(Mockito.any(Team.class), Mockito.any(Long.class));
+        VirtualUser user = new VirtualUser();
+        user.setUsername(UUID.randomUUID().toString().substring(0, 20));
+        user.setCreator_id(0L);
+
+        Mockito.when(teamService.removeVirtualUser(Mockito.any(Team.class), Mockito.anyLong())).thenReturn(user);
         mvc.perform(delete("/api/teams/{id}/users/123", testTeam.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent()).andReturn();
     }
 }
