@@ -166,31 +166,38 @@ public class RoomController {
     }
 
     @PostMapping("/rooms/{id}/connect_pi")
-    public void connectPiToRoom(@RequestBody String piName, @PathVariable String id){
+    public ResponseEntity<?>  connectPiToRoom(@RequestBody String piName, @PathVariable String id){
         roomService.connectRoomAndPi(Long.valueOf(id), piName);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping("/rooms/{id}/disconnect_pi")
-    public void disconnectPiFromRoom(@RequestBody String piName, @PathVariable String id){
+    public ResponseEntity<?>  disconnectPiFromRoom(@RequestBody String piName, @PathVariable String id){
         roomService.disconnectRoomAndPi(Long.valueOf(id), piName);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping("/rooms/{id}/searchCube")
-    public void searchBlueToothCube(@PathVariable String id){
+    public ResponseEntity<?> searchBlueToothCube(@PathVariable String id){
         Room room = roomService.getRoomById(Integer.parseInt(id)).get();
         cubeController.cubeStartSearching(room);
+        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
     }
 
     //WS Messages to the FrontEnd
-    //TODO FrontEnd shows "Cube not found / not connected. reset battery and retry"
-    public void cubeNotConnected(Room room){
-        room.setConnectedWithPiAndCube(false);
-        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
+    public void cubeNotConnected(int roomIdOnPi){
+        Room backendRoom = roomService.getRoomById(roomIdOnPi).get();
+        backendRoom.setConnectedWithPiAndCube(false);
+        backendRoom.setCube(null);
+        roomService.updateRoom(backendRoom);
+        template.convertAndSend("/rooms/" + backendRoom.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
     }
-    public void cubeConnected(Room room, Cube cube){
-        room.setConnectedWithPiAndCube(true);
-        room.setCube(cube);
-        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
+    public void cubeConnected(int roomIdOnPi, Cube cube){
+        Room backendRoom = roomService.getRoomById(roomIdOnPi).get();
+        backendRoom.setConnectedWithPiAndCube(true);
+        backendRoom.setCube(cube);
+        roomService.updateRoom(backendRoom);
+        template.convertAndSend("/rooms/" + backendRoom.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
     }
 
 //    private RoomDto convertToRoomDto(Room room) {
