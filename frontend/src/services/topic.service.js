@@ -36,6 +36,15 @@ export function createTopic(topic) {
 }
 
 /**
+ * Edit topic
+ * @param {string} topicId
+ * @param {string} topic
+ * @returns {Promise} Edited topic
+ */
+export function editTopic(topicId, topic) {
+    return axios.patch(`${API_URL}/${topicId}`, { name: topic });
+}
+/**
  * Delete term
  * @param {number} topicId
  * @param {number} termId

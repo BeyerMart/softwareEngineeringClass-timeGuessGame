@@ -1,5 +1,5 @@
 <template>
-    <div class="my-2 rounded shadow p-4 max-w-lg bg-gray-50">
+    <div class="my-2 rounded shadow p-4 md:max-w-lg bg-gray-50">
         <h1 class="text-xl mb-4">
             {{ $t('dashboard.importTerms') }}
         </h1>

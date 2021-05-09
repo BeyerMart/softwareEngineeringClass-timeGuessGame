@@ -1,6 +1,5 @@
 <template>
     <div>
-        <pre>{{ terms }}</pre>
         <table class="min-w-full divide-y divide-gray-200 bg-white w-full mb-6 shadow rounded">
             <thead class="bg-gray-50">
                 <tr>
@@ -32,11 +31,6 @@
                         {{ term.appearances }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        <font-awesome-icon
-                            icon="pen"
-                            class="text-l cursor-pointer mr-5"
-                        />
-
                         <font-awesome-icon
                             icon="trash"
                             class="text-l cursor-pointer"

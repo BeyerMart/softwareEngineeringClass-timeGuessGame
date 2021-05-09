@@ -14,7 +14,7 @@ import { initSocket } from '@/services/websocket.service';
 // Icon font
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-    faEllipsisV, faExclamation, faUpload, faChevronLeft, faPlus, faTimesCircle, faPen, faTrash,
+    faEllipsisV, faExclamation, faUpload, faChevronLeft, faPlus, faTimesCircle, faPen, faTrash, faFileImport,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -27,6 +27,7 @@ library.add(faPlus);
 library.add(faTimesCircle);
 library.add(faPen);
 library.add(faTrash);
+library.add(faFileImport);
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 // End of icon font
 

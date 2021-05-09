@@ -74,10 +74,13 @@ export default {
         selectFile: 'Datei auswählen',
         createNewTopic: 'Create new term',
         createTopic: 'Create topic',
+        editTopic: 'Edit topic',
         createTerm: 'Create term',
         messages: {
             topicCreateSuccess: 'Topic created!',
+            topicEditSuccess: 'Topic edited!',
             topicCreateSuccessMessage: '{topicName} was created successfully',
+            topicEditSuccessMessage: '{topicName} was edited successfully',
             termCreateSuccess: 'Term created!',
             termCreateSuccessMessage: '{termName} was created successfully',
         },

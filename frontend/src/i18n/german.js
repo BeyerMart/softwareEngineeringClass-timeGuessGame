@@ -75,10 +75,13 @@ export default {
         selectFile: 'Datei auswählen',
         createNewTopic: 'Neues Themengebiet hinzufügen',
         createTopic: 'Themengebiet hinzufügen',
+        editTopic: 'Themengebiet bearbeiten',
         createTerm: 'Begriff hinzufügen',
         messages: {
             topicCreateSuccess: 'Themengebiet hinzugefügt!',
+            topicEditSuccess: 'Themengebiet bearbeitet!',
             topicCreateSuccessMessage: '{topicName} wurde erfolgreich hinzugefügt',
+            topicEditSuccessMessage: '{topicName} wurde erfolgreich bearbeitet',
             topicDeleteSuccess: 'Themengebiet wurde erfolgreich entfernt',
             termCreateSuccess: 'Begriff hinzugefügt!',
             termCreateSuccessMessage: '{termName} wurde erfolgreich hinzugefügt',

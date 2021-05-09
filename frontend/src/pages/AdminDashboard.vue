@@ -7,18 +7,6 @@
                 <h1 class="mb-8 text-4xl md:text-5xl">
                     {{ $t('dashboard.dashboard') }}
                 </h1>
-                <div class="admin-actions">
-                    <button
-                        class="bg-gray-900 hover:bg-gray-600 text-white font-bold p-3 rounded mb-2"
-                        @click="display.showImporter = !display.showImporter; fetchTopics();"
-                    >
-                        {{ $t('dashboard.termImporter') }}
-                    </button>
-                </div>
-                <TermImporter
-                    v-show="display.showImporter"
-                    :topics="topics"
-                />
                 <!-- TABS https://www.creative-tim.com/learning-lab/tailwind-starter-kit/documentation/vue/tabs/text-->
                 <ul class="flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row">
                     <li class="-mb-px mr-2 last:mr-0 flex-auto text-center cursor-pointer">
@@ -74,7 +62,17 @@
                                     <section
                                         v-show="!display.showTermTable"
                                     >
-                                        <div class="flex justify-end mb-4">
+                                        <div class="flex justify-end mb-4 gap-2">
+                                            <button
+                                                class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                                                @click="display.showImporter = !display.showImporter; fetchTopics();"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="file-import"
+                                                    class="text-l cursor-pointer"
+                                                />
+                                                {{ $t('dashboard.termImporter') }}
+                                            </button>
                                             <button
                                                 class="flex items-center gap-3 p-2 rounded bg-gray-900 hover:bg-gray-600 text-white"
                                                 @click="display.showTopicForm = true"
@@ -90,7 +88,18 @@
                                                 @close="display.showTopicForm = false"
                                                 @fetchTopics="fetchTopics(true)"
                                             />
+                                            <EditTopicForm
+                                                v-show="display.showTopicEditForm"
+                                                v-bind="topicToEdit"
+                                                @close="display.showTopicEditForm = false"
+                                                @fetchTopics="fetchTopics(true)"
+                                            />
                                         </div>
+                                        <TermImporter
+                                            v-show="display.showImporter"
+                                            class="m-auto mr-0 mb-3"
+                                            :topics="topics"
+                                        />
                                         <table class="min-w-full divide-y divide-gray-200 shadow rounded">
                                             <thead class="bg-gray-50">
                                                 <tr>
@@ -139,15 +148,17 @@
                                                     </td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                                                        @click.stop
                                                     >
                                                         <font-awesome-icon
                                                             icon="pen"
-                                                            class="text-l cursor-pointer mr-5"
+                                                            class="text-xl cursor-pointer mr-5"
+                                                            @click.stop="editTopic(topic)"
                                                         />
 
                                                         <font-awesome-icon
                                                             icon="trash"
-                                                            class="text-l cursor-pointer"
+                                                            class="text-xl cursor-pointer"
                                                             @click.stop="deleteTopic(topic.id)"
                                                         />
                                                     </td>
@@ -205,6 +216,7 @@ import * as TopicService from '@/services/topic.service';
 import TermImporter from '@/components/page/TermImporter.vue';
 import TermTable from '@/components/page/TermTable.vue';
 import CreateTopicForm from '@/components/forms/CreateTopicForm.vue';
+import EditTopicForm from '@/components/forms/EditTopicForm.vue';
 import CreateTermForm from '@/components/forms/CreateTermForm.vue';
 
 export default {
@@ -214,7 +226,9 @@ export default {
         TermTable,
         CreateTopicForm,
         CreateTermForm,
+        EditTopicForm,
     },
+
     data() {
         return {
             topics: [],
@@ -222,8 +236,10 @@ export default {
             openTab: 1,
             fetched: false,
             selectedTopic: {},
+            topicToEdit: {},
             display: {
                 showTopicForm: false,
+                showTopicEditForm: false,
                 showTermForm: false,
                 showImporter: false,
                 showTermTable: false,
@@ -234,8 +250,8 @@ export default {
         isAdmin() {
             return this.$store.getters['user/isAdmin'];
         },
-
     },
+
     methods: {
         toggleTabs(tabNumber) {
             this.openTab = tabNumber;
@@ -254,6 +270,10 @@ export default {
                     });
                 });
             }
+        },
+        editTopic(topic) {
+            this.topicToEdit = topic;
+            this.display.showTopicEditForm = true;
         },
         deleteTopic(topicId) {
             this.$confirm(
