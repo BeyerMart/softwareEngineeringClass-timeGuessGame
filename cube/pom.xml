@@ -6,7 +6,7 @@
 	<name>timeguess-bleclient</name>
 	<artifactId>cube</artifactId>
 	<groupId>at.ac.uibk</groupId>
-	<version>1.0.0</version>
+	<version>0.6.0</version>
 	<packaging>jar</packaging>
 		<parent>
 		<groupId>org.springframework.boot</groupId>

@@ -2,10 +2,7 @@ package at.qe.skeleton.tests.controller;
 
 
 import at.qe.skeleton.Main;
-import at.qe.skeleton.model.Term;
-import at.qe.skeleton.model.Topic;
-import at.qe.skeleton.model.User;
-import at.qe.skeleton.model.UserRole;
+import at.qe.skeleton.model.*;
 import at.qe.skeleton.repository.TermRepository;
 import at.qe.skeleton.services.TermService;
 import at.qe.skeleton.services.TopicService;
@@ -25,10 +22,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -43,6 +41,9 @@ public class TermControllerTest {
 
     @MockBean
     private TermService termService;
+
+    @MockBean
+    private TopicService topicService;
 
     User testAdmin = new User("testAdmin", "password","mail@test.com");
 
@@ -70,22 +71,41 @@ public class TermControllerTest {
 
     @Test
     @WithMockUser(authorities = "ROLE_MANAGER")
+    public void testCreateTerm() throws Exception {
+        Mockito.when(termService.addTerm(Mockito.anyLong(), Mockito.any(Term.class))).thenReturn(testTerm);
+        String body = "{\"name\":\"" + testTerm.getName() + "\",\"topic_id\":" + testTopic.getId() + "}";
+        mvc.perform(post("/api/topics/{topicId}/terms",testTopic.getId()).content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_MANAGER")
     public void testDeleteTermAsManager() throws Exception {
-        mvc.perform(delete("/api/topics/{topicId}/terms/{termId}",1000L, 1337L)).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/topics/{topicId}/terms/{termId}",testTopic.getId(), testTerm.getId())).andExpect(status().isNoContent());
     }
 
     @Test
     @WithMockUser(roles = {"ADMIN", "MANAGER"})
     public void testDeleteTermAsAdmin() throws Exception {
-        mvc.perform(delete("/api/topics/{topicId}/terms/{termId}",1000L, 1337L)).andExpect(status().isNoContent());
+        mvc.perform(delete("/api/topics/{topicId}/terms/{termId}",testTopic.getId(), testTerm.getId())).andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(roles = {"ADMIN", "MANAGER", "USER"})
+    public void testGetAllTerms() throws Exception {
+        Mockito.when(topicService.findTopic(testTopic.getId())).thenReturn(testTopic);
+        Mockito.when(termService.findAllTerms(Mockito.any(Topic.class))).thenReturn(List.of(testTerm));
+
+        MvcResult result = mvc.perform(get("/api/topics/{topicId}/terms",testTopic.getId())).andExpect(status().isOk()).andReturn();
+        String response = result.getResponse().getContentAsString();
+        assertTrue(response.contains(testTerm.getName()));
     }
 
     @Test
     @WithMockUser(authorities = "ROLE_MANAGER")
     public void testSearchTermAsManager() throws Exception {
-        Mockito.when(termService.findTerm(1337L)).thenReturn(testTerm);
+        Mockito.when(termService.findTerm(testTerm.getId())).thenReturn(testTerm);
 
-        MvcResult result = mvc.perform(get("/api/topics/{id}/terms/{termId}",1000L, 1337L).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        MvcResult result = mvc.perform(get("/api/topics/{id}/terms/{termId}",testTopic.getId(), testTerm.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         String response = result.getResponse().getContentAsString();
         assertTrue(response.contains(testTerm.getName()));
     }
@@ -93,9 +113,9 @@ public class TermControllerTest {
     @Test
     @WithMockUser(authorities = "ROLE_USER")
     public void testSearchTermAsUser() throws Exception {
-        Mockito.when(termService.findTerm(1337L)).thenReturn(testTerm);
+        Mockito.when(termService.findTerm(testTerm.getId())).thenReturn(testTerm);
 
-        MvcResult result = mvc.perform(get("/api/topics/{id}/terms/{termId}",1000L, 1337L).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        MvcResult result = mvc.perform(get("/api/topics/{id}/terms/{termId}",testTopic.getId(), testTerm.getId()).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         String response = result.getResponse().getContentAsString();
         assertTrue(response.contains(testTerm.getName()));
     }

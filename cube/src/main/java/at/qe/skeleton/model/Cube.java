@@ -2,19 +2,17 @@ package at.qe.skeleton.model;
 
 public class Cube {
     private int facet;
-    private int id;
-    private String name;
-    private int gameId;
+    private String piName;
+    private int roomId;
+    private int batteryLevel;
 
-
-    public int getGameId() {
-        return gameId;
+    public Cube() {
     }
 
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
+    public Cube(int batteryLevel, int roomId) {
+        this.batteryLevel = batteryLevel;
+        this.roomId = roomId;
     }
-
 
     public int getFacet() {
         return facet;
@@ -24,19 +22,27 @@ public class Cube {
         this.facet = facet;
     }
 
-    public int getId() {
-        return id;
+    public String getPiName() {
+        return piName;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPiName(String piName) {
+        this.piName = piName;
     }
 
-    public String getName() {
-        return name;
+    public int getRoomId() {
+        return roomId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRoomId(int gameId) {
+        this.roomId = gameId;
+    }
+
+    public int getBatteryLevel() {
+        return batteryLevel;
+    }
+
+    public void setBatteryLevel(int level) {
+        batteryLevel = level;
     }
 }

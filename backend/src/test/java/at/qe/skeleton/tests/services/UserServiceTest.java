@@ -192,4 +192,17 @@ public class UserServiceTest {
         assertThrows(AccessDeniedException.class, () -> userService.deleteUser(testUser));
     }
 
+    /**
+     * Tests that deleting an admin user as non-admin throws an exception
+     * */
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN", username = "lib")
+    public void testDeleteUser() {
+        User testUser = new User("test_user1", "passwd", "jonass@gmail.com");
+        testUser.setRole(UserRole.ROLE_ADMIN);
+        Mockito.doAnswer((i) -> null).when(userRepository).delete(testUser);
+
+        assertDoesNotThrow(() -> userService.deleteUser(testUser));
+    }
+
 }

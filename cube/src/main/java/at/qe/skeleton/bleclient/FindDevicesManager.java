@@ -1,13 +1,14 @@
 package at.qe.skeleton.bleclient;
 
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tinyb.BluetoothDevice;
 import tinyb.BluetoothManager;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-// TODO: use logging instead of System.out
 
 // TODO: add variable such as 'running' to stop searching earlier in a graceful way e.g. when using signal handling
 
@@ -25,14 +26,14 @@ public class FindDevicesManager {
     private final String searchDevice;
 
     private final Set<BluetoothDevice> foundDevices = new HashSet<>();
+    private static final Logger logger = LoggerFactory.getLogger(FindDevicesManager.class);
+
 
     public FindDevicesManager(final String searchDeviceName) {
         Preconditions.checkNotNull(searchDeviceName, "Precondition violation - argument 'searchDeviceName' must not be NULL!");
         this.searchDevice = searchDeviceName;
     }
 
-    // TODO: could search for devices based on information from server e.g. at least two devices
-    //  with a certain ID should be reachable from this machine based on MAC address
 
     /**
      * Search for Bluetooth devices until either at least one device could be found or until
@@ -75,9 +76,9 @@ public class FindDevicesManager {
         if (device.getName().toLowerCase(Locale.ROOT).contains(this.searchDevice.toLowerCase(Locale.ROOT))) {
             final int rssi = device.getRSSI();
             if (rssi == 0) {
-                System.out.println(this.searchDevice + " with address " + device.getAddress() + " has no signal.");
+                logger.info(this.searchDevice + " with address " + device.getAddress() + " has no signal.");
             } else if (rssi < MIN_RSSI_ALLOWED) {
-                System.out.println(this.searchDevice + " with address " + device.getAddress() + " has a very low signal ("
+                logger.info(this.searchDevice + " with address " + device.getAddress() + " has a very low signal ("
                         + rssi + ")");
             } else {
                 this.foundDevices.add(device);

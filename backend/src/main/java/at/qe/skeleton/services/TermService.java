@@ -31,20 +31,16 @@ public class TermService {
      */
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public Term addTerm (Long id, Term term){
-        Term newTerm = new Term();
-        Topic topic;
-        topic =  topicRepository.getOne(id);
+        Topic topic = topicRepository.getOne(id);
 
-        newTerm.setName(term.getName());
-        newTerm.setCreated_at(timestamp);
-        newTerm.setUpdated_at(timestamp);
-        newTerm.setTopic(topic);
-        newTerm.setId(term.getId());
-        newTerm.setCorrect_guesses(0L);
-        newTerm.setAppearances(0L);
+        term.setCreated_at(timestamp);
+        term.setUpdated_at(timestamp);
+        term.setTopic(topic);
+        term.setCorrect_guesses(0L);
+        term.setAppearances(0L);
 
-        topic.getTerms().add(newTerm);
-        return termRepository.save(newTerm);
+        topic.getTerms().add(term);
+        return termRepository.save(term);
     }
 
     /**
@@ -64,9 +60,7 @@ public class TermService {
      * @return all terms
      */
     public List<Term> findAllTerms(Topic topic) {
-
         return termRepository.findByTopic(topic);
-        //return termRepository.findAll();
     }
 
     /**

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "api/version", produces = MediaType.APPLICATION_JSON_VALUE)
 public class VersionController {
     @GetMapping
-    public String getVersion() throws JsonProcessingException {
+    public String getVersion() {
         //Create json object
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
