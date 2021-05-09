@@ -72,7 +72,16 @@ import {
 import { editTopic } from '@/services/topic.service';
 
 export default {
-    props: ['name', 'id'],
+    props: {
+        name: {
+            type: String,
+            default: () => '',
+        },
+        id: {
+            type: Number,
+            default: () => null,
+        },
+    },
     data() {
         return {
             form: {

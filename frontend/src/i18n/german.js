@@ -77,6 +77,7 @@ export default {
         createTopic: 'Themengebiet hinzufügen',
         editTopic: 'Themengebiet bearbeiten',
         createTerm: 'Begriff hinzufügen',
+        options: 'Einstellungen',
         messages: {
             topicCreateSuccess: 'Themengebiet hinzugefügt!',
             topicEditSuccess: 'Themengebiet bearbeitet!',
@@ -94,5 +95,6 @@ export default {
         logoutSuccess: 'Ausloggen erfolgreich',
         userUpdatedSuccess: 'Benutzer wurde erfolgreich aktualisiert',
         lastPlayedWith: 'Zuletzt gespielt mit',
+        registrationDate: 'Registrierungsdatum',
     },
 };

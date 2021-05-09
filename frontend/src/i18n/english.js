@@ -76,6 +76,7 @@ export default {
         createTopic: 'Create topic',
         editTopic: 'Edit topic',
         createTerm: 'Create term',
+        options: 'Options',
         messages: {
             topicCreateSuccess: 'Topic created!',
             topicEditSuccess: 'Topic edited!',
@@ -92,5 +93,6 @@ export default {
         logoutSuccess: 'Logout successful',
         userUpdatedSuccess: 'User was updated successfully',
         lastPlayedWith: 'Last played with',
+        registrationDate: 'Registraion date',
     },
 };

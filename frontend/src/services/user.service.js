@@ -2,6 +2,14 @@ import axios from 'axios';
 
 const API_URL = '/api/users';
 
+/**
+ * Fetch users
+ * @returns {Promise} Users
+ */
+export function getUsers() {
+    return axios.get(`${API_URL}`);
+}
+
 export function getUserById(userId) {
     return axios.get(`${API_URL}/${userId}`);
 }
