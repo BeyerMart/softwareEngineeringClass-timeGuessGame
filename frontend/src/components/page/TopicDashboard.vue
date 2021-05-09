@@ -85,7 +85,12 @@
                             {{ topic.name }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {{ topic.creatorId }}
+                            <router-link
+                                :to="'/profile/' + topic.creator_id"
+                                class="flex flex-shrink-0 items-center"
+                            >
+                                {{ topic.creator_id }}
+                            </router-link>
                         </td>
                         <td
                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
