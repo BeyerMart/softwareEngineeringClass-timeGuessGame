@@ -21,7 +21,7 @@ public class GameDto {
     @JsonIgnore
     private Set<Team> teams;
 
-    private Long topicId;
+    private Long topic_id;
 
     private Timestamp created_at;
 
@@ -62,12 +62,12 @@ public class GameDto {
         this.teams = teams;
     }
 
-    public Long getTopicId() {
-        return topicId;
+    public Long getTopic_id() {
+        return topic_id;
     }
 
-    public void setTopicId(Long topicId) {
-        this.topicId = topicId;
+    public void setTopic_id(Long topic_id) {
+        this.topic_id = topic_id;
     }
 
     public Timestamp getCreated_at() {

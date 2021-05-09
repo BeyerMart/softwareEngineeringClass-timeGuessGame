@@ -62,7 +62,7 @@ public class GameController {
 
     @PostMapping(value = "/games", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<?> createGame(@Valid @RequestBody GameDto newGame) throws ParseException, GameService.GameExistsException{
-        GameDto game = convertToGameDto(gameService.addGame(convertToGameEntity(newGame), newGame.getTopicId()));
+        GameDto game = convertToGameDto(gameService.addGame(convertToGameEntity(newGame), newGame.getTopic_id()));
         gameCreatedResponse(game);
         return new ResponseEntity<>((new SuccessResponse(game, 201)).toString(),HttpStatus.CREATED);
     }
@@ -90,7 +90,7 @@ public class GameController {
     @PatchMapping("/games/{gameId}")
     private ResponseEntity<?> updateGameTopic(@RequestBody Map<String, Long> fields, @PathVariable Long gameId, UriComponentsBuilder uriComponentsBuilder) {
         GameDto currentGame = convertToGameDto(gameService.findGame(gameId).get());
-        Long newTopicId = fields.get("topicId");
+        Long newTopicId = fields.get("topic_id");
         if(newTopicId == null){
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -133,13 +133,13 @@ public class GameController {
      */
     private GameDto convertToGameDto(Game game) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.typeMap(Game.class, GameDto.class).addMappings(m -> m.map(src -> src.getTopic().getId(), GameDto::setTopicId));
+        modelMapper.typeMap(Game.class, GameDto.class).addMappings(m -> m.map(src -> src.getTopic().getId(), GameDto::setTopic_id));
         return modelMapper.map(game, GameDto.class);
     }
 
     private Game convertToGameEntity(GameDto gameDto) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.typeMap(GameDto.class, Game.class).addMappings(m -> m.map(GameDto::getTopicId, Game::setTopic));
+        modelMapper.typeMap(GameDto.class, Game.class).addMappings(m -> m.map(GameDto::getTopic_id, Game::setTopic));
         return modelMapper.map(gameDto, Game.class);
     }
 }

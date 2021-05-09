@@ -1,6 +1,10 @@
 package at.qe.skeleton.bleclient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sputnikdev.bluetooth.manager.BluetoothFatalException;
 import tinyb.BluetoothDevice;
+import tinyb.BluetoothException;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
 
@@ -15,8 +19,7 @@ public class TimeCubeService {
     private final BluetoothGattService timeFlipService;
     private final BluetoothGattCharacteristic facetCharacteristic;
     private final BluetoothGattCharacteristic batteryCharacteristic;
-
-    // TODO: use logging instead of System.out/System.err
+    private final Logger logger = LoggerFactory.getLogger(TimeCubeService.class);
     /**
      * Entry point for program to search for Bluetooth devices and communicate with them
      */
@@ -29,7 +32,7 @@ public class TimeCubeService {
      * @see <a href="https://github.com/DI-GROUP/TimeFlip.Docs/blob/master/Hardware/BLE_device_commutication_protocol_v3.0_en.md" target="_top">BLE device communication protocol v3.0</a>
      */
 
-    public TimeCubeService() {
+    public TimeCubeService() throws BluetoothFatalException, BluetoothException, RuntimeException {
         Set<BluetoothDevice> foundDevices;
         foundDevices = BluetoothService.findTimeFlips();
 
@@ -39,11 +42,11 @@ public class TimeCubeService {
         batteryService = device.find("0000180f-0000-1000-8000-00805f9b34fb");
         timeFlipService = device.find("f1196f50-71a4-11e6-bdf4-0800200c9a66");
         if (timeFlipService == null) {
-            System.err.println("This device does not have the timeflip service we are looking for.");
+            logger.error("This device does not have the timeflip service we are looking for.");
             device.disconnect();
             //System.exit(-1);
         } else {
-            System.out.println("Found (timeflip) service " + timeFlipService.getUUID());
+            logger.info("Found (timeflip) service " + timeFlipService.getUUID());
         }
         //setPassword(timeFlipService);
         facetCharacteristic = timeFlipService.find("f1196f52-71a4-11e6-bdf4-0800200c9a66");
@@ -60,27 +63,27 @@ public class TimeCubeService {
     }
 
     public void main(String[] args) {
-        facetCharacteristic.enableValueNotifications(new ValueNotification());
-        facetCharacteristic.disableValueNotifications();
+        //facetCharacteristic.enableValueNotifications(new ValueNotification());
+        //facetCharacteristic.disableValueNotifications();
     }
 
     public boolean setPassword() {
         BluetoothGattCharacteristic passwordCharacteristic = timeFlipService.find("f1196f57-71a4-11e6-bdf4-0800200c9a66");
         byte[] password = {0x30, 0x30, 0x30, 0x30, 0x30, 0x30};
         if (passwordCharacteristic.writeValue(password)) {
-            System.out.println("New password was written.");
+            logger.info("New password was written.");
             return true;
         } else {
-            System.out.println("Error writing password.");
+            logger.info("Error writing password.");
             return false;
         }
     }
 
     public int getCurrentFacet() {
-        BluetoothGattCharacteristic facetCharacteristic = timeFlipService.find("f1196f52-71a4-11e6-bdf4-0800200c9a66");
         byte[] b = facetCharacteristic.readValue();
         int facet = b[0];
-        facet--; //This is necessary, as the facets are labeled from 2 to 13.
+        //facet--; //This is necessary, as the facets are labeled from 2 to 13.
+        //Not necessary, as we are using % 12 to get the mapping from facet to points, activity, time
         return facet;
     }
 
@@ -89,7 +92,7 @@ public class TimeCubeService {
         for (BluetoothGattService service : services) {
             List<BluetoothGattCharacteristic> bluetoothGattCharacteristics = service.getCharacteristics();
             for (BluetoothGattCharacteristic characteristic : bluetoothGattCharacteristics) {
-                System.out.println("Service: " + service.getUUID() + " characteristic: " + characteristic.getUUID());
+                logger.info("Service: " + service.getUUID() + " characteristic: " + characteristic.getUUID());
             }
         }
     }
@@ -99,5 +102,21 @@ public class TimeCubeService {
         String hex = String.format("%02x", batteryRaw[0]);
         int value = Integer.parseInt(hex, 16);
         return value;
+    }
+
+    public BluetoothGattService getBatteryService() {
+        return batteryService;
+    }
+
+    public BluetoothGattService getTimeFlipService() {
+        return timeFlipService;
+    }
+
+    public BluetoothGattCharacteristic getFacetCharacteristic() {
+        return facetCharacteristic;
+    }
+
+    public BluetoothGattCharacteristic getBatteryCharacteristic() {
+        return batteryCharacteristic;
     }
 }
