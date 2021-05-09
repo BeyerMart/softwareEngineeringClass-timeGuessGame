@@ -6,8 +6,13 @@ export function fetchRooms() {
     return axios.get(`${API_URL}/`);
 }
 
-export function createRoom(room) {
-    if (room) return axios.post(`${API_URL}/`, room);
+export function createRoom(form) {
+    if (form) {
+        const room = {};
+        if (form.roomName) room.room_name = form.roomName;
+        if (form.topic) room.topic_id = form.topic;
+        return axios.post(`${API_URL}/`, room);
+    }
     return axios.post(`${API_URL}/`);
 }
 

@@ -14,7 +14,7 @@ public class Room {
     private Map<String, VirtualTeam> teams;
     private long game_id = -1;
     private String room_name;
-    private long topic_id = -1;
+    private Long topic_id;
     private Cube cube;
     private boolean connectedWithPiAndCube = false;
 
@@ -106,11 +106,11 @@ public class Room {
         this.room_name = room_name;
     }
 
-    public long getTopic_id() {
+    public Long getTopic_id() {
         return topic_id;
     }
 
-    public void setTopic_id(long topic_id) {
+    public void setTopic_id(Long topic_id) {
         this.topic_id = topic_id;
     }
 

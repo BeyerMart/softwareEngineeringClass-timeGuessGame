@@ -3,8 +3,10 @@ package at.qe.skeleton.services;
 import at.qe.skeleton.controller.RoomController;
 import at.qe.skeleton.exceptions.RoomNotFoundException;
 import at.qe.skeleton.exceptions.TeamNotFoundException;
+import at.qe.skeleton.exceptions.TopicNotFoundException;
 import at.qe.skeleton.exceptions.UserNotFoundException;
 import at.qe.skeleton.model.*;
+import at.qe.skeleton.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
@@ -28,6 +30,9 @@ public class RoomService {
     @Autowired
     RoomController roomController;
 
+    @Autowired
+    TopicRepository topicRepository;
+
     private ConcurrentHashMap<Long, Room> rooms = new ConcurrentHashMap<Long, Room>();
     private long counter = 0;
 
@@ -39,6 +44,22 @@ public class RoomService {
     public Room createNewRoom() {
         long hostId = userService.getAuthenticatedUser().get().getId();
         Room newRoom = new Room(counter++, hostId);
+        rooms.put(newRoom.getRoom_id(), newRoom);
+        roomController.roomCreated(newRoom);
+        return newRoom;
+    }
+
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    public Room createNewRoom(Room roomRequest) {
+        long hostId = userService.getAuthenticatedUser().get().getId();
+        Room newRoom = new Room(counter++, hostId);
+        if (roomRequest.getRoom_name() != null)
+            newRoom.setRoom_name(roomRequest.getRoom_name());
+        if (roomRequest.getTopic_id() != null) {
+            if (!topicRepository.existsById(roomRequest.getTopic_id()))
+                throw new TopicNotFoundException(roomRequest.getTopic_id());
+            newRoom.setTopic_id(roomRequest.getTopic_id());
+        }
         rooms.put(newRoom.getRoom_id(), newRoom);
         roomController.roomCreated(newRoom);
         return newRoom;

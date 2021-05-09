@@ -47,8 +47,12 @@ public class RoomController {
 
 
     @PostMapping(value = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
-    private ResponseEntity<?> createRoom() {
-        Room room = roomService.createNewRoom();
+    private ResponseEntity<?> createRoom(@RequestBody(required = false) Room roomRequest) {
+        Room room;
+        if(roomRequest == null)
+            room = roomService.createNewRoom();
+        else
+            room = roomService.createNewRoom(roomRequest);
         return new ResponseEntity<>((new SuccessResponse(room, 201)).toString(), HttpStatus.CREATED);
     }
 

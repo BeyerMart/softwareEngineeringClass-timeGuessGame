@@ -69,7 +69,7 @@
                                                 {{ Object.keys(room.teams).length }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ room.topic }}
+                                                {{ room.topic_id ? topicList.find(topic => room.topic_id === topic.id).name : '' }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -101,14 +101,13 @@ export default {
             showModal: false,
         };
     },
-    computed: { ...mapGetters(['roomsList']) },
-    created() {
-        this.fetchRooms();
-    },
+    computed: { ...mapGetters(['roomsList', 'topicList']) },
     unmounted() {
         unsubChannel('/rooms');
     },
     mounted() {
+        this.fetchRooms();
+        if (!this.topicList) this.fetchTopics();
         while (!isConnected);
         subChannel('/rooms', (message) => {
             switch (message.type) {
@@ -127,7 +126,7 @@ export default {
         });
     },
     methods: {
-        ...mapActions(['fetchRooms']),
+        ...mapActions(['fetchRooms', 'fetchTopics']),
         ...mapMutations(['removeRoom', 'addRoom', 'updateRoom']),
     },
 };

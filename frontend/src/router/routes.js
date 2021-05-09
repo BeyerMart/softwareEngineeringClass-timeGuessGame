@@ -6,6 +6,7 @@ import Login from '@/pages/auth/Login';
 import Auth from '@/pages/auth/Auth';
 import Profile from '@/pages/Profile';
 import WSDebug from '@/pages/WSDebug';
+import Room from '@/pages/game/Room';
 
 const routes = [
     {
@@ -42,6 +43,11 @@ const routes = [
         meta: {
             auth: true,
         },
+    },
+    {
+        path: '/room/:id',
+        name: 'room',
+        component: Room,
     },
     /* Errors */
     {
