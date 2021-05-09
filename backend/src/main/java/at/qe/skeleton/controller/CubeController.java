@@ -78,7 +78,7 @@ public class CubeController {
 				Optional<Room> roomOptional = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional.isPresent()) {
 					//updating Room
-					roomController.cubeConnected(roomOptional.get(), cube);
+					roomController.cubeConnected(cube.getRoomId(), cube);
 					response = new WebsocketResponse(roomOptional.get(), WSResponseType.OK);
 				} else {
 					response = new WebsocketResponse(cube, WSResponseType.CUBE_ERROR);
@@ -87,17 +87,17 @@ public class CubeController {
 				break;
 			case NOT_FOUND:
 			case NOT_CONNECTED:
+				//Less complexity (less Room objects) but less error handling (If room somehow is not at Backend)
 				//roomService.getRoomById(cube.getRoomId());
-				//TODO Trigger FrontEnd "CubeNotFound, reset Battery"
 				int roomId = data.asInt();
-				Optional<Room> roomOptional1 = roomService.getRoomById(roomId);
-				if (roomOptional1.isPresent()) {
-					roomController.cubeNotConnected(roomOptional1.get());
-					response = new WebsocketResponse(roomOptional1.get(), WSResponseType.OK);
-				} else {
-					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
-					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
-				}
+				//Optional<Room> roomOptional1 = roomService.getRoomById(roomId);
+				//if (roomOptional1.isPresent()) {
+					roomController.cubeNotConnected(roomId);
+					response = new WebsocketResponse(roomId, WSResponseType.OK);
+				//} else {
+				//	logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
+				//	response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
+				//}
 				break;
 
 			case FACET_NOTIFICATION:
