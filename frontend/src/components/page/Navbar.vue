@@ -111,7 +111,7 @@
                         >
                             <router-link
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                :to="{ name: 'profile' }"
+                                :to="{ name: 'userProfile' }"
                             >
                                 {{ $t('profile.profile') }}
                             </router-link>

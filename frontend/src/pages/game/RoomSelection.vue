@@ -102,7 +102,7 @@ export default {
         };
     },
     computed: { ...mapGetters(['roomsList', 'topicList']) },
-    unmounted() {
+    beforeDestroy() {
         unsubChannel('/rooms');
     },
     mounted() {
