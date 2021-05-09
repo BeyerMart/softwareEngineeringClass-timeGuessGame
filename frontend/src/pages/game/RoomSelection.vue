@@ -54,22 +54,22 @@
                                     </thead>
                                     <tbody>
                                         <tr
-                                            v-for="(game, index) in gamesList"
-                                            :key="game.id"
+                                            v-for="(room, index) in roomsList"
+                                            :key="room.id"
                                             class="cursor-pointer"
                                             :class="{ 'bg-gray-50': index % 2 !== 0 }"
                                         >
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {{ game.name }}
+                                                {{ room.room_name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ game.numOfPlayers }}/24
+                                                {{ room.amountOfPlayers }}/24
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ game.numOfTeams }}
+                                                {{ Object.keys(room.teams).length }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ game.topic }}
+                                                {{ room.topic }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -86,8 +86,10 @@
 import {
     mapGetters,
     mapActions,
+    mapMutations,
 } from 'vuex';
 import RoomCreateForm from '@/components/page/RoomCreateForm';
+import { subChannel, unsubChannel, isConnected } from '@/services/websocket.service';
 
 export default {
     name: 'RoomSelection',
@@ -99,13 +101,34 @@ export default {
             showModal: false,
         };
     },
-    computed: { ...mapGetters(['roomList']) },
+    computed: { ...mapGetters(['roomsList']) },
     created() {
-        this.fetchGames();
+        this.fetchRooms();
+    },
+    unmounted() {
+        unsubChannel('/rooms');
+    },
+    mounted() {
+        while (!isConnected);
+        subChannel('/rooms', (message) => {
+            switch (message.type) {
+            case 'ROOM_CREATED':
+                this.addRoom(message.data);
+                break;
+            case 'ROOM_DELETED':
+                this.removeRoom(message.id);
+                break;
+            case 'ROOM_CHANGED':
+                this.updateRoom(message.data);
+                break;
+            default:
+                break;
+            }
+        });
     },
     methods: {
         ...mapActions(['fetchRooms']),
+        ...mapMutations(['removeRoom', 'addRoom', 'updateRoom']),
     },
-
 };
 </script>

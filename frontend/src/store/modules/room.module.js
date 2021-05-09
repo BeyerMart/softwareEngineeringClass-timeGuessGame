@@ -9,26 +9,24 @@ export const roomModule = {
             const response = await RoomService.fetchRooms();
             commit('setRooms', response.data);
         },
+        // eslint-disable-next-line no-unused-vars
         async createRoom({ commit }, room) {
-            const response = await RoomService.createRoom(room);
-            commit('createNewRoom', response.data);
-            return response;
-        },
-        async removeRoom({ commit }, roomId) {
-            const response = await RoomService.removeRoom(roomId);
-            commit('removeRoom', response.data);
+            return RoomService.createRoom(room);
         },
     },
     mutations: {
         setRooms: (state, fetchedRooms) => {
-            state.rooms = fetchedRooms;
+            state.rooms = Object.values(fetchedRooms);
         },
-        createRoom: (state, room) => {
-            state.users.unshift(room);
+        addRoom: (state, room) => {
+            state.rooms.unshift(room);
         },
         removeRoom: (state, id) => {
             state.rooms.filter((room) => room.id !== id);
             state.rooms.splice((room) => room.id, 1);
+        },
+        updateRoom: (state, room) => {
+            state.rooms.map((oldRoom) => (oldRoom.id === room.id ? room : oldRoom));
         },
     },
 

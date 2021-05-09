@@ -6,7 +6,8 @@ export function fetchRooms() {
     return axios.get(`${API_URL}/`);
 }
 
-export function createRoom() {
+export function createRoom(room) {
+    if (room) return axios.post(`${API_URL}/`, room);
     return axios.post(`${API_URL}/`);
 }
 
@@ -40,13 +41,13 @@ export function leaveTeam(roomId, virtualTeam) {
 }
 
 export function connectPi(piName, roomId) {
-    return axios.post(`${API_URL}/${roomId}/connect_pi`, piName)
+    return axios.post(`${API_URL}/${roomId}/connect_pi`, piName);
 }
 
 export function disconnectPi(piName, roomId) {
-    return axios.post(`${API_URL}/${roomId}/disconnect_pi`, piName)
+    return axios.post(`${API_URL}/${roomId}/disconnect_pi`, piName);
 }
 
 export function searchCube(roomId) {
-    return axios.post(`${API_URL}/${roomId}/searchCube`)
+    return axios.post(`${API_URL}/${roomId}/searchCube`);
 }
