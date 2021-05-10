@@ -1,5 +1,6 @@
 package at.qe.skeleton.controller;
 
+import at.qe.skeleton.bleclient.CubeCalibration;
 import at.qe.skeleton.model.Cube;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,21 +25,27 @@ import java.util.concurrent.*;
 public class WebSocketConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConnection.class);
-    private final LogicController logicController = new LogicController(this);
-    private final String URL = "192.168.0.242";
+    private CubeCalibration cubeCalibration;
+    private final LogicController logicController;
+    private final String URL;
     //private final String URL = "localhost";
-    private final int PORT = 8080;
+    private final int PORT;
     private final ConcurrentLinkedQueue blockingQueue = new ConcurrentLinkedQueue();
     // private final BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
     private final WebSocketStompClient client;
     private final StompSession session;
     private final ObjectMapper mapper = new ObjectMapper();
     //each Pi gets own Name
-    private final String piName = "MyPi";
+    private final String piName;
     //used to only accept / process messages for me / my cube.
     private Cube cube;
 
-    public WebSocketConnection() throws ExecutionException, InterruptedException, TimeoutException {
+    public WebSocketConnection(CubeCalibration cubeCalibration) throws ExecutionException, InterruptedException, TimeoutException {
+        this.cubeCalibration = cubeCalibration;
+        this.logicController = new LogicController(this, cubeCalibration);
+        piName = cubeCalibration.getPiName();
+        URL = cubeCalibration.getURL();
+        PORT = cubeCalibration.getPORT();
         ArrayList list = new ArrayList();
         list.add(new WebSocketTransport(new StandardWebSocketClient()));
         this.client = new WebSocketStompClient(new SockJsClient(list));
