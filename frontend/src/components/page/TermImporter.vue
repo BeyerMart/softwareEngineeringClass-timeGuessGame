@@ -88,11 +88,11 @@ export default {
             const topicId = this.selectedTopic.id;
             if (topicId) {
                 this.jsonData.every((term) => {
-                    createTerm(topicId, { name: term }).then((res) => {
+                    createTerm(topicId, term).then((res) => {
                         this.message = this.$t('dashboard.importedTerm', { termName: res.data.name });
                     }).catch((err) => {
                         this.$notify({
-                            title: this.$t('dashboard.importSuccess'),
+                            title: this.$t('dashboard.importedError', { termName: term }),
                             text: err.response.error,
                             type: 'error',
                         });

@@ -70,6 +70,7 @@ export default {
         importTerms: 'Begriffe importieren',
         foundTerms: '{termCount} Begriffe gefunden. Klicken Sie zum Importieren.',
         importedTerm: '{termName} wurde erfolgreich importiert.',
+        importedError: '{termName} konnte nicht importiert werden.',
         importSuccess: 'Alle Begriffe wurden erfolgreich importiert.',
         selectTopic: 'Themengebiet auswählen',
         selectFile: 'Datei auswählen',
