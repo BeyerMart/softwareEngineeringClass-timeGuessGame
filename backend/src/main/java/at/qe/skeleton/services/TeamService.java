@@ -12,10 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -96,6 +93,8 @@ public class TeamService {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public Team addUser(Team team, User user) {
+        if (team.getUsers() == null)
+            team.setUsers(new HashSet<User>());
         team.getUsers().add(user);
         return teamRepository.save(team);
     }
