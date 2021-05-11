@@ -20,7 +20,6 @@ public class LogicController {
     private static final Logger logger = LoggerFactory.getLogger(LogicController.class);
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private TimeCubeService timeCubeService;
     private Cube cube;
     private WebSocketConnection connection;
     private CubeCalibration cubeCalibration;
@@ -28,22 +27,6 @@ public class LogicController {
     public LogicController(WebSocketConnection connection, CubeCalibration cubeCalibration) {
         this.connection = connection;
         this.cubeCalibration = cubeCalibration;
-    }
-
-    public void logic(WebSocketConnection connection, WSResponseType wsType, JsonNode data) throws InterruptedException, JsonProcessingException {
-
-        switch (wsType) {
-            case VERSION:
-                //return new WebsocketResponse(jsonResult.get("data"), WSResponseType.VERSION);
-                logger.info("BackendVersion: " + data.get("version").asText());
-                break;
-
-
-            case OK:
-                //connection.sendAck();
-                break;
-            default:
-        }
     }
 
 
@@ -60,23 +43,31 @@ public class LogicController {
         }
         WSResponseType wsType = WSResponseType.valueOf(jsonResult.get("type").asText());
         JsonNode data = jsonResult.get("data");
-        if (data.get("piName").asText().equals(connection.getPiName())) {
+        if (wsType == WSResponseType.OK || wsType == WSResponseType.PI_CONNECTED || wsType == WSResponseType.PI_DISCONNECTING){
+            return;
+        }
+        int room_id = data.get("room_id").asInt();
+        if (data.asText().equals(connection.getPiName())) {
+            Cube cube = new Cube();
+            cube.setRoomId(room_id);
             switch (wsType) {
                 case START_BATTERY_NOTIFICATION:
-                    timeCubeService.getBatteryCharacteristic().enableValueNotifications(new BatteryValueNotification(connection, cube));
+                    cubeCalibration.getTimeCubeService().getBatteryCharacteristic().enableValueNotifications(new BatteryValueNotification(connection, cube));
                     break;
                 case STOP_BATTERY_NOTIFICATION:
-                    timeCubeService.getBatteryCharacteristic().disableValueNotifications();
+                    cubeCalibration.getTimeCubeService().getBatteryCharacteristic().disableValueNotifications();
                     break;
                 case START_FACET_NOTIFICATION:
-                    timeCubeService.getFacetCharacteristic().enableValueNotifications(new FacetValueNotification(connection, cube));
+                    cubeCalibration.getTimeCubeService().getFacetCharacteristic().enableValueNotifications(new FacetValueNotification(connection, cube, cubeCalibration));
                     break;
                 case STOP_FACET_NOTIFICATION:
-                    timeCubeService.getFacetCharacteristic().disableValueNotifications();
+                    cubeCalibration.getTimeCubeService().getFacetCharacteristic().disableValueNotifications();
                     break;
                 case FACET_REQUEST:
-                    int facet = timeCubeService.getCurrentFacet();
+                    int facet = cubeCalibration.getTimeCubeService().getCurrentFacet();
+                    int batteryLevel = cubeCalibration.getTimeCubeService().getBatteryLevel();
                     cube.setFacet(facet);
+                    cube.setBatteryLevel(batteryLevel);
                     connection.sendFacetNotification(cube);
             }
         }
