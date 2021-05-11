@@ -175,24 +175,6 @@ public class RoomController {
         roomService.disconnectRoomAndPi(Long.valueOf(id), piName);
     }
 
-    @PostMapping("/rooms/{id}/searchCube")
-    public void searchBlueToothCube(@PathVariable String id){
-        Room room = roomService.getRoomById(Integer.parseInt(id)).get();
-        cubeController.cubeStartSearching(room);
-    }
-
-    //WS Messages to the FrontEnd
-    //TODO FrontEnd shows "Cube not found / not connected. reset battery and retry"
-    public void cubeNotConnected(Room room){
-        room.setConnectedWithPiAndCube(false);
-        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
-    }
-    public void cubeConnected(Room room, Cube cube){
-        room.setConnectedWithPiAndCube(true);
-        room.setCube(cube);
-        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
-    }
-
 //    private RoomDto convertToRoomDto(Room room) {
 //        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 //        return modelMapper.map(room, RoomDto.class);

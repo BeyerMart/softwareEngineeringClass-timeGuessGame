@@ -34,83 +34,36 @@ public class CubeService {
 		return new ArrayList<String>(connectedPis);
 	}
 
+	//Static Mapping from External Cube Facet (The one that gets transmitted) to actual labeled facets
+	//P1-P2-P3-S1-S2-S3-R1-R2-R3-Z1-Z2-Z3
+	//00-01-02-03-04-05-06-07-08-09-10-11
+
+
 	public int getTimeFromFacet(int facet) {
-		int option = facet % 12;
-		switch (option) {
-			case 4:
-			case 5:
-			case 9:
-				return 2;
-			default:
-				return 1;
-		}
+		return (facet >= 9 ? 2 : 1);
 	}
 
 	public int getPointsFromFacet(int facet) {
-		int option = facet % 12;
-		switch (option) {
-			case 0:
-				return 3;
-			case 1:
-				return 2;
-			case 2:
-				return 3;
-			case 3:
-				return 2;
-			case 4:
-				return 2;
-			case 5:
-				return 1;
-			case 6:
-				return 1;
-			case 7:
-				return 1;
-			case 8:
-				return 2;
-			case 9:
-				return 3;
-			case 10:
-				return 3;
-			case 11:
-				return 1;
-			default:
-				return 0;
-		}
+		return (facet % 3) + 1;
 	}
 
 	public Activity getActivityFromFacet(int facet) {
-		int option = facet % 12;
-		switch (option) {
+		int type = facet / 3;
+		switch (type){
 			case 0:
-				return Activity.mime;
+				return Activity.PANTOMIME;
 			case 1:
-				return Activity.speak;
+				return Activity.SPEAK;
 			case 2:
-				return Activity.rhyme;
+				return Activity.RHYME;
 			case 3:
-				return Activity.rhyme;
-			case 4:
-				return Activity.draw;
-			case 5:
-				return Activity.draw;
-			case 6:
-				return Activity.speak;
-			case 7:
-				return Activity.mime;
-			case 8:
-				return Activity.mime;
-			case 9:
-				return Activity.draw;
-			case 10:
-				return Activity.speak;
-			case 11:
-				return Activity.rhyme;
+				return Activity.DRAW;
 			default:
-				return Activity.speak;
+				//As fallback, if some unexpected values happen to be in facet.
+				return Activity.SPEAK;
 		}
 	}
 
-	//TODO needs timer / thread wait / bool to stop the timer in GameplayController
 	//Update for cube facet is in RoomService
 	public void startFacetNotification(int roomId) {
 		Room room = roomService.getRoomById(roomId).get();
