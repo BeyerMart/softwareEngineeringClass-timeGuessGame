@@ -22,6 +22,9 @@ public class TopicService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TermService termService;
+
     /**
      * @param topic the topic to create
      * @return newly created topic
@@ -89,6 +92,12 @@ public class TopicService {
         if(!topicRepository.existsById(topic.getId())){
             throw (new TopicNotFoundException(topic.getId()));
         }
+
+        //Delete all terms
+        for(Term term : topic.getTerms()) {
+            termService.deleteTerm(term);
+        }
+
         topicRepository.delete(topic);
     }
 }
