@@ -62,6 +62,12 @@ public class RoomController {
         return ResponseEntity.ok(new SuccessResponse(rooms).toString());
     }
 
+    @GetMapping("/rooms/{id}")
+    public ResponseEntity<?> getRoom(@PathVariable Long id) {
+        Room room = roomService.getRoomById(id).orElseThrow(() -> (new RoomNotFoundException(id)));
+        return ResponseEntity.ok(new SuccessResponse(room).toString());
+    }
+
     @DeleteMapping("/rooms/{id}")
     public ResponseEntity<?> deleteRoom(@PathVariable("id") Long id) {
         roomService.deleteRoom(id);

@@ -43,6 +43,7 @@ public class RoomService {
     @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     public Room createNewRoom() {
         long hostId = userService.getAuthenticatedUser().get().getId();
+        removePlayer(hostId);
         Room newRoom = new Room(counter++, hostId);
         rooms.put(newRoom.getRoom_id(), newRoom);
         roomController.roomCreated(newRoom);
@@ -52,6 +53,7 @@ public class RoomService {
     @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     public Room createNewRoom(Room roomRequest) {
         long hostId = userService.getAuthenticatedUser().get().getId();
+        removePlayer(hostId);
         Room newRoom = new Room(counter++, hostId);
         if (roomRequest.getRoom_name() != null)
             newRoom.setRoom_name(roomRequest.getRoom_name());
