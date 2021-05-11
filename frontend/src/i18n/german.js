@@ -13,6 +13,7 @@ export default {
             nameRequired: 'Name ist erforderlich',
             topicRequired: 'Themengebiet is erforderlich',
         },
+        loginRequired: 'Login erforderlich',
     },
     signup: {
         signup: 'Registrieren',
@@ -52,6 +53,10 @@ export default {
         games: 'Spiele',
         messages: {
             roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
+            roomAlreadyFull: 'Der Raum ist bereits voll',
+            youJoinedRoom: 'Raum erfolgreich beigetreten',
+            roomRemoved: 'Der Raum wurde vom Host gelöscht.',
+            userJoined: ' ist beigetreten',
         },
     },
 

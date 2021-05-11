@@ -55,9 +55,10 @@
                                     <tbody>
                                         <tr
                                             v-for="(room, index) in roomsList"
-                                            :key="room.id"
+                                            :key="room.room_id"
                                             class="cursor-pointer"
                                             :class="{ 'bg-gray-50': index % 2 !== 0 }"
+                                            @click="roomClickHandler(room)"
                                         >
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                 {{ room.room_name }}
@@ -69,7 +70,9 @@
                                                 {{ Object.keys(room.teams).length }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ room.topic_id ? topicList.find(topic => room.topic_id === topic.id).name : '' }}
+                                                {{
+                                                    room.topic_id ? topicList.find(topic => room.topic_id === topic.id).name : ''
+                                                }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -90,6 +93,7 @@ import {
 } from 'vuex';
 import RoomCreateForm from '@/components/page/RoomCreateForm';
 import { subChannel, unsubChannel, isConnected } from '@/services/websocket.service';
+import { joinRoom } from '@/services/room.service';
 
 export default {
     name: 'RoomSelection',
@@ -101,14 +105,14 @@ export default {
             showModal: false,
         };
     },
-    computed: { ...mapGetters(['roomsList', 'topicList']) },
+    computed: { ...mapGetters(['roomsList', 'topicList', 'user/isLoggedIn']) },
     beforeDestroy() {
         unsubChannel('/rooms');
     },
     mounted() {
         this.fetchRooms();
         if (!this.topicList) this.fetchTopics();
-        while (!isConnected);
+        while (!isConnected) ;
         subChannel('/rooms', (message) => {
             switch (message.type) {
             case 'ROOM_CREATED':
@@ -128,6 +132,27 @@ export default {
     methods: {
         ...mapActions(['fetchRooms', 'fetchTopics']),
         ...mapMutations(['removeRoom', 'addRoom', 'updateRoom']),
+        roomClickHandler(room) {
+            if (!this['user/isLoggedIn']) {
+                this.$notify({
+                    title: this.$t('errors.loginRequired'),
+                    type: 'error',
+                });
+            } else if (room.amountOfPlayers >= 24) {
+                this.$notify({
+                    title: this.$t('game.messages.roomAlreadyFull'),
+                    type: 'error',
+                });
+            } else {
+                joinRoom(room.room_id).then(() => {
+                    this.$notify({
+                        title: this.$t('game.messages.youJoinedRoom'),
+                        type: 'success',
+                    });
+                    this.$router.push(`room/${room.room_id}`);
+                }).catch((error) => console.error(error));
+            }
+        },
     },
 };
 </script>

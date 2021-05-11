@@ -48,6 +48,9 @@ const routes = [
         path: '/room/:id',
         name: 'room',
         component: Room,
+        meta: {
+            auth: true,
+        },
     },
     /* Errors */
     {

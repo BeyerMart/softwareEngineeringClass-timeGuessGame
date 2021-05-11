@@ -134,12 +134,13 @@ export default {
             if (this.$v.$invalid) {
                 return;
             }
-            this.createRoom(this.form).then(() => {
+            this.createRoom(this.form).then((response) => {
                 this.$notify({
                     title: this.$t('game.messages.roomCreateSuccess'),
                     type: 'success',
                 });
                 this.$emit('close');
+                this.$router.push(`room/${response.data.room_id}`);
             }).catch((err) => {
                 console.error(err);
             });
