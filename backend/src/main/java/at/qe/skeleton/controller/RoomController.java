@@ -9,6 +9,7 @@ import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import at.qe.skeleton.services.RoomService;
 import at.qe.skeleton.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -81,6 +82,8 @@ public class RoomController {
                 case "teams":
                 case "game_id":
                     break;
+                case "topic_id":
+                    v = Long.parseLong((String) v);
                 default:
                     Field field = ReflectionUtils.findField(Room.class, (String) k);
                     field.setAccessible(true);
@@ -193,13 +196,13 @@ public class RoomController {
         template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
     }
 
-//    private RoomDto convertToRoomDto(Room room) {
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        return modelMapper.map(room, RoomDto.class);
-//    }
-//
-//    private Room convertToRoomEntity(RoomDto roomDto) {
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        return modelMapper.map(roomDto, Room.class);
-//    }
+/*      public RoomDto convertToRoomDto(Room room) {
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+          return modelMapper.map(room, RoomDto.class);
+      }
+
+      public Room convertToRoomEntity(RoomDto roomDto) {
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+          return modelMapper.map(roomDto, Room.class);
+      }*/
 }

@@ -1,12 +1,7 @@
 package at.qe.skeleton.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -16,7 +11,7 @@ public class GameDto {
 
     private String name;
 
-    private Team team;
+    private Team winner;
 
     @JsonIgnore
     private Set<Team> teams;
@@ -26,6 +21,13 @@ public class GameDto {
     private Timestamp created_at;
 
     private Timestamp updated_at;
+
+    //points
+    //TODO
+    private int max_points;
+
+    @JsonIgnore
+    private Long room_id;
 
 
     //Getter and Setter
@@ -46,12 +48,12 @@ public class GameDto {
         this.name = name;
     }
 
-    public Team getTeam() {
-        return team;
+    public Team getWinner() {
+        return winner;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWinner(Team winner) {
+        this.winner = winner;
     }
 
     public Set<Team> getTeams() {
@@ -84,5 +86,21 @@ public class GameDto {
 
     public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public int getMax_points() {
+        return max_points;
+    }
+
+    public void setMax_points(int max_points) {
+        this.max_points = max_points;
+    }
+
+    public Long getRoom_id() {
+        return room_id;
+    }
+
+    public void setRoom_id(Long room_id) {
+        this.room_id = room_id;
     }
 }

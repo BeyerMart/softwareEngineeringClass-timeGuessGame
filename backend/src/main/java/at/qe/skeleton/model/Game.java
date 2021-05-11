@@ -5,7 +5,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Set;
@@ -25,7 +24,7 @@ public class Game {
 
     @ManyToOne()
     @JoinColumn(name = "winning_team_id", referencedColumnName = "id")
-    private Team team;
+    private Team winner;
 
     @OneToMany(targetEntity = Team.class, mappedBy = "game")
     private Set<Team> teams;
@@ -39,6 +38,10 @@ public class Game {
 
     @UpdateTimestamp
     private Timestamp updated_at;
+
+    private int max_points;
+
+    private Long room_id;
 
 
     //Getter - Setter
@@ -59,12 +62,12 @@ public class Game {
         this.name = name;
     }
 
-    public Team getTeam() {
-        return team;
+    public Team getWinner() {
+        return winner;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWinner(Team team) {
+        this.winner = team;
     }
 
     public Set<Team> getTeams() {
@@ -97,5 +100,21 @@ public class Game {
 
     public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public int getMax_points() {
+        return max_points;
+    }
+
+    public void setMax_points(int max_points) {
+        this.max_points = max_points;
+    }
+
+    public Long getRoom_id() {
+        return room_id;
+    }
+
+    public void setRoom_id(Long room_id) {
+        this.room_id = room_id;
     }
 }

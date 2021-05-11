@@ -14,9 +14,10 @@ public class Room {
     private Map<String, VirtualTeam> teams;
     private long game_id = -1;
     private String room_name;
-    private long topic_id = -1;
+    private Long topic_id;
     private Cube cube;
     private boolean connectedWithPiAndCube = false;
+    private int max_points;
 
     public Room(long room_id, long host_id) {
         this.room_id = room_id;
@@ -106,7 +107,7 @@ public class Room {
         this.room_name = room_name;
     }
 
-    public long getTopic_id() {
+    public Long getTopic_id() {
         return topic_id;
     }
 
@@ -127,5 +128,13 @@ public class Room {
 
     public boolean isConnectedWithPiAndCube() {
         return connectedWithPiAndCube;
+    }
+
+    public int getMax_points() {
+        return max_points;
+    }
+
+    public void setMax_points(int max_points) {
+        this.max_points = max_points;
     }
 }

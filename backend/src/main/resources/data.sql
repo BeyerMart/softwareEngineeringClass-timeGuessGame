@@ -27,9 +27,9 @@ INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, to
 INSERT INTO term (appearances, correct_guesses, created_at, name, updated_at, topic_id) VALUES (30, 20, CURRENT_TIMESTAMP(), 'Andreas Hofer', CURRENT_TIMESTAMP(), (SELECT id FROM topic WHERE name='Geschichte'));
 
 -- GAME
-INSERT INTO game (created_at, name, updated_at, winning_team_id, topic_id) VALUES (CURRENT_TIMESTAMP(), 'Game 1', CURRENT_TIMESTAMP(), NULL, (SELECT id FROM topic WHERE name='Geschichte'));
-INSERT INTO game (created_at, name, updated_at, winning_team_id, topic_id) VALUES (CURRENT_TIMESTAMP(), 'Game 2', CURRENT_TIMESTAMP(), NULL, (SELECT id FROM topic WHERE name='Biologie'));
-INSERT INTO game (created_at, name, updated_at, winning_team_id, topic_id) VALUES (CURRENT_TIMESTAMP(), 'Game 3', CURRENT_TIMESTAMP(), NULL, (SELECT id FROM topic WHERE name='Geographie'));
+INSERT INTO game (created_at, name, updated_at, winning_team_id, topic_id, max_points) VALUES (CURRENT_TIMESTAMP(), 'Game 1', CURRENT_TIMESTAMP(), NULL, (SELECT id FROM topic WHERE name='Geschichte'),0);
+INSERT INTO game (created_at, name, updated_at, winning_team_id, topic_id, max_points) VALUES (CURRENT_TIMESTAMP(), 'Game 2', CURRENT_TIMESTAMP(), NULL, (SELECT id FROM topic WHERE name='Biologie'),0);
+INSERT INTO game (created_at, name, updated_at, winning_team_id, topic_id, max_points) VALUES (CURRENT_TIMESTAMP(), 'Game 3', CURRENT_TIMESTAMP(), NULL, (SELECT id FROM topic WHERE name='Geographie'),0);
 
 -- TEAM
 INSERT INTO team (id, name, points, created_at, updated_at, game_id) VALUES (1, 'Ball of Duty', 16, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), (SELECT id FROM game WHERE name='Game 1'));
