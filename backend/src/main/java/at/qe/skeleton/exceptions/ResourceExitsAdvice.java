@@ -21,12 +21,4 @@ public class ResourceExitsAdvice {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<String>((new ErrorResponse("Topic is already taken!",400)).toString(),headers,HttpStatus.BAD_REQUEST);
     }
-
-    @ResponseBody
-    @ExceptionHandler(GameService.GameExistsException.class)
-    ResponseEntity<?> gameExistsHandler (GameService.GameExistsException ex) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<String>((new ErrorResponse("Game already exists!",400)).toString(),headers,HttpStatus.BAD_REQUEST);
-    }
 }

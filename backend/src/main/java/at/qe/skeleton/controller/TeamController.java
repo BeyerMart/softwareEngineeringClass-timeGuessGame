@@ -116,7 +116,7 @@ public class TeamController {
 
         List<Object> users = teamService.getAllTeamUsers(team.get()).stream().map(user -> {
             if (user.getClass().getName().equals("at.qe.skeleton.model.User")) {
-                return modelMapper.map(user, UserDto.class);
+                return userController.convertToDto((User)user);
             } else {
                 return virtualUserController.convertToDto((VirtualUser) user);
             }
