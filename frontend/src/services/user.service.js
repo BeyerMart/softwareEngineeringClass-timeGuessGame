@@ -21,3 +21,12 @@ export function updateUser(userData) {
         email: userData.email,
     });
 }
+
+/**
+ * Delete user
+ * @param {number} userId
+ * @returns {Promise} response
+ */
+export function deleteUser(userId) {
+    return axios.delete(`${API_URL}/${userId}/`);
+}

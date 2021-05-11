@@ -9,6 +9,7 @@ export default {
         confirmMessage: 'Sie können diese Aktion nicht rückgängig machen',
         yes: 'Ja',
         no: 'Nein',
+        role: 'Rolle',
     },
     errors: {
         back: 'Zurück',

@@ -16,7 +16,9 @@
                 <tr
                     v-for="(user, index) in users"
                     :key="user.id"
+                    class="cursor-pointer hover:bg-gray-200"
                     :class="{ 'bg-gray-50': index % 2 === 0}"
+                    @click="gotoUserProfile(user)"
                 >
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {{ user.id }}
@@ -25,10 +27,10 @@
                         {{ user.username }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {{ user.role }}
+                        {{ user.email }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {{ user.email }}
+                        {{ user.role }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {{ registrationDate(user.created_at) }}
@@ -37,7 +39,7 @@
                         <font-awesome-icon
                             icon="trash"
                             class="text-l cursor-pointer"
-                            @click.stop="deleteuser(user.topic_id, user.id)"
+                            @click.stop="deleteUser(user)"
                         />
                     </td>
                 </tr>
@@ -47,6 +49,7 @@
 </template>
 
 <script>
+import { deleteUser } from '@/services/user.service';
 
 export default {
     name: 'UserTable',
@@ -58,12 +61,52 @@ export default {
     },
     data() {
         return {
-            columns: ['ID', this.$t('signup.username'), this.$t('generic.role'), this.$t('signup.email'), this.$t('profile.registrationDate'), this.$t('dashboard.options')],
+            columns: [
+                'ID',
+                this.$t('signup.username'),
+                this.$t('signup.email'),
+                this.$t('generic.role'),
+                this.$t('profile.registrationDate'),
+                this.$t('dashboard.options')],
         };
     },
     methods: {
+        deleteUser(user) {
+            this.$confirm(
+                {
+                    title: this.$t('generic.confirmTitle'),
+                    message: this.$t('generic.confirmMessage'),
+                    button: {
+
+                        yes: this.$t('generic.yes'),
+                        no: this.$t('generic.no'),
+                    },
+                    callback: (confirm) => {
+                        if (confirm) {
+                            deleteUser(user.id).then(() => {
+                                this.$notify({
+                                    title: this.$t('dashboard.messages.deleteUserSuccess'),
+                                    text: this.$t('dashboard.messages.deleteUserMessage'),
+                                    type: 'success',
+                                });
+                                this.$emit('fetchUsers');
+                            }).catch((err) => {
+                                this.$notify({
+                                    title: this.$t('generic.error'),
+                                    text: err.response.data.error,
+                                    type: 'error',
+                                });
+                            });
+                        }
+                    },
+                },
+            );
+        },
         registrationDate(timestamp) {
             return new Date(timestamp).toLocaleDateString();
+        },
+        gotoUserProfile(user) {
+            this.$router.push({ path: `/profile/${user.id}` });
         },
     },
 };
