@@ -16,7 +16,7 @@ public class GameDto {
 
     private String name;
 
-    private Team team;
+    private Long team_id;
 
     @JsonIgnore
     private Set<Team> teams;
@@ -46,12 +46,12 @@ public class GameDto {
         this.name = name;
     }
 
-    public Team getTeam() {
-        return team;
+    public Long getTeam_id() {
+        return team_id;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setTeam_id(Long team_id) {
+        this.team_id = team_id;
     }
 
     public Set<Team> getTeams() {

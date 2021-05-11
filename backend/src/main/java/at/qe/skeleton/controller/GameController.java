@@ -134,6 +134,7 @@ public class GameController {
     private GameDto convertToGameDto(Game game) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         modelMapper.typeMap(Game.class, GameDto.class).addMappings(m -> m.map(src -> src.getTopic().getId(), GameDto::setTopic_id));
+        modelMapper.typeMap(Game.class, GameDto.class).addMappings(m -> m.map(src -> src.getTeam().getId(), GameDto::setTeam_id));
         return modelMapper.map(game, GameDto.class);
     }
 
