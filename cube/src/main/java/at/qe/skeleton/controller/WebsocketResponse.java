@@ -23,7 +23,7 @@ public class WebsocketResponse {
         }
 
         this.response = "{\"type\":\"" + type + "\",\"data\":" + response + ",\"timestamp\":\"" + Instant.now().toString() + "\"}";
-        logger.info("Generated Response/Request is: " + this.response);
+        logger.debug("Generated Response/Request is: " + this.response);
     }
 
     @Override
