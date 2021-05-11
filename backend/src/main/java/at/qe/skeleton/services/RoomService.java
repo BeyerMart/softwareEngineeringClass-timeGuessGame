@@ -17,6 +17,7 @@ import javax.persistence.EntityExistsException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -38,6 +39,7 @@ public class RoomService {
 
     /**
      * Creates a new room and automatically makes the executing user join and host.
+     *
      * @return the newly created room
      */
     @PreAuthorize("hasAnyAuthority('ROLE_USER')")
@@ -81,6 +83,7 @@ public class RoomService {
     /**
      * Method to override a room.
      * Can only be executed by the room host.
+     *
      * @return updated room
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -94,6 +97,7 @@ public class RoomService {
 
     /**
      * Removes a room.
+     *
      * @param id roomId of room to remove
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -117,8 +121,7 @@ public class RoomService {
                 if (room.getPlayers().isEmpty()) {
                     iterator.remove();
                     roomController.roomDeleted(room);
-                }
-                else {
+                } else {
                     removeUserFromAllTeams(userId, room);
                     room.checkHost();
                     roomController.roomChanged(room);
@@ -173,7 +176,8 @@ public class RoomService {
     /**
      * Remove a virtual user from a room.
      * Can be executed by the parent user or the room host.
-     * @param roomId id of the room the virtual user shall be removed from
+     *
+     * @param roomId      id of the room the virtual user shall be removed from
      * @param virtualUser VirtualUser to remove, equals on ID is used to find the correct Object.
      */
     public void removePlayer(Long roomId, VirtualUser virtualUser) {
@@ -194,7 +198,8 @@ public class RoomService {
     /**
      * Adds a virtual User to the room.
      * The Parent must be a part of the room already.
-     * @param roomId Id of the Room that the VirtualUser is added to
+     *
+     * @param roomId      Id of the Room that the VirtualUser is added to
      * @param virtualUser VirtualUSer to add
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -215,6 +220,7 @@ public class RoomService {
 
     /**
      * Lets a user join a room. Before that he is removed from all other rooms.
+     *
      * @param roomId room to remove the user from
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -239,7 +245,7 @@ public class RoomService {
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public VirtualTeam joinTeam (Long roomId, String teamName) {
+    public VirtualTeam joinTeam(Long roomId, String teamName) {
         Room room = rooms.get(roomId);
         if (room == null)
             throw new RoomNotFoundException(roomId);
@@ -251,8 +257,7 @@ public class RoomService {
         if (team == null) {
             team = new VirtualTeam(teamName, user);
             room.getTeams().put(teamName, team);
-        }
-        else
+        } else
             team.getPlayers().add(user);
         roomController.roomChanged(room);
         roomController.userJoinedTeam(user, room);
@@ -261,12 +266,13 @@ public class RoomService {
 
     /**
      * Method to leave a team. All virtual users leave the team with their parent user automatically.
-     * @param roomId id of the room which should contain the team
+     *
+     * @param roomId   id of the room which should contain the team
      * @param teamName name of the team from which to remove
      * @return True if a user was removed, False if the user wasn't in the team before
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public boolean leaveTeam (long roomId, String teamName) {
+    public boolean leaveTeam(long roomId, String teamName) {
         Room room = rooms.get(roomId);
         if (room == null)
             throw new RoomNotFoundException(roomId);
@@ -276,7 +282,7 @@ public class RoomService {
         }
         Long userId = userService.getAuthenticatedUser().get().getId();
         UserIdVirtualUser user = room.getPlayers().get(userId);
-        if(team.getPlayers().removeIf(userIdVirtualUser -> userIdVirtualUser.getUser_id().equals(userId))) {
+        if (team.getPlayers().removeIf(userIdVirtualUser -> userIdVirtualUser.getUser_id().equals(userId))) {
             if (team.getPlayers().isEmpty())
                 room.getTeams().remove(teamName);
             roomController.roomChanged(room);
@@ -300,7 +306,7 @@ public class RoomService {
     public void connectRoomAndPi(Long roomId, String piName) {
         Long userId = userService.getAuthenticatedUser().get().getId();
         Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
-        if (userId != room.getHost_id()){
+        if (userId != room.getHost_id()) {
             throw new AccessDeniedException("Only the Host can connect the pi to a room");
         }
         room.setPi_name(piName);
@@ -315,11 +321,23 @@ public class RoomService {
         roomController.roomChanged(room);
     }
 
-    public void updateCube(int roomId, Cube cube){
+    public void updateCube(int roomId, Cube cube) {
         Optional<Room> optionalRoom = getRoomById(roomId);
-        if (optionalRoom.isPresent()){
+        if (optionalRoom.isPresent()) {
             optionalRoom.get().setCube(cube);
             roomController.roomChanged(optionalRoom.get());
         }
+    }
+
+    private Set<VirtualUser> getVirtualUsersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
+        Set<VirtualUser> virtualUsers = new HashSet<>();
+        userIdVirtualUsers.forEach(userIdVirtualUser -> {
+            virtualUsers.addAll(userIdVirtualUser.getVirtualUsers().values());
+        });
+        return virtualUsers;
+    }
+
+    private Set<User> getUsersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
+        return userIdVirtualUsers.stream().map(userIdVirtualUser -> userService.getUserById(userIdVirtualUser.getUser_id()).orElseThrow(() -> new UserNotFoundException(userIdVirtualUser.getUser_id()))).collect(Collectors.toSet());
     }
 }
