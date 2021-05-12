@@ -204,6 +204,14 @@ export default {
         leaveTeam(teamName) {
             RoomService.leaveTeam(this.room.id, { name: teamName });
         },
+        leaveRoom() {
+            RoomService.leaveRoom(this.room.id).then(() => {
+                this.$router.push('/');
+                this.notifySuccess('left room successfully'); // TODO: Translation
+            }).catch((error) => {
+                console.error(error);
+            });
+        },
         notifyError(message) {
             this.$notify({
                 title: message,
