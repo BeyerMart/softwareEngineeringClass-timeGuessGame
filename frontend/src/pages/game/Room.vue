@@ -25,11 +25,18 @@
                         <VirtualTeam
                             :team="team"
                             :host-id="room.host_id"
+                            @joinTeam="joinTeam(team.name)"
                         />
                     </div>
                 </div>
                 <div>
-                    <button>
+                    <input
+                        v-model="newTeamName"
+                        placeholder="new team name"
+                    >
+                    <button
+                        @click="createTeam(newTeamName)"
+                    >
                         Create Team
                     </button>
                 </div>
@@ -57,6 +64,7 @@ export default {
             topic: '',
             players: [],
             teams: [],
+            newTeamName: '',
         };
     },
     computed: {
@@ -163,14 +171,29 @@ export default {
             return player1.id === player2.id;
         },
         createTeam(teamName) {
-            if (this.teams.some((team) => team.name === team.teamName)) this.notifyError('already exists'); // TODO: translate
-            if (!this.room.game_id || this.room.game_id < 0) this.notifyError("You can't create a new Team after the Game has started"); // TODO: translate
+            if (this.teams.some((team) => team.name === team.teamName)) {
+                this.notifyError('already exists'); // TODO: translate
+                return;
+            }
+            if (this.room.game_id >= 0) {
+                this.notifyError("You can't create a new Team after the Game has started"); // TODO: translate
+                return;
+            }
             RoomService.joinTeam(this.room.id, { name: teamName }).then(() => {
                 this.notifySuccess('Team created successfully'); // TODO: translate
+                this.newTeamName = '';
             }).catch((error) => {
                 console.error(error);
                 this.notifyError(error.error);
             });
+        },
+        joinTeam(teamName) {
+            RoomService.joinTeam(this.room.id, { name: teamName }).then(() => {
+                this.notifySuccess('Team joined successfully');
+            }).catch((error) => console.error(error));
+        },
+        leaveTeam(teamName) {
+            RoomService.leaveTeam(this.room.id, { name: teamName });
         },
         notifyError(message) {
             this.$notify({

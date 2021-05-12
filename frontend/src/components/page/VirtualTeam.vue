@@ -11,8 +11,8 @@
                             <div class="w-full">
                                 <div class="flex cursor-pointer my-1 hover:bg-blue-lightest rounded">
                                     <div
-                                        v-for="player in players"
-                                        :key="player"
+                                        v-for="(player, index) in players"
+                                        :key="index"
                                     >
                                         <Player
                                             :player="player"
