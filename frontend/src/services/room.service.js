@@ -53,6 +53,10 @@ export function disconnectPi(piName, roomId) {
     return axios.post(`${API_URL}/${roomId}/disconnect_pi`, piName);
 }
 
-export function searchCube(roomId) {
-    return axios.post(`${API_URL}/${roomId}/searchCube`);
+export function getPlayers(roomId) {
+    return axios.get(`${API_URL}/${roomId}/users`);
+}
+
+export function getTeams(roomId) {
+    return axios.get(`${API_URL}/${roomId}/teams/users`);
 }

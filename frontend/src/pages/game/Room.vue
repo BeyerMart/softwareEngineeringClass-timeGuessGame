@@ -1,7 +1,7 @@
 <template>
     <div>
         Welcome to your room {{ room }}
-        The following Users have connected: {{ usersInRoom }}
+        The following Users have connected: {{ players }}
         The following Teams are in this room {{ teams }}
     </div>
 </template>
@@ -10,6 +10,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { subChannel, unsubChannel } from '@/services/websocket.service';
 import * as RoomService from '@/services/room.service';
+import * as TopicService from '@/services/topic.service';
 
 export default {
 
@@ -18,6 +19,9 @@ export default {
         return {
             id: this.$route.params.id,
             room: undefined,
+            topic: '',
+            players: [],
+            teams: [],
         };
     },
     computed: {
@@ -25,18 +29,21 @@ export default {
             getUsers: 'user/getUsers',
             getUser: 'user/getUser',
         }),
-        usersInRoom() {
-            if (this.room) return this.getUsersFromUserContainer(Object.values(this.room.players));
-            return undefined;
+        topic_id() {
+            return this.room.topic_id;
         },
-        teams() {
-            if (this.room) {
-                return Object.keys(this.room.teams).forEach(function (key) {
-                    this.room.teams[key] = this.getUsersFromUserContainer(this.room.teams[key].players);
+    },
+    watch: {
+        topicId(newVal) {
+            TopicService.fetchTopic(newVal)
+                .then((response) => {
+                    this.topic = response.data;
+                })
+                .catch((error) => {
+                    console.error(error);
                 });
-            }
-            return undefined;
         },
+
     },
     mounted() {
         RoomService.fetchRoomById(this.$route.params.id)
@@ -46,9 +53,26 @@ export default {
                 console.error(error);
                 this.$router.push('/');
             });
+
         if (!this.topicList) this.fetchTopics();
-        // TODO: Make sure user is part of this room
+
+        RoomService.getPlayers(this.$route.params.id)
+            .then((response) => {
+                this.players = response.data;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        RoomService.getTeams(this.$route.params.id)
+            .then((response) => {
+                this.teams = response.data;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
         subChannel(`/rooms/${this.$route.params.id}`, (message) => {
+            console.log('You got a message:');
+            console.log(message);
             switch (message.type) {
             case 'ROOM_DELETED':
                 this.$notify({
@@ -61,12 +85,15 @@ export default {
                 this.room = (message.data);
                 break;
             case 'USER_JOINED_ROOM':
+                if (this.players.some((playerEl) => message.data.virtual_id === playerEl.virtual_id && message.data.id === playerEl.id)) break;
+                this.players.push(message.data);
                 this.$notify({
                     title: message.data.username + this.$t('game.messages.userJoined'),
-                    type: 'error',
+                    type: 'success',
                 });
                 break;
             case 'USER_LEFT_ROOM':
+                this.players = this.players.filter((playerEl) => !(message.data.virtual_id === playerEl.virtual_id && message.data.id === playerEl.id));
                 this.$notify({
                     title: message.data.username + this.$t('game.messages.userJoined'),
                     type: 'error',
@@ -95,19 +122,7 @@ export default {
     methods: {
         ...mapActions({
             fetchTopics: 'fetchTopics',
-            fetchUser: 'user/fetchUser',
         }),
-        async getUsersFromUserContainer(containers) {
-            const result = [];
-            const self = this;
-            containers.forEach((container) => {
-                if (!self.getUsers.some((storageUser) => container.user_id === storageUser.user_id)) self.fetchUser(container.userId);
-                const localUser = self.getUsers.find((storageUser) => container.user_id === storageUser.user_id);
-                result.push(localUser);
-                Object.values(container.virtualUsers).forEach((virtualUser) => result.push(virtualUser));
-            });
-            return result;
-        },
     },
 };
 </script>
