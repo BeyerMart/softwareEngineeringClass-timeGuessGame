@@ -235,7 +235,7 @@ export default {
             });
         },
         addVirtualUser(username) {
-            RoomService.joinRoom(this.room.id, { username }).then(() => {
+            RoomService.joinRoom(this.room.id, { username: username }).then(() => {
                 this.notifySuccess(`${username} created successfully`); // TODO: Translation
             }).catch((error) => console.error(error));
         },
