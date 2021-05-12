@@ -152,7 +152,7 @@ export default {
                         text: this.$t('login.loginAgain'),
                         type: 'success',
                     });
-                    this.$router.push('/login');
+                    this.$router.push({ name: 'login' });
                 } else {
                     this.$notify({
                         title: this.$t('profile.userUpdatedSuccess'),
