@@ -47,7 +47,7 @@
                                     name="team-name"
                                     class="form-control block border border-grey-light w-full p-3 rounded mb-4"
                                     :class="{ 'border-red-500 !important': submitted && $v.form.teamName.$error }"
-                                    :placeholder="$t('dashboard.term')"
+                                    :placeholder="$t('generic.name')"
                                 >
                             </div>
                             <div class="form-group mt-5 sm:mt-6">

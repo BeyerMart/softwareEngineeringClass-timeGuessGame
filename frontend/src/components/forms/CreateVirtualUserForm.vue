@@ -33,12 +33,12 @@
                                 <label
                                     class="block text-gray-700 text-sm mb-2"
                                     for="termName"
-                                >{{ $t('generic.name') }}</label>
+                                >{{ $t('signup.username') }}</label>
                                 <div
                                     v-show="submitted && $v.form.vUsername.$error"
                                     class="has-errors py-1 text-xs"
                                 >
-                                    {{ $t('errors.validation.nameRequired') }}
+                                    {{ $t('signup.errors.usernameRequired') }}
                                 </div>
                                 <input
                                     id="termName"
@@ -47,7 +47,7 @@
                                     name="team-name"
                                     class="form-control block border border-grey-light w-full p-3 rounded mb-4"
                                     :class="{ 'border-red-500 !important': submitted && $v.form.vUsername.$error }"
-                                    :placeholder="$t('dashboard.term')"
+                                    :placeholder="$t('signup.username')"
                                 >
                             </div>
                             <div class="form-group mt-5 sm:mt-6">
@@ -101,7 +101,7 @@ export default {
                 return;
             }
 
-            this.$emit('createVirtualUser', this.form.vUsername);
+            this.$emit('addVirtualUser', this.form.vUsername);
             this.$emit('close');
         },
     },

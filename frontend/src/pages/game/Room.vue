@@ -60,6 +60,13 @@
                             />
                             {{ $t('room.createVirtualUser') }}
                         </button>
+
+                        <CreateVirtualUser
+                            v-show="display.showVUserForm"
+                            @close="display.showVUserForm = false"
+                            @addVirtualUser="addVirtualUser"
+                        />
+
                         <button
                             class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
                         >
@@ -249,7 +256,7 @@ export default {
             });
         },
         addVirtualUser(username) {
-            RoomService.joinRoom(this.room.id, { username: username }).then(() => {
+            RoomService.joinRoom(this.room.id, { username }).then(() => {
                 this.notifySuccess(`${username} created successfully`); // TODO: Translation
             }).catch((error) => console.error(error));
         },
