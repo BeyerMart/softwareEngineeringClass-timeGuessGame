@@ -19,7 +19,7 @@ public class FindDevicesManager {
 
     public static final int MIN_RSSI_ALLOWED = -80;
 
-    private static final int ATTEMPTS_TO_FIND = 5;
+    private static final int ATTEMPTS_TO_FIND = 3;
 
     private static final long SECONDS_BETWEEN_ATTEMPTS = 4L;
 
