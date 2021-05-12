@@ -149,7 +149,7 @@ export default {
                 });
                 break;
             case 'USER_LEFT_ROOM':
-                this.players = this.players.filter((playerEl) => !(message.data.virtual_id === playerEl.virtual_id && message.data.id === playerEl.id));
+                this.players = this.players.filter((playerEl) => !this.samePlayerCheck(message.data, playerEl) && !(message.data.id && playerEl.virtual_id && playerEl.creator_id === message.data.id));
                 this.$notify({
                     title: message.data.username + this.$t('game.messages.userJoined'),
                     type: 'error',
@@ -211,6 +211,11 @@ export default {
             }).catch((error) => {
                 console.error(error);
             });
+        },
+        addVirtualUser(username) {
+            RoomService.joinRoom(this.room.id, { username }).then(() => {
+                this.notifySuccess(`${username} created successfully`); // TODO: Translation
+            }).catch((error) => console.error(error));
         },
         notifyError(message) {
             this.$notify({
