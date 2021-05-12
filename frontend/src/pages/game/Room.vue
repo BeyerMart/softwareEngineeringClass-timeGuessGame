@@ -7,7 +7,7 @@
             <div
                 class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8"
             >
-                <h1 class="text-4xl md:text-5xl">
+                <h1 class="text-4xl md:text-5xl my-5">
                     {{ room.name }} | {{ getTopicNameById(room.topic_id) }}
                 </h1>
 
@@ -52,6 +52,16 @@
                         </button>
                         <button
                             class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                            @click="display.showVUserForm = true"
+                        >
+                            <font-awesome-icon
+                                icon="sign-out-alt"
+                                class="text-l cursor-pointer"
+                            />
+                            {{ $t('room.createVirtualUser') }}
+                        </button>
+                        <button
+                            class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
                         >
                             <font-awesome-icon
                                 icon="sign-out-alt"
@@ -80,11 +90,14 @@ import * as TopicService from '@/services/topic.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
 import Player from '@/components/page/Player';
 import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
+import CreateVirtualUser from '@/components/forms/CreateVirtualUserForm.vue';
 
 export default {
 
     name: 'Room',
-    components: { Player, VirtualTeam, CreateTeamForm },
+    components: {
+        Player, VirtualTeam, CreateTeamForm, CreateVirtualUser,
+    },
     data() {
         return {
             id: this.$route.params.id,
@@ -94,6 +107,7 @@ export default {
             teams: [],
             display: {
                 showTeamForm: false,
+                showVUserForm: false,
             },
         };
     },
