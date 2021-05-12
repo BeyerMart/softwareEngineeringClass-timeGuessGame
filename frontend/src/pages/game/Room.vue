@@ -69,6 +69,7 @@
 
                         <button
                             class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                            @click="leaveRoom()"
                         >
                             <font-awesome-icon
                                 icon="sign-out-alt"
@@ -94,6 +95,7 @@ import { mapActions, mapGetters } from 'vuex';
 import { subChannel, unsubChannel } from '@/services/websocket.service';
 import * as RoomService from '@/services/room.service';
 import * as TopicService from '@/services/topic.service';
+import * as CubeService from '@/services/cube.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
 import Player from '@/components/page/Player';
 import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
@@ -112,6 +114,7 @@ export default {
             topic: '',
             players: [],
             teams: [],
+            piNames: [],
             display: {
                 showTeamForm: false,
                 showVUserForm: false,
@@ -154,6 +157,7 @@ export default {
             });
 
         if (!this.topicList) this.fetchTopics();
+        this.piNames = CubeService.getCubes();
 
         RoomService.getPlayers(this.$route.params.id)
             .then((response) => {

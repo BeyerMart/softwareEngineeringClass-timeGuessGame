@@ -112,6 +112,7 @@ public class RoomController {
     public ResponseEntity<?> joinRoom(@RequestBody(required = false) VirtualUserDto virtualUserDto, @PathVariable Long id) throws ParseException {
 
         if (virtualUserDto != null) {
+            virtualUserDto.setCreator_id(0L); // Only temporary, will be overwritten in Room Service
             roomService.joinRoom(id, virtualUserController.convertToEntity(virtualUserDto));
         } else {
             roomService.joinRoom(id);
