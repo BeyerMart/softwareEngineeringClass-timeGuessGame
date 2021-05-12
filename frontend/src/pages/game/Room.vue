@@ -134,6 +134,9 @@ export default {
             return this.players
                 .filter((player) => !this.teams.some((team) => team.players.some((teamPlayer) => this.samePlayerCheck(teamPlayer, player))));
         },
+        connectedPi() {
+            return this.room.pi_name;
+        },
     },
     watch: {
         topicId(newVal) {
@@ -155,10 +158,10 @@ export default {
                 console.error(error);
                 this.$router.push('/');
             });
-
         if (!this.topicList) this.fetchTopics();
-        this.piNames = CubeService.getCubes();
-
+        CubeService.getCubes().then((response) => {
+            this.piNames = response.data;
+        });
         RoomService.getPlayers(this.$route.params.id)
             .then((response) => {
                 this.players = response.data;
@@ -287,6 +290,24 @@ export default {
         getTopicNameById(topicId) {
             const res = this.topicList.find((topic) => topic.id === topicId);
             return res ? res.name : topicId;
+        },
+        connectPi(piName) {
+            RoomService.connectPi(piName, this.room.id).then(() => {
+                this.notifySuccess(`Trying to connect Pi ${piName}`); // TODO: Translation
+            }).catch((error) => {
+                console.error(error);
+                this.notifyError('Connection attempt failed'); // TODO: Translation
+            });
+        },
+        disconnectPi(piName) {
+            RoomService.connectPi(piName, this.room.id).then(() => {
+                this.notifySuccess(`Trying to disconnect Pi ${piName}`);
+            }).catch((error) => {
+                this.notifyError('Disconnection attempt failed');
+            });
+        },
+        createGame() {
+            // TODO
         },
     },
 };
