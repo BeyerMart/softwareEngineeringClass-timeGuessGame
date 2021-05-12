@@ -178,14 +178,8 @@ public class RoomController {
         roomService.disconnectRoomAndPi(Long.valueOf(id), piName);
     }
 
-    @PostMapping("/rooms/{id}/searchCube")
-    public void searchBlueToothCube(@PathVariable String id){
-        Room room = roomService.getRoomById(Integer.parseInt(id)).get();
-        cubeController.cubeStartSearching(room);
-    }
 
-    //WS Messages to the FrontEnd
-    //TODO FrontEnd shows "Cube not found / not connected. reset battery and retry"
+    //WS Messages to the FrontEnd only used in cased where connection gets lost and reconnect is needed.
     public void cubeNotConnected(Room room){
         room.setConnectedWithPiAndCube(false);
         template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());

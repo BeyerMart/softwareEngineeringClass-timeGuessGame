@@ -1,5 +1,6 @@
 package at.qe.skeleton.controller;
 
+import at.qe.skeleton.bleclient.CubeCalibration;
 import at.qe.skeleton.model.Cube;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,21 +25,28 @@ import java.util.concurrent.*;
 public class WebSocketConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConnection.class);
-    private final LogicController logicController = new LogicController(this);
-    private final String URL = "192.168.0.242";
+    private CubeCalibration cubeCalibration;
+    private final LogicController logicController;
+    private final String URL;
     //private final String URL = "localhost";
-    private final int PORT = 8080;
+    private final int PORT;
     private final ConcurrentLinkedQueue blockingQueue = new ConcurrentLinkedQueue();
     // private final BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
     private final WebSocketStompClient client;
     private final StompSession session;
     private final ObjectMapper mapper = new ObjectMapper();
     //each Pi gets own Name
-    private final String piName = "MyPi";
+    private final String piName;
     //used to only accept / process messages for me / my cube.
     private Cube cube;
 
-    public WebSocketConnection() throws ExecutionException, InterruptedException, TimeoutException {
+    public WebSocketConnection(CubeCalibration cubeCalibration) throws ExecutionException, InterruptedException, TimeoutException {
+        logger.info("Connecting to Backend...");
+        this.cubeCalibration = cubeCalibration;
+        this.logicController = new LogicController(this, cubeCalibration);
+        piName = cubeCalibration.getPiName();
+        URL = cubeCalibration.getURL();
+        PORT = cubeCalibration.getPORT();
         ArrayList list = new ArrayList();
         list.add(new WebSocketTransport(new StandardWebSocketClient()));
         this.client = new WebSocketStompClient(new SockJsClient(list));
@@ -59,7 +67,7 @@ public class WebSocketConnection {
                     @Override
                     public void handleFrame(StompHeaders stompHeaders, Object payload) {
                         blockingQueue.add((String) payload);
-                        logger.info("Got This in my channel: " + (String) payload);
+                        logger.info("Got this in my channel: " + (String) payload);
                         try {
                             logicController.handler((String) payload);
                         } catch (InterruptedException e) {
@@ -84,50 +92,27 @@ public class WebSocketConnection {
         JsonNode jsonResult = mapper.readTree(response);
         WSResponseType wsType = WSResponseType.valueOf(jsonResult.get("type").asText());
         JsonNode data = jsonResult.get("data");
-        if (wsType == WSResponseType.OK) {
+        if (wsType == WSResponseType.OK || wsType == WSResponseType.PI_CONNECTED || wsType == WSResponseType.PI_DISCONNECTING) {
             return response;
         } else {
-            if (wsType == WSResponseType.VERSION || data.get("piName").asText() == piName || data.get("id").asInt() == cube.getRoomId()) {
-                logicController.logic(this, wsType, data);
+            if (wsType == WSResponseType.VERSION || data.get("piName").asText() == piName) {
             }
         }
         return response;
     }
 
-    public String sendRequestForVersion(String input) throws InterruptedException, JsonProcessingException {
+    public void sendRequestForVersion(String input) throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(input, WSResponseType.VERSION);
         session.send("/version", request.toString());
         String response = handleBackendResponse(request.toString());
-        return response;
     }
 
-    public String sendPiConnected() throws InterruptedException, JsonProcessingException {
+    public void sendPiConnected() throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.PI_CONNECTED);
         sendWebsocketRequest(request);
         String response = handleBackendResponse(request.toString());
-        return response;
     }
 
-    public String sendFoundAndConnected(Cube cube) throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.FOUND_AND_CONNECTED);
-        sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
-    }
-
-    public String sendNotFound(int roomId) throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(roomId, WSResponseType.NOT_FOUND);
-        sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
-    }
-
-    public String sendNotConnected(int roomId) throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(roomId, WSResponseType.NOT_CONNECTED);
-        sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
-    }
 
     public String sendFacetNotification(Cube cube) throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.FACET_NOTIFICATION);
@@ -143,19 +128,6 @@ public class WebSocketConnection {
         return response;
     }
 
-    public String sendCubeError(Cube cube) throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.CUBE_ERROR);
-        sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
-    }
-
-    public String sendCubeDisconnected(Cube cube) throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.CUBE_DISCONNECTED);
-        sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
-    }
 
     public String sendPiDisconnected(Cube cube) throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.PI_DISCONNECTING);
@@ -198,11 +170,6 @@ public class WebSocketConnection {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }*/
-    }
-
-    public void close(WSResponseType version) {
-        if (session.isConnected()) session.disconnect();
-        if (client.isRunning()) client.start();
     }
 
     public void close() {
