@@ -33,7 +33,7 @@ export function joinRoom(roomId, virtualUser) {
 }
 
 export function leaveRoom(roomId, virtualUser, userId) {
-    if (userId || userId === 0) return axios.delete(`${API_URL}/${roomId}/users/${roomId}`, virtualUser);
+    if (userId || userId === 0) return axios.delete(`${API_URL}/${roomId}/users/${userId}`, virtualUser);
     return axios.delete(`${API_URL}/${roomId}/users`, virtualUser);
 }
 

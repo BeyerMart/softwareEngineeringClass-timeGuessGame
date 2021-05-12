@@ -251,8 +251,10 @@ export default {
         leaveTeam(teamName) {
             RoomService.leaveTeam(this.room.id, { name: teamName });
         },
-        leaveRoom() {
-            RoomService.leaveRoom(this.room.id).then(() => {
+        leaveRoom(userId, virtualUser) {
+            let localUserId = userId;
+            if (userId !== 0 && !userId) localUserId = this.getUser.id;
+            RoomService.leaveRoom(this.room.id, virtualUser, localUserId).then(() => {
                 this.$router.push('/');
                 this.notifySuccess('left room successfully'); // TODO: Translation
             }).catch((error) => {
