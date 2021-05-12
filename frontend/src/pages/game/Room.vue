@@ -190,6 +190,12 @@ export default {
             case 'USER_JOINED_ROOM':
                 if (this.players.some((playerEl) => message.data.virtual_id === playerEl.virtual_id && message.data.id === playerEl.id)) break;
                 this.players.push(message.data);
+                // Make sure a virtual user joins his creator's team
+                if (message.data.creator_id) {
+                    this.teams.forEach((team) => {
+                        if (team.players.some((player) => player.id && player.id === message.data.creator_id)) team.players.push(message.data);
+                    });
+                }
                 this.$notify({
                     title: message.data.username + this.$t('game.messages.userJoined'),
                     type: 'success',
