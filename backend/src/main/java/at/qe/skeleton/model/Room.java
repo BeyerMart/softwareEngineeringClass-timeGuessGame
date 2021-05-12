@@ -13,7 +13,7 @@ public class Room {
     private Map<Long, UserIdVirtualUser> players;
     private Map<String, VirtualTeam> teams;
     private long game_id = -1;
-    private String room;
+    private String name;
     private Long topic_id;
     private Cube cube;
     private boolean connectedWithPiAndCube = false;
@@ -25,7 +25,7 @@ public class Room {
         this.players = new ConcurrentHashMap<>();
         this.teams = new ConcurrentHashMap<>();
         players.put(host_id, new UserIdVirtualUser(host_id));
-        this.room = "Room " + host_id;
+        this.name = "Room " + host_id;
     }
 
     public void removeFromAllTeams (Long userId) {
@@ -99,12 +99,12 @@ public class Room {
         this.game_id = game_id;
     }
 
-    public String getRoom() {
-        return room;
+    public String getName() {
+        return name;
     }
 
-    public void setRoom(String room) {
-        this.room = room;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getTopic_id() {

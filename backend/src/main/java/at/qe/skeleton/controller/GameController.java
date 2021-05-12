@@ -6,10 +6,8 @@ import at.qe.skeleton.payload.response.ErrorResponse;
 import at.qe.skeleton.payload.response.SuccessResponse;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
-import at.qe.skeleton.repository.GameRepository;
 import at.qe.skeleton.repository.TeamRepository;
 import at.qe.skeleton.services.*;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.security.access.AccessDeniedException;
 
-import javax.validation.Valid;
-import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,9 +69,9 @@ public class GameController {
 
         //Copy values from room
         Game game = new Game();
-        game.setName(room.getRoom_name());
+        game.setName(room.getName());
         game.setMax_points(room.getMax_points());
-        game.setRoom_id(room.getRoom_id());
+        game.setRoom_id(room.getId());
 
         game = gameService.addGame(game, room.getTopic_id());
 
@@ -85,7 +79,7 @@ public class GameController {
         for(VirtualTeam virtTeam : room.getTeams().values()) {
             Team team = new Team();
             team.setGame(game);
-            team.setName(virtTeam.getTeam_name());
+            team.setName(virtTeam.getName());
             team = teamService.addTeam(team);
 
             //Add (virtual) users

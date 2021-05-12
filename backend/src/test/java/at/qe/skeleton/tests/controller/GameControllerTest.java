@@ -5,12 +5,10 @@ import at.qe.skeleton.Main;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.services.GameService;
 import at.qe.skeleton.services.RoomService;
-import at.qe.skeleton.services.TeamService;
 import at.qe.skeleton.services.TopicService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalAnswers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +22,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 
-import java.sql.Timestamp;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,12 +78,12 @@ public class GameControllerTest {
     @WithMockUser(roles = {"ADMIN", "MANAGER", "USER"})
     public void testCreateGame() throws Exception {
         Room room = new Room(0, -1);
-        room.setRoom_name("Hell yeah");
+        room.setName("Hell yeah");
         room.setTopic_id(testTopic.getId());
-        Mockito.when(roomService.getRoomById(room.getRoom_id())).thenReturn(Optional.of(room));
+        Mockito.when(roomService.getRoomById(room.getId())).thenReturn(Optional.of(room));
         Mockito.when(gameService.addGame(Mockito.any(Game.class), Mockito.any())).thenReturn(testGame);
 
-        String body = "{\"room_id\":" + room.getRoom_id() + "}";
+        String body = "{\"room_id\":" + room.getId() + "}";
         MvcResult result = mvc.perform(post("/api/games").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
         String response = result.getResponse().getContentAsString();
         assertTrue(response.contains(testGame.getName()));

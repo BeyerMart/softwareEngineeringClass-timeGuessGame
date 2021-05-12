@@ -176,7 +176,7 @@ public class GameplayController {
             /*
              * End game if room does not exist anymore
              */
-            if (!roomService.getRoomById(room.getRoom_id()).isPresent()) {
+            if (!roomService.getRoomById(room.getId()).isPresent()) {
                 roomDeletedMessage(game, room);
                 break;
             }

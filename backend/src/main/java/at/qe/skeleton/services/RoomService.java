@@ -56,8 +56,8 @@ public class RoomService {
         long hostId = userService.getAuthenticatedUser().get().getId();
         removePlayer(hostId);
         Room newRoom = new Room(counter++, hostId);
-        if (roomRequest.getRoom() != null)
-            newRoom.setRoom(roomRequest.getRoom());
+        if (roomRequest.getName() != null)
+            newRoom.setName(roomRequest.getName());
         if (roomRequest.getTopic_id() != null) {
             if (!topicRepository.existsById(roomRequest.getTopic_id()))
                 throw new TopicNotFoundException(roomRequest.getTopic_id());
