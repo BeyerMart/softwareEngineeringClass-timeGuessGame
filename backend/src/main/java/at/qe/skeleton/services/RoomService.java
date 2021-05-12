@@ -1,6 +1,7 @@
 package at.qe.skeleton.services;
 
 import at.qe.skeleton.controller.RoomController;
+import at.qe.skeleton.controller.UserController;
 import at.qe.skeleton.exceptions.RoomNotFoundException;
 import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.exceptions.TopicNotFoundException;
@@ -224,18 +225,26 @@ public class RoomService {
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public void joinRoom(Long roomId) {
-        Long userId = userService.getAuthenticatedUser().get().getId();
+        User user = userService.getAuthenticatedUser().get();
+        Long userId = user.getId();
         removePlayer(userId);
         Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
         room.getPlayers().put(userId, new UserIdVirtualUser(userId));
         roomController.roomChanged(room);
+        roomController.userJoinedRoom(user, room);
     }
 
     private void removeUserFromAllTeams(Long userId, Room room) {
         Iterator<VirtualTeam> iterator = room.getTeams().values().iterator();
         while (iterator.hasNext()) {
             VirtualTeam virtualTeam = iterator.next();
-            virtualTeam.getPlayers().removeIf(userIdVirtualUser -> userIdVirtualUser.getUser_id().equals(userId));
+            if (virtualTeam.getPlayers().removeIf(userIdVirtualUser -> {
+                if (userIdVirtualUser.getUser_id().equals(userId)) {
+                    roomController.userLeftTeam(userIdVirtualUser, virtualTeam, room);
+                    return true;
+                }
+                return  false;
+            }));
             if (virtualTeam.getPlayers().isEmpty()) {
                 iterator.remove();
                 roomController.roomChanged(room);
