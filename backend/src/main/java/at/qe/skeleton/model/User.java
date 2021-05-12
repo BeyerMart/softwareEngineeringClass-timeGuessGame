@@ -1,5 +1,6 @@
 package at.qe.skeleton.model;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -41,6 +42,9 @@ public class User {
 
     @UpdateTimestamp
     private Timestamp updated_at;
+
+    @Column()
+    private Timestamp deleted_at;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -131,5 +135,13 @@ public class User {
 
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
+    }
+
+    public Timestamp getDeletedAt() {
+        return deleted_at;
+    }
+
+    public void setDeletedAt(Timestamp deleted_at) {
+        this.deleted_at = deleted_at;
     }
 }
