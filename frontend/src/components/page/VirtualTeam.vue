@@ -58,7 +58,7 @@ export default {
     },
     computed: {
         players() {
-            return this.team.players();
+            return this.team.players;
         },
     },
 };
