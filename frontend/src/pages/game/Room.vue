@@ -1,50 +1,71 @@
 <template>
     <div>
-        <div v-if="room">
-            <div id="Room Details">
-                <h1>{{ room.name }}</h1>
-            </div>
-            <div>
-                <h3>Payers yet to join a team</h3>
-                <div
-                    v-for="(player, index) in teamlessPlayers"
-                    :key="index"
-                >
-                    <Player
-                        :player="player"
-                        :host="player.id ? player.id === room.host_id : false"
-                    />
-                </div>
-            </div>
-            <div id="teams">
-                <div>
-                    <div
-                        v-for="team in teams"
-                        :key="team.name"
-                    >
-                        <VirtualTeam
-                            :team="team"
-                            :host-id="room.host_id"
-                            @joinTeam="joinTeam(team.name)"
-                        />
+        <div
+            v-if="room"
+            class="my-8"
+        >
+            <div
+                class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8"
+            >
+                <h1 class="text-4xl md:text-5xl">
+                    {{ room.name }} | {{ getTopicNameById(room.topic_id) }}
+                </h1>
+
+                <div v-if="room">
+                    <div>
+                        <h3>Payers yet to join a team</h3>
+                        <div
+                            v-for="(player, index) in teamlessPlayers"
+                            :key="index"
+                        >
+                            <Player
+                                :player="player"
+                                :host="player.id ? player.id === room.host_id : false"
+                            />
+                        </div>
+                    </div>
+                    <div id="teams">
+                        <div>
+                            <div
+                                v-for="team in teams"
+                                :key="team.name"
+                            >
+                                <VirtualTeam
+                                    :team="team"
+                                    :host-id="room.host_id"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <button
-                        class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
-                        @click="display.showTeamForm = true"
-                    >
-                        <font-awesome-icon
-                            icon="plus"
-                            class="text-l cursor-pointer"
+                <div class="my-2">
+                    <div class="flex flex-col justify-center gap-3 md:flex-row text-base shadow p-5 bg-gray-100">
+                        <button
+                            class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                            @click="display.showTeamForm = true"
+                        >
+                            <font-awesome-icon
+                                icon="plus"
+                                class="text-l cursor-pointer"
+                            />
+                            {{ $t('room.createTeam') }}
+                        </button>
+                        <button
+                            class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                        >
+                            <font-awesome-icon
+                                icon="sign-out-alt"
+                                class="text-l cursor-pointer"
+                            />
+                            {{ $t('room.leaveRoom') }}
+                        </button>
+
+                        <CreateTeamForm
+                            v-show="display.showTeamForm"
+                            @close="display.showTeamForm = false"
+                            @createTeam="createTeam"
                         />
-                        {{ $t('dashboard.createTeam') }}
-                    </button>
-                    <CreateTeamForm
-                        v-show="display.showTeamForm"
-                        @close="display.showTeamForm = false"
-                        @createTeam="createTeam"
-                    />
+                    </div>
                 </div>
             </div>
         </div>
@@ -80,6 +101,7 @@ export default {
         ...mapGetters({
             getUsers: 'user/getUsers',
             getUser: 'user/getUser',
+            topicList: 'topicList',
         }),
         topic_id() {
             return this.room.topic_id;
@@ -224,8 +246,9 @@ export default {
                 type: 'success',
             });
         },
-        helloHello(e) {
-            console.log('HELLLO', e);
+        getTopicNameById(topicId) {
+            const res = this.topicList.find((topic) => topic.id === topicId);
+            return res ? res.name : topicId;
         },
     },
 };
