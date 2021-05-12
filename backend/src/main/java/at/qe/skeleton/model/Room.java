@@ -7,24 +7,24 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Room {
 
-    private long room_id;
+    private long id;
     private String pi_name;
     private long host_id;
     private Map<Long, UserIdVirtualUser> players;
     private Map<String, VirtualTeam> teams;
     private long game_id = -1;
-    private String room_name;
+    private String room;
     private Long topic_id;
     private Cube cube;
     private boolean connectedWithPiAndCube = false;
 
     public Room(long room_id, long host_id) {
-        this.room_id = room_id;
+        this.id = room_id;
         this.host_id = host_id;
         this.players = new ConcurrentHashMap<>();
         this.teams = new ConcurrentHashMap<>();
         players.put(host_id, new UserIdVirtualUser(host_id));
-        this.room_name = "Room " + host_id;
+        this.room = "Room " + host_id;
     }
 
     public void removeFromAllTeams (Long userId) {
@@ -50,12 +50,12 @@ public class Room {
         teams.values().removeIf((virtualTeam -> virtualTeam.getPlayers().isEmpty()));
     }
 
-    public long getRoom_id() {
-        return room_id;
+    public long getId() {
+        return id;
     }
 
-    public void setRoom_id(long room_id) {
-        this.room_id = room_id;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getPi_name() {
@@ -98,12 +98,12 @@ public class Room {
         this.game_id = game_id;
     }
 
-    public String getRoom_name() {
-        return room_name;
+    public String getRoom() {
+        return room;
     }
 
-    public void setRoom_name(String room_name) {
-        this.room_name = room_name;
+    public void setRoom(String room) {
+        this.room = room;
     }
 
     public Long getTopic_id() {

@@ -17,7 +17,6 @@ import javax.persistence.EntityExistsException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
@@ -47,7 +46,7 @@ public class RoomService {
         long hostId = userService.getAuthenticatedUser().get().getId();
         removePlayer(hostId);
         Room newRoom = new Room(counter++, hostId);
-        rooms.put(newRoom.getRoom_id(), newRoom);
+        rooms.put(newRoom.getId(), newRoom);
         roomController.roomCreated(newRoom);
         return newRoom;
     }
@@ -57,14 +56,14 @@ public class RoomService {
         long hostId = userService.getAuthenticatedUser().get().getId();
         removePlayer(hostId);
         Room newRoom = new Room(counter++, hostId);
-        if (roomRequest.getRoom_name() != null)
-            newRoom.setRoom_name(roomRequest.getRoom_name());
+        if (roomRequest.getRoom() != null)
+            newRoom.setRoom(roomRequest.getRoom());
         if (roomRequest.getTopic_id() != null) {
             if (!topicRepository.existsById(roomRequest.getTopic_id()))
                 throw new TopicNotFoundException(roomRequest.getTopic_id());
             newRoom.setTopic_id(roomRequest.getTopic_id());
         }
-        rooms.put(newRoom.getRoom_id(), newRoom);
+        rooms.put(newRoom.getId(), newRoom);
         roomController.roomCreated(newRoom);
         return newRoom;
     }
@@ -88,9 +87,9 @@ public class RoomService {
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public Room updateRoom(Room room) {
-        if (userService.getAuthenticatedUser().get().getId() != rooms.get(room.getRoom_id()).getHost_id())
+        if (userService.getAuthenticatedUser().get().getId() != rooms.get(room.getId()).getHost_id())
             throw new AccessDeniedException("not Room Host");
-        rooms.put(room.getRoom_id(), room);
+        rooms.put(room.getId(), room);
         roomController.roomChanged(room);
         return room;
     }

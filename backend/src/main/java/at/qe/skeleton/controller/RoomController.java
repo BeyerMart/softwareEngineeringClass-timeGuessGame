@@ -9,7 +9,6 @@ import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import at.qe.skeleton.services.RoomService;
 import at.qe.skeleton.services.UserService;
-import io.jsonwebtoken.lang.Arrays;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -131,7 +130,7 @@ public class RoomController {
     @GetMapping(value = "/rooms/{id}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getVirtualTeams (@PathVariable Long id) {
         Room room = roomService.getRoomById(id).orElseThrow(() -> new RoomNotFoundException(id));
-        List<VirtualTeamDto> teams = room.getTeams().values().stream().map(virtualTeam -> new VirtualTeamDto(virtualTeam.getTeam_name(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers())))).collect(Collectors.toList());
+        List<VirtualTeamDto> teams = room.getTeams().values().stream().map(virtualTeam -> new VirtualTeamDto(virtualTeam.getName(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers())))).collect(Collectors.toList());
         return ResponseEntity.ok((new SuccessResponse(teams)).toString());
     }
 
@@ -148,13 +147,13 @@ public class RoomController {
 
     @PostMapping("/rooms/{roomId}/teams")
     public ResponseEntity<?> joinTeam(@PathVariable Long roomId, @RequestBody VirtualTeam team) {
-        VirtualTeam virtualTeam = roomService.joinTeam(roomId, team.getTeam_name());
+        VirtualTeam virtualTeam = roomService.joinTeam(roomId, team.getName());
         return ResponseEntity.ok((new SuccessResponse(virtualTeam)).toString());
     }
 
     @DeleteMapping("/rooms/{roomId}/teams")
     public ResponseEntity<?> leaveTeam(@PathVariable Long roomId, @RequestBody VirtualTeam team) {
-        if (roomService.leaveTeam(roomId, team.getTeam_name()))
+        if (roomService.leaveTeam(roomId, team.getName()))
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
@@ -165,44 +164,44 @@ public class RoomController {
 
     public void roomDeleted(Room room) {
         template.convertAndSend("/rooms", (new WebsocketResponse(room, WSResponseType.ROOM_DELETED)).toString());
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(room, WSResponseType.ROOM_DELETED)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(room, WSResponseType.ROOM_DELETED)).toString());
     }
 
     public void roomChanged(Room room) {
         template.convertAndSend("/rooms", (new WebsocketResponse(room, WSResponseType.ROOM_CHANGED)).toString());
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(room, WSResponseType.ROOM_CHANGED)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(room, WSResponseType.ROOM_CHANGED)).toString());
     }
 
     public void userJoinedRoom(VirtualUser virtualUser, Room room) {
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(virtualUserController.convertToDto(virtualUser), WSResponseType.USER_JOINED_ROOM)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(virtualUserController.convertToDto(virtualUser), WSResponseType.USER_JOINED_ROOM)).toString());
     }
 
     public void userJoinedRoom(User user, Room room) {
         UserDto userDto = new ModelMapper().map(user, UserDto.class);
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(userDto, WSResponseType.USER_JOINED_ROOM)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(userDto, WSResponseType.USER_JOINED_ROOM)).toString());
     }
 
     public void userLeftRoom(User user, Room room) {
         UserDto userDto = new ModelMapper().map(user, UserDto.class);
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(userDto, WSResponseType.USER_LEFT_ROOM)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(userDto, WSResponseType.USER_LEFT_ROOM)).toString());
     }
 
     public void userLeftRoom(VirtualUser virtualUser, Room room) {
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(virtualUserController.convertToDto(virtualUser), WSResponseType.USER_LEFT_ROOM)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(virtualUserController.convertToDto(virtualUser), WSResponseType.USER_LEFT_ROOM)).toString());
     }
 
     public void userJoinedTeam(UserIdVirtualUser user, VirtualTeam virtualTeam, Room room) {
         Map<String, Object> data = new HashMap<>();
-        data.put("team", new VirtualTeamDto(virtualTeam.getTeam_name(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers()))));
+        data.put("team", new VirtualTeamDto(virtualTeam.getName(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers()))));
         data.put("user", userController.convertToDto(userService.getUserById(user.getUser_id()).orElseThrow(() -> new UserNotFoundException(user.getUser_id()))));
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(data, WSResponseType.USER_JOINED_TEAM)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(data, WSResponseType.USER_JOINED_TEAM)).toString());
     }
 
     public void userLeftTeam(UserIdVirtualUser user, VirtualTeam virtualTeam, Room room) {
         Map<String, Object> data = new HashMap<>();
-        data.put("team", new VirtualTeamDto(virtualTeam.getTeam_name(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers()))));
+        data.put("team", new VirtualTeamDto(virtualTeam.getName(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers()))));
         data.put("user", userController.convertToDto(userService.getUserById(user.getUser_id()).orElseThrow(() -> new UserNotFoundException(user.getUser_id()))));
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(data, WSResponseType.USER_LEFT_TEAM)).toString());
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(data, WSResponseType.USER_LEFT_TEAM)).toString());
     }
 
     @PostMapping("/rooms/{id}/connect_pi")
@@ -230,14 +229,14 @@ public class RoomController {
         backendRoom.setConnectedWithPiAndCube(false);
         backendRoom.setCube(null);
         roomService.updateRoom(backendRoom);
-        template.convertAndSend("/rooms/" + backendRoom.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
+        template.convertAndSend("/rooms/" + backendRoom.getId(), WSResponseType.NOT_CONNECTED.toString());
     }
     public void cubeConnected(int roomIdOnPi, Cube cube){
         Room backendRoom = roomService.getRoomById(roomIdOnPi).get();
         backendRoom.setConnectedWithPiAndCube(true);
         backendRoom.setCube(cube);
         roomService.updateRoom(backendRoom);
-        template.convertAndSend("/rooms/" + backendRoom.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
+        template.convertAndSend("/rooms/" + backendRoom.getId(), WSResponseType.FOUND_AND_CONNECTED.toString());
     }
 
     private Set<VirtualUser> getVirtualUsersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
