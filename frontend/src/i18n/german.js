@@ -10,6 +10,7 @@ export default {
         yes: 'Ja',
         no: 'Nein',
         role: 'Rolle',
+        create: 'Erstellen',
     },
     errors: {
         back: 'Zurück',

@@ -30,15 +30,21 @@
                     </div>
                 </div>
                 <div>
-                    <input
-                        v-model="newTeamName"
-                        placeholder="new team name"
-                    >
                     <button
-                        @click="createTeam(newTeamName)"
+                        class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                        @click="display.showTeamForm = true"
                     >
-                        Create Team
+                        <font-awesome-icon
+                            icon="plus"
+                            class="text-l cursor-pointer"
+                        />
+                        {{ $t('dashboard.createTeam') }}
                     </button>
+                    <CreateTeamForm
+                        v-show="display.showTeamForm"
+                        @close="display.showTeamForm = false"
+                        @createTeam="createTeam"
+                    />
                 </div>
             </div>
         </div>
@@ -52,11 +58,12 @@ import * as RoomService from '@/services/room.service';
 import * as TopicService from '@/services/topic.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
 import Player from '@/components/page/Player';
+import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
 
 export default {
 
     name: 'Room',
-    components: { Player, VirtualTeam },
+    components: { Player, VirtualTeam, CreateTeamForm },
     data() {
         return {
             id: this.$route.params.id,
@@ -64,7 +71,9 @@ export default {
             topic: '',
             players: [],
             teams: [],
-            newTeamName: '',
+            display: {
+                showTeamForm: false,
+            },
         };
     },
     computed: {
@@ -206,6 +215,9 @@ export default {
                 title: message,
                 type: 'success',
             });
+        },
+        helloHello(e) {
+            console.log('HELLLO', e);
         },
     },
 };
