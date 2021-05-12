@@ -17,6 +17,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,6 +52,7 @@ public class TopicServiceTest {
         topic.setCreator(admin);
         topic.setName(UUID.randomUUID().toString().substring(0,20));
         topic.setId(1000L);
+        topic.setTerms(new HashSet<>());
 
         Mockito.when(topicRepository.save(topic)).thenReturn(topic);
         Mockito.when(topicRepository.existsById(topic.getId())).thenReturn(true);

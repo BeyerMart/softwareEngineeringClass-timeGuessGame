@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -120,10 +121,28 @@ public class UserService {
      * @param user the user to delete
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void deleteUser(User user) {
+    public User deleteUser(User user) {
         checkForHigherRoles(user);
-        userRepository.delete(user);
+
+        user.setDeletedAt(new Timestamp(System.currentTimeMillis()));
         log.info(getAuthenticatedUser().get().getUsername() + " deleted user " + user.getUsername());
+
+        return userRepository.save(user);
+    }
+
+    /**
+     * Restores the user.
+     *
+     * @param user the user to restore
+     */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public User restoreUser(User user) {
+        checkForHigherRoles(user);
+
+        user.setDeletedAt(null);
+        log.info(getAuthenticatedUser().get().getUsername() + " restored user " + user.getUsername());
+
+        return userRepository.save(user);
     }
 
     /**

@@ -129,9 +129,22 @@ public class GameController {
     @DeleteMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     private ResponseEntity<?> deleteGame(@PathVariable Long gameId){
-        GameDto game = convertToGameDto(gameService.findGame(gameId).get());
-        gameService.deleteGame(gameService.findGame(gameId).get());
-        gameDeletedResponse(game);
+        Game game = gameService.findGame(gameId).get();
+        GameDto gameDto = convertToGameDto(game);
+
+        //Unset winning team (due to db reference)
+        if(game.getWinner() != null) {
+            game.setWinner(null);
+            game = gameService.updateGame(game);
+        }
+
+        //Delete teams
+        for(Team team : game.getTeams()) {
+            teamService.deleteTeam(team);
+        }
+
+        gameService.deleteGame(game);
+        gameDeletedResponse(gameDto);
 
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
@@ -207,6 +220,7 @@ public class GameController {
     public GameDto convertToGameDto(Game game) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         modelMapper.typeMap(Game.class, GameDto.class).addMappings(m -> m.map(src -> src.getTopic().getId(), GameDto::setTopic_id));
+        modelMapper.typeMap(Game.class, GameDto.class).addMappings(m -> m.map(src -> src.getWinner().getId(), GameDto::setWinner_id));
         return modelMapper.map(game, GameDto.class);
     }
 

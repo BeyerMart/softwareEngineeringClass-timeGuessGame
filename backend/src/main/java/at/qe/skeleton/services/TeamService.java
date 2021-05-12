@@ -168,6 +168,10 @@ public class TeamService {
             throw (new TeamNotFoundException(team.getId()));
         }
 
+        //Remove database relationships
+        team.setUsers(new HashSet<>());
+        teamRepository.save(team);
+
         //Remove virtual users if exist
         virtualUsers.remove(team.getId());
 

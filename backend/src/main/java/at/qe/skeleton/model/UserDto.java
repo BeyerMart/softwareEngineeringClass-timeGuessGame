@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,8 @@ public class UserDto {
     private String email;
 
     private Timestamp created_at;
+
+    private Timestamp deleted_at;
 
 
     @NotNull
@@ -85,5 +88,13 @@ public class UserDto {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public Timestamp getDeletedAt() {
+        return deleted_at;
+    }
+
+    public void setDeletedAt(Timestamp deleted_at) {
+        this.deleted_at = deleted_at;
     }
 }

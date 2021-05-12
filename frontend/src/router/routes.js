@@ -5,6 +5,7 @@ import Signup from '@/pages/auth/Signup';
 import Login from '@/pages/auth/Login';
 import Auth from '@/pages/auth/Auth';
 import Profile from '@/pages/Profile';
+import AdminDashboard from '@/pages/AdminDashboard';
 import WSDebug from '@/pages/WSDebug';
 
 const routes = [
@@ -41,6 +42,15 @@ const routes = [
         component: Profile,
         meta: {
             auth: true,
+        },
+    },
+    {
+        path: '/admin',
+        name: 'Dashboard',
+        component: AdminDashboard,
+        meta: {
+            auth: true,
+            role: ['ROLE_ADMIN', 'ROLE_MANAGER'],
         },
     },
     /* Errors */
