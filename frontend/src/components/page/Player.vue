@@ -27,14 +27,16 @@ export default {
         badges: {
             required: false,
             type: Array,
-            default: [],
+            default() {
+                return [];
+            },
         },
     },
     methods: {
         getClass(colour) {
-            return `inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-${colour}-100 bg-${colour}-600 rounded-full`
-        }
-    }
+            return `inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-${colour}-100 bg-${colour}-600 rounded-full`;
+        },
+    },
 };
 </script>
 

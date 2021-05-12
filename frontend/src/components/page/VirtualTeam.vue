@@ -53,6 +53,7 @@ export default {
         hostId: {
             default: null,
             required: false,
+            type: Number,
         },
     },
     computed: {

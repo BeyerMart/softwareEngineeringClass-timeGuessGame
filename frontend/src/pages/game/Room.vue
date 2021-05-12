@@ -138,18 +138,13 @@ export default {
                     type: 'error',
                 });
                 break;
-
             case 'USER_JOINED_TEAM':
-                this.$notify({
-                    title: message.data.username + this.$t('game.messages.userJoined'),
-                    type: 'error',
-                });
+                if (this.teams.some((team) => team.name === message.data.team.name)) { this.teams = this.teams.map((team) => (team.name === message.data.team.name ? message.data.team : team)); } else { this.teams.push(message.data.team); }
+                this.notifySuccess(`${message.data.user.username} joined team ${message.data.team.name}`); // TODO: translate
                 break;
             case 'USER_LEFT_TEAM':
-                this.$notify({
-                    title: message.data.username + this.$t('game.messages.userJoined'),
-                    type: 'error',
-                });
+                if (!message.data.team.players.length) { this.teams = this.teams.filter((team) => team.name !== message.data.team.length); } else { this.teams = this.teams.map((team) => (team.name === message.data.team.name ? message.data.team : team)); }
+                this.notifyError(`${message.data.user.username} left team ${message.data.team.name}`); // TODO: translate
                 break;
             default:
                 break;
