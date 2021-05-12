@@ -1,19 +1,22 @@
 <template>
-    <div class="w-4/5 h-10 py-3 px-1">
-        <p class="hover:text-blue-dark">
-            {{ player.username }}
-        </p>
-        <p class="text-sm text-grey-dark">
-            <span
-                v-if="player.virtual_id"
-                class="inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full"
-            >Virtual User</span>
-            <span
-                v-for="(badge, index) in badges"
-                :key="index"
-                :class="getClass(badge.colour)"
-            >badge.text</span>
-        </p>
+    <div class="w-full flex items-center justify-between p-6 space-x-6">
+        <div class="flex-1 truncate">
+            <div class="flex items-center space-x-3">
+                <h3 class="text-gray-900 text-sm font-medium truncate">
+                    {{ player.username }}
+                </h3>
+                <span
+                    v-if="player.virtual_id"
+                    class="flex-shrink-0 inline-block px-2 py-0.5 text-green-800 text-xs font-medium bg-green-100 rounded-full"
+                >Virtual User</span>
+                <span
+                    v-for="(badge, index) in badges"
+                    :key="index"
+                    class="flex-shrink-0 inline-block px-2 py-0.5 text-xs font-medium rounded-full"
+                    :class="getClass(badge.colour)"
+                >{{ badge.text }}</span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -34,7 +37,7 @@ export default {
     },
     methods: {
         getClass(colour) {
-            return `inline-flex items-center justify-center px-2 py-1 mr-2 text-xs font-bold leading-none text-${colour}-100 bg-${colour}-600 rounded-full`;
+            return `text-${colour}-100 bg-${colour}-600`;
         },
     },
 };

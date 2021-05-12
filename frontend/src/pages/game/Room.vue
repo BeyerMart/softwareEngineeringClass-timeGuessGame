@@ -14,15 +14,21 @@
                 <div v-if="room">
                     <div>
                         <h3>Payers yet to join a team</h3>
-                        <div
-                            v-for="(player, index) in teamlessPlayers"
-                            :key="index"
+
+                        <ul
+                            class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
                         >
-                            <Player
-                                :player="player"
-                                :host="player.id ? player.id === room.host_id : false"
-                            />
-                        </div>
+                            <li
+                                v-for="(player, index) in teamlessPlayers"
+                                :key="index"
+                                class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
+                            >
+                                <Player
+                                    :player="player"
+                                    :host="player.id ? player.id === room.host_id : false"
+                                />
+                            </li>
+                        </ul>
                     </div>
                     <div id="teams">
                         <div>
