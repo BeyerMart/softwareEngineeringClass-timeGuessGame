@@ -7,7 +7,7 @@ export const topicModule = {
     actions: {
         async fetchTopics({ commit, state }, forceFetch = false) {
             if (state.topics.length === 0 || forceFetch) {
-                const response = await TopicsService.fetchTopics();
+                const response = await TopicsService.getTopics();
                 commit('setTopics', response.data);
             }
         },
