@@ -47,6 +47,7 @@ export default {
         points: 'Points',
         score: 'Score',
         topic: 'Topic',
+        createdAt: 'Creation date',
     },
     login: {
         login: 'Login',
@@ -84,8 +85,11 @@ export default {
             topicEditSuccess: 'Topic edited!',
             topicCreateSuccessMessage: '{topicName} was created successfully',
             topicEditSuccessMessage: '{topicName} was edited successfully',
+            topicDeleteSuccess: 'Topic was deleted successfully',
             termCreateSuccess: 'Term created!',
             termCreateSuccessMessage: '{termName} was created successfully',
+            userDeleteSuccess: 'User deleted',
+            userDeleteSuccessMessage: 'User: {userName} was deleted successfully',
         },
     },
     profile: {

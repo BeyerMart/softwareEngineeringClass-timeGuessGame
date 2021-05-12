@@ -16,7 +16,7 @@
                 <tr
                     v-for="(term, index) in terms"
                     :key="term.id"
-                    :class="{ 'bg-gray-50': index % 2 === 0}"
+                    :class="{ 'bg-gray-50': index % 2 !== 0}"
                 >
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {{ term.id }}

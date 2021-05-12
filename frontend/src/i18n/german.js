@@ -48,6 +48,7 @@ export default {
         points: 'Punkte',
         score: 'Punktestand',
         topic: 'Themengebiet',
+        createdAt: 'Erstelldatum',
     },
     login: {
         login: 'Einloggen',
@@ -88,6 +89,8 @@ export default {
             topicDeleteSuccess: 'Themengebiet wurde erfolgreich entfernt',
             termCreateSuccess: 'Begriff hinzugefügt!',
             termCreateSuccessMessage: '{termName} wurde erfolgreich hinzugefügt',
+            userDeleteSuccess: 'Benutzer gelöscht.',
+            userDeleteSuccessMessage: 'Benutzer: {userName} wurde erfolgreich gelöscht.',
         },
     },
     profile: {

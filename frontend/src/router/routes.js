@@ -46,11 +46,11 @@ const routes = [
     },
     {
         path: '/admin',
-        name: 'AdminDashboard',
+        name: 'Dashboard',
         component: AdminDashboard,
         meta: {
             auth: true,
-            role: ['ROLE_ADMIN'],
+            role: ['ROLE_ADMIN', 'ROLE_MANAGER'],
         },
     },
     /* Errors */

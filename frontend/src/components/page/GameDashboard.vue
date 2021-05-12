@@ -14,32 +14,31 @@
             </thead>
             <tbody>
                 <tr
-                    v-for="(user, index) in users"
-                    :key="user.id"
-                    class="cursor-pointer hover:bg-gray-200"
-                    :class="{ 'bg-gray-50': index % 2 === 0}"
-                    @click="gotoUserProfile(user)"
+                    v-for="(game, index) in games"
+                    :key="game.id"
+                    class="cursor-default"
+                    :class="{ 'bg-gray-50': index % 2 !== 0}"
                 >
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {{ user.id }}
+                        {{ game.id }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {{ user.username }}
+                        {{ game.name }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {{ user.email }}
+                        {{ getTeamName(game.team_id) }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {{ user.role }}
+                        {{ getTopicName(game.topic_id) }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {{ registrationDate(user.created_at) }}
+                        {{ creationDate(game.created_at) }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         <font-awesome-icon
                             icon="trash"
                             class="text-l cursor-pointer"
-                            @click.stop="deleteUser(user)"
+                            @click="deleteGame(game)"
                         />
                     </td>
                 </tr>
@@ -49,11 +48,20 @@
 </template>
 
 <script>
-import { deleteUser } from '@/services/user.service';
+import { getTeams } from '@/services/team.service';
+import { deleteGame } from '@/services/game.service';
 
 export default {
-    name: 'UserTable',
+    name: 'GameDashboard',
     props: {
+        games: {
+            type: Array,
+            default: () => {},
+        },
+        topics: {
+            type: Array,
+            default: () => {},
+        },
         users: {
             type: Array,
             default: () => {},
@@ -63,15 +71,34 @@ export default {
         return {
             columns: [
                 'ID',
-                this.$t('signup.username'),
-                this.$t('signup.email'),
-                this.$t('generic.role'),
-                this.$t('profile.registrationDate'),
-                this.$t('dashboard.options')],
+                this.$t('generic.name'),
+                this.$t('game.teamName'),
+                this.$t('game.topic'),
+                this.$t('game.createdAt'),
+                this.$t('dashboard.options'),
+            ],
+            teams: [],
+            fetched: false,
         };
     },
+    watch: {
+        games() {},
+    },
+    mounted() {
+        this.getTeams();
+    },
     methods: {
-        deleteUser(user) {
+        getTeams() {
+            if (!this.fetched) {
+                getTeams().then((res) => {
+                    this.teams = res.data;
+                }).catch((err) => {
+                    console.error(err.response);
+                });
+            }
+        },
+
+        deleteGame(game) {
             this.$confirm(
                 {
                     title: this.$t('generic.confirmTitle'),
@@ -83,13 +110,12 @@ export default {
                     },
                     callback: (confirm) => {
                         if (confirm) {
-                            deleteUser(user.id).then(() => {
+                            deleteGame(game.id).then(() => {
                                 this.$notify({
-                                    title: this.$t('dashboard.messages.deleteUserSuccess'),
-                                    text: this.$t('dashboard.messages.deleteUserMessage'),
+                                    title: this.$t('dashboard.messages.gameDeleteSuccess'),
                                     type: 'success',
                                 });
-                                this.$emit('fetchUsers');
+                                this.$emit('fetchGames');
                             }).catch((err) => {
                                 this.$notify({
                                     title: this.$t('generic.error'),
@@ -102,12 +128,20 @@ export default {
                 },
             );
         },
-        registrationDate(timestamp) {
+        creationDate(timestamp) {
             return new Date(timestamp).toLocaleDateString();
         },
-        gotoUserProfile(user) {
-            this.$router.push({ path: `/profile/${user.id}` });
+
+        getTopicName(topicId) {
+            const res = this.topics.find((topic) => topic.id === topicId);
+            return res ? res.name : topicId;
+        },
+
+        getTeamName(teamId) {
+            const res = this.teams.find((team) => team.id === teamId);
+            return res ? res.name : teamId;
         },
     },
+
 };
 </script>

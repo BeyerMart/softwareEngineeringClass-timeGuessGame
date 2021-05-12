@@ -22,7 +22,7 @@
                         <a
                             class="text-xs font-bold uppercase px-5 py-3 shadow rounded block leading-normal"
                             :class="{'text-gray-900 bg-white': openTab !== 2, 'bg-gray-100': openTab === 2}"
-                            @click="toggleTabs(2)"
+                            @click="toggleTabs(2); fetchTopics(); fetchGames();"
                         >
                             {{ $t('dashboard.games') }}
                         </a>
@@ -50,19 +50,19 @@
                             </div>
                             <div :class="{'hidden': openTab !== 2, 'block': openTab === 2}">
                                 <p>
-                                    Completely synergize resource taxing relationships via
-                                    premier niche markets. Professionally cultivate one-to-one
-                                    customer service with robust ideas.
-                                    <br>
-                                    <br>
-                                    Dynamically innovate resource-leveling customer service for
-                                    state of the art customer service.
+                                    <GameDashboard
+                                        :topics="topics"
+                                        :games="games"
+                                        :users="users"
+                                        @fetchGames="fetchGames(true)"
+                                    />
                                 </p>
                             </div>
 
                             <div :class="{'hidden': openTab !== 3, 'block': openTab === 3}">
                                 <p>
                                     <TopicDashboard
+                                        :users="users"
                                         :topics="topics"
                                         @fetchTopics="fetchTopics(true)"
                                     />
@@ -79,23 +79,28 @@
 <script>
 import { getTopics } from '@/services/topic.service';
 import { getUsers } from '@/services/user.service';
+import { getGames } from '@/services/game.service';
 import TopicDashboard from '@/components/page/TopicDashboard.vue';
 import UserDashboard from '@/components/page/UserDashboard.vue';
+import GameDashboard from '@/components/page/GameDashboard.vue';
 
 export default {
     name: 'AdminDashboard',
     components: {
         TopicDashboard,
         UserDashboard,
+        GameDashboard,
     },
     data() {
         return {
             topics: [],
             users: [],
+            games: [],
             openTab: 1,
             fetched: {
                 topics: false,
                 users: false,
+                games: false,
             },
         };
     },
@@ -107,12 +112,31 @@ export default {
         toggleTabs(tabNumber) {
             this.openTab = tabNumber;
         },
-
+        fetchGames(force = false) {
+            if (!this.fetched.games || force) {
+                getGames().then((res) => {
+                    this.games = res.data;
+                    this.fetched.games = true;
+                }).catch((err) => {
+                    this.$notify({
+                        title: this.$t('generic.error'),
+                        text: err.response.data.error,
+                        type: 'error',
+                    });
+                });
+            }
+        },
         fetchUsers(force = false) {
-            if (!this.fetched.user || force) {
+            if (!this.fetched.users || force) {
                 getUsers().then((res) => {
-                    this.users = res.data;
+                    this.users = res.data.filter((user) => user.deleted_at === null);
                     this.fetched.users = true;
+                }).catch((err) => {
+                    this.$notify({
+                        title: this.$t('generic.error'),
+                        text: err.response.data.error,
+                        type: 'error',
+                    });
                 });
             }
         },

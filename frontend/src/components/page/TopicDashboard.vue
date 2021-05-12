@@ -89,7 +89,7 @@
                                 :to="'/profile/' + topic.creator_id"
                                 class="flex flex-shrink-0 items-center"
                             >
-                                {{ topic.creator_id }}
+                                {{ getTopicCreator(topic.creator_id) }}
                             </router-link>
                         </td>
                         <td
@@ -171,6 +171,10 @@ export default {
             type: Array,
             default: () => {},
         },
+        users: {
+            type: Array,
+            default: () => {},
+        },
     },
 
     data() {
@@ -208,7 +212,7 @@ export default {
                         if (confirm) {
                             TopicService.deleteTopic(topicId).then(() => {
                                 this.$notify({
-                                    title: this.$t('dashboard.messages.deleteTopicSuccess'),
+                                    title: this.$t('dashboard.messages.topicDeleteSuccess'),
                                     type: 'success',
                                 });
                                 this.fetched = false;
@@ -237,6 +241,10 @@ export default {
                     type: 'error',
                 });
             });
+        },
+        getTopicCreator(topicId) {
+            const creator = this.users.find((user) => user.id === topicId);
+            return creator ? creator.username : topicId;
         },
     },
 
