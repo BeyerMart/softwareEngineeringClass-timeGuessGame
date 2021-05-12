@@ -31,7 +31,6 @@ public class TermService {
      */
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public Term addTerm (Long id, Term term){
-        Term newTerm = new Term();
         Topic topic = topicRepository.getOne(id);
 
         term.setCreated_at(timestamp);
@@ -40,8 +39,8 @@ public class TermService {
         term.setCorrect_guesses(0L);
         term.setAppearances(0L);
 
-        topic.getTerms().add(newTerm);
-        return termRepository.save(newTerm);
+        topic.getTerms().add(term);
+        return termRepository.save(term);
     }
 
     /**

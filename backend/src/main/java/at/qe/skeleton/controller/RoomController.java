@@ -10,6 +10,7 @@ import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import at.qe.skeleton.services.RoomService;
 import at.qe.skeleton.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -95,7 +96,7 @@ public class RoomController {
                 case "players":
                 case "teams":
                 case "game_id":
-
+                    break;
                 case "topic_id":
                     v = Long.parseLong((String) v);
                 default:

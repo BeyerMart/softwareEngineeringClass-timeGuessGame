@@ -17,6 +17,7 @@ public class Room {
     private Long topic_id;
     private Cube cube;
     private boolean connectedWithPiAndCube = false;
+    private int max_points;
 
     public Room(long room_id, long host_id) {
         this.id = room_id;
@@ -127,5 +128,13 @@ public class Room {
 
     public boolean isConnectedWithPiAndCube() {
         return connectedWithPiAndCube;
+    }
+
+    public int getMax_points() {
+        return max_points;
+    }
+
+    public void setMax_points(int max_points) {
+        this.max_points = max_points;
     }
 }

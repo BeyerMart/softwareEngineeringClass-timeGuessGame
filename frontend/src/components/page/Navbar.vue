@@ -115,6 +115,13 @@
                             >
                                 {{ $t('profile.profile') }}
                             </router-link>
+                            <router-link
+                                v-show="isUserLoggedIn && (isAdmin || isManager)"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                                :to="{ name: 'Dashboard' }"
+                            >
+                                {{ $t('dashboard.dashboard') }}
+                            </router-link>
                             <a
                                 href="#"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
@@ -164,6 +171,12 @@ export default {
     computed: {
         isUserLoggedIn() {
             return this.$store.getters['user/isLoggedIn'];
+        },
+        isAdmin() {
+            return this.$store.getters['user/isAdmin'];
+        },
+        isManager() {
+            return this.$store.getters['user/isManager'];
         },
     },
     methods: {

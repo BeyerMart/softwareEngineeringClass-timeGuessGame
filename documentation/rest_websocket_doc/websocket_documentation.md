@@ -29,6 +29,12 @@ Below is a table containing all available message types. `TYPE` equals the messa
 | ROOM_CHANGED        | The room name was updated         | All players                 |
 | GAME_CREATED        | The room is started               | All players of current room |
 | GAME_DELETED        | The game is deleted               | All players of current room |
+| ROLL_DICE           | The dice has to be rolled         | All players of current game |
+| GAMEPLAY_PRE_ROUND_TIMER  | The preround timer has started  | All players of current game |
+| GAMEPLAY_ROUND_START| The round has started                 | All players of current game |
+| GAMEPLAY_TIMER  | The timer of the current round has started   | All players of current game |
+| GAMEPLAY_CUBE_INFORMATION  | The dice has been rolled, facet information is sent (Term, Time, Activity, Potential points)  | Players of current game who are not part of guessing team |
+| GAMEPLAY_TEAMUSER  | A team and a user has been randomly selected to guess   | All players of current room |
 | ROOM_TOPIC_CHANGED  | The room topic has been updated   | All players of current room |
 | GAME_OVER           | The game is over                  | All players of current room |
 | GAME_TOPIC_CHANGED  | The game topic has been updated   | All players of current game |

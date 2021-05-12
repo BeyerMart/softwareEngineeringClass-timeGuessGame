@@ -6,6 +6,7 @@
             class="vue-notf mr-2"
             position="top right"
         />
+        <vue-confirm-dialog class="confirm-dialog" />
         <Footer v-show="showFooter" />
     </div>
 </template>
@@ -50,4 +51,23 @@ export default {
             margin: auto;
         }
     }
+    .confirm-dialog .vc-container {
+        @apply bg-white rounded-lg p-6 shadow-xl;
+    }
+    .confirm-dialog .vc-container .vc-title {
+        @apply text-lg my-2 font-bold uppercase tracking-normal;
+    }
+    .confirm-dialog .vc-container .vc-text {
+        @apply text-base my-2;
+    }
+    .confirm-dialog .vc-container .vc-btn-grid {
+        @apply flex justify-evenly rounded-none gap-2;
+    }
+    .confirm-dialog .vc-container .vc-btn-grid .vc-btn {
+        @apply rounded border-none w-full outline-none bg-gray-900 hover:bg-gray-600 text-white ;
+    }
+    .confirm-dialog .vc-container .vc-btn-grid .vc-btn.left {
+        @apply bg-gray-500 hover:bg-gray-300;
+    }
+
 </style>

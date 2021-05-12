@@ -5,8 +5,10 @@ import at.qe.skeleton.repository.GameRepository;
 import at.qe.skeleton.repository.TopicRepository;
 import at.qe.skeleton.repository.UserRepository;
 import at.qe.skeleton.services.GameService;
+import at.qe.skeleton.services.UserService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,8 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +37,9 @@ public class GameServiceTest {
 
     @MockBean
     private GameRepository gameRepository;
+
+    @MockBean
+    private UserService userService;
 
     private Topic topic;
     private User admin;
@@ -65,11 +69,14 @@ public class GameServiceTest {
         game.setTopic(topic);
         game.setName("Game For Tests");
         game.setId(1000L);
+        game.setTeams(new HashSet<>());
 
         Mockito.when(gameRepository.save(game)).thenReturn(game);
         Mockito.when(gameRepository.existsById(game.getId())).thenReturn(true);
         Mockito.when(gameRepository.getOne(game.getId())).thenReturn(game);
         Mockito.when(gameRepository.findAll()).thenReturn(Collections.singletonList(game));
+
+        Mockito.when(userService.getAuthenticatedUser()).thenReturn(Optional.of(admin));
     }
 
     /**
@@ -160,6 +167,82 @@ public class GameServiceTest {
     @WithMockUser(authorities = "ROLE_ADMIN")
     public void testDeleteGameAsAdmin() {
         assertDoesNotThrow(() -> gameService.deleteGame(game));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testBadCheckGamePoints() {
+        String result = gameService.checkGamePoints(game, admin);
+        assertEquals("You are not a player", result);
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testCheckGamePoints() {
+        Team team = new Team();
+        team.setUsers(Set.of(admin));
+        game.setTeams(Set.of(team));
+
+        Team testTeam = new Team();
+        testTeam.setUsers(new HashSet<>());
+        gameService.addGamePoints(game, testTeam);
+
+        String result = gameService.checkGamePoints(game, admin);
+        assertNull(result);
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testAddGamePoints() {
+        Team testTeam = new Team();
+        testTeam.setUsers(new HashSet<>());
+        gameService.addGamePoints(game, testTeam);
+        assertNotNull(gameService.getGamePoints(game));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testRemoveGamePoints() {
+        Team testTeam = new Team();
+        testTeam.setUsers(new HashSet<>());
+        gameService.addGamePoints(game, testTeam);
+        gameService.removeGamePoints(game);
+        assertNull(gameService.getGamePoints(game));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testRejectPoints() {
+        Team team = new Team();
+        team.setUsers(Set.of(admin));
+        game.setTeams(Set.of(team));
+
+        Team testTeam = new Team();
+        testTeam.setUsers(new HashSet<>());
+        gameService.addGamePoints(game, testTeam);
+
+        String result = gameService.rejectPoints(game);
+        assertNull(result);
+
+        result = gameService.rejectPoints(game); //Voting again shouldn't work
+        assertNotNull(result);
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testAcceptPoints() {
+        Team team = new Team();
+        team.setUsers(Set.of(admin));
+        game.setTeams(Set.of(team));
+
+        Team testTeam = new Team();
+        testTeam.setUsers(new HashSet<>());
+        gameService.addGamePoints(game, testTeam);
+
+        String result = gameService.confirmPoints(game);
+        assertNull(result);
+        result = gameService.confirmPoints(game); //Voting again shouldn't work
+        assertNotNull(result);
     }
 
 

@@ -20,7 +20,7 @@ public class TopicDto {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 128)
     private String name;
 
     private Timestamp created_at;
@@ -86,6 +86,6 @@ public class TopicDto {
     }
 
     public void setCreator_id(Long creator_id) {
-        this.created_at = created_at;
+        this.creator_id = creator_id;
     }
 }

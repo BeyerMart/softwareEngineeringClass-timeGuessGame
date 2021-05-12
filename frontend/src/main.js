@@ -8,22 +8,34 @@ import i18n from '@/i18n';
 import Vuelidate from 'vuelidate';
 import Notifications from 'vue-notification';
 import Multiselect from 'vue-multiselect';
+import VueConfirmDialog from 'vue-confirm-dialog';
 import { initSocket } from '@/services/websocket.service';
 
 // Icon font
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faEllipsisV, faExclamation, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+    faEllipsisV, faExclamation, faUpload, faChevronLeft, faPlus, faTimesCircle, faPen, faTrash, faFileImport,
+} from '@fortawesome/free-solid-svg-icons';
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add(faEllipsisV);
 library.add(faExclamation);
+library.add(faUpload);
+library.add(faChevronLeft);
+library.add(faPlus);
 library.add(faTimesCircle);
+library.add(faPen);
+library.add(faTrash);
+library.add(faFileImport);
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 // End of icon font
 
 Vue.component('Multiselect', Multiselect);
 Vue.use(Vuelidate);
 Vue.use(Notifications);
+Vue.use(VueConfirmDialog);
+Vue.component('VueConfirmDialog', VueConfirmDialog.default);
 
 Vue.config.productionTip = true;
 Vue.config.devtools = true;
