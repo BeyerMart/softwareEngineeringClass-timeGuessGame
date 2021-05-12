@@ -260,7 +260,7 @@ public class RoomService {
         } else
             team.getPlayers().add(user);
         roomController.roomChanged(room);
-        roomController.userJoinedTeam(user, room);
+        roomController.userJoinedTeam(user, team, room);
         return team;
     }
 
@@ -286,7 +286,7 @@ public class RoomService {
             if (team.getPlayers().isEmpty())
                 room.getTeams().remove(teamName);
             roomController.roomChanged(room);
-            roomController.userLeftTeam(user, room);
+            roomController.userLeftTeam(user, team, room);
             return true;
         }
         return false;
@@ -329,15 +329,5 @@ public class RoomService {
         }
     }
 
-    private Set<VirtualUser> getVirtualUsersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
-        Set<VirtualUser> virtualUsers = new HashSet<>();
-        userIdVirtualUsers.forEach(userIdVirtualUser -> {
-            virtualUsers.addAll(userIdVirtualUser.getVirtualUsers().values());
-        });
-        return virtualUsers;
-    }
 
-    private Set<User> getUsersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
-        return userIdVirtualUsers.stream().map(userIdVirtualUser -> userService.getUserById(userIdVirtualUser.getUser_id()).orElseThrow(() -> new UserNotFoundException(userIdVirtualUser.getUser_id()))).collect(Collectors.toSet());
-    }
 }

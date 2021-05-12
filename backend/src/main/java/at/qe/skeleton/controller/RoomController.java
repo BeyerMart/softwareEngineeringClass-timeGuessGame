@@ -1,6 +1,7 @@
 package at.qe.skeleton.controller;
 
 import at.qe.skeleton.exceptions.RoomNotFoundException;
+import at.qe.skeleton.exceptions.UserNotFoundException;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.payload.response.ErrorResponse;
 import at.qe.skeleton.payload.response.SuccessResponse;
@@ -8,6 +9,7 @@ import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import at.qe.skeleton.services.RoomService;
 import at.qe.skeleton.services.UserService;
+import io.jsonwebtoken.lang.Arrays;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -44,6 +47,9 @@ public class RoomController {
 
     @Autowired
     private CubeController cubeController;
+
+    @Autowired
+    private UserController userController;
 
 
     @PostMapping(value = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,7 +96,9 @@ public class RoomController {
                 case "players":
                 case "teams":
                 case "game_id":
-                    break;
+
+                case "topic_id":
+                    v = Long.parseLong((String) v);
                 default:
                     Field field = ReflectionUtils.findField(Room.class, (String) k);
                     field.setAccessible(true);
@@ -109,6 +117,22 @@ public class RoomController {
             roomService.joinRoom(id);
         }
         return ResponseEntity.ok((new SuccessResponse(roomService.getRoomById(id).get())).toString());
+    }
+
+    @GetMapping(value = "/rooms/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPlayersInRoom (@PathVariable Long id) {
+        ArrayList<Object> players = new ArrayList<>();
+        Room room = roomService.getRoomById(id).orElseThrow(() -> new RoomNotFoundException(id));
+        players.addAll(getUsersFromSet(new HashSet<>(room.getPlayers().values())));
+        players.addAll(getVirtualUsersFromSet(new HashSet<>(room.getPlayers().values())));
+        return ResponseEntity.ok((new SuccessResponse(players)).toString());
+    }
+
+    @GetMapping(value = "/rooms/{id}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getVirtualTeams (@PathVariable Long id) {
+        Room room = roomService.getRoomById(id).orElseThrow(() -> new RoomNotFoundException(id));
+        List<VirtualTeamDto> teams = room.getTeams().values().stream().map(virtualTeam -> new VirtualTeamDto(virtualTeam.getTeam_name(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers())))).collect(Collectors.toList());
+        return ResponseEntity.ok((new SuccessResponse(teams)).toString());
     }
 
     @DeleteMapping("/rooms/{roomId}/users/{userId}")
@@ -167,12 +191,18 @@ public class RoomController {
         template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(virtualUserController.convertToDto(virtualUser), WSResponseType.USER_LEFT_ROOM)).toString());
     }
 
-    public void userJoinedTeam(UserIdVirtualUser user, Room room) {
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(user, WSResponseType.USER_JOINED_TEAM)).toString());
+    public void userJoinedTeam(UserIdVirtualUser user, VirtualTeam virtualTeam, Room room) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("team", new VirtualTeamDto(virtualTeam.getTeam_name(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers()))));
+        data.put("user", userController.convertToDto(userService.getUserById(user.getUser_id()).orElseThrow(() -> new UserNotFoundException(user.getUser_id()))));
+        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(data, WSResponseType.USER_JOINED_TEAM)).toString());
     }
 
-    public void userLeftTeam(UserIdVirtualUser user, Room room) {
-        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(user, WSResponseType.USER_LEFT_TEAM)).toString());
+    public void userLeftTeam(UserIdVirtualUser user, VirtualTeam virtualTeam, Room room) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("team", new VirtualTeamDto(virtualTeam.getTeam_name(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers()))));
+        data.put("user", userController.convertToDto(userService.getUserById(user.getUser_id()).orElseThrow(() -> new UserNotFoundException(user.getUser_id()))));
+        template.convertAndSend("/rooms/" + room.getRoom_id(), (new WebsocketResponse(data, WSResponseType.USER_LEFT_TEAM)).toString());
     }
 
     @PostMapping("/rooms/{id}/connect_pi")
@@ -210,13 +240,22 @@ public class RoomController {
         template.convertAndSend("/rooms/" + backendRoom.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
     }
 
-//    private RoomDto convertToRoomDto(Room room) {
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        return modelMapper.map(room, RoomDto.class);
-//    }
-//
-//    private Room convertToRoomEntity(RoomDto roomDto) {
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        return modelMapper.map(roomDto, Room.class);
-//    }
+    private Set<VirtualUser> getVirtualUsersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
+        Set<VirtualUser> virtualUsers = new HashSet<>();
+        userIdVirtualUsers.forEach(userIdVirtualUser -> {
+            virtualUsers.addAll(userIdVirtualUser.getVirtualUsers().values());
+        });
+        return virtualUsers;
+    }
+
+    private Set<UserDto> getUsersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
+        return userIdVirtualUsers.stream()
+                .map(userIdVirtualUser -> userController.convertToDto(userService.getUserById(userIdVirtualUser.getUser_id()).orElseThrow(() -> new UserNotFoundException(userIdVirtualUser.getUser_id())))).collect(Collectors.toSet());
+    }
+
+    private Set<Object> getPlayersFromSet(Set<UserIdVirtualUser> userIdVirtualUsers) {
+        HashSet<Object> players = new HashSet<Object>(getVirtualUsersFromSet(userIdVirtualUsers));
+        players.addAll(getUsersFromSet(userIdVirtualUsers));
+        return players;
+    }
 }
