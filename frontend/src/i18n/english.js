@@ -9,6 +9,7 @@ export default {
         yes: 'Ja',
         no: 'Nein',
         role: 'Role',
+        create: 'Create',
     },
     errors: {
         back: 'Go back',
