@@ -19,7 +19,7 @@ public class Game {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 128)
     private String name;
 
     @ManyToOne()
