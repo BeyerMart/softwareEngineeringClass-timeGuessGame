@@ -9,7 +9,7 @@ export function fetchRooms() {
 export function createRoom(form) {
     if (form) {
         const room = {};
-        if (form.roomName) room.room_name = form.roomName;
+        if (form.roomName) room.name = form.roomName;
         if (form.topic) room.topic_id = form.topic;
         return axios.post(`${API_URL}/`, room);
     }
@@ -58,5 +58,5 @@ export function getPlayers(roomId) {
 }
 
 export function getTeams(roomId) {
-    return axios.get(`${API_URL}/${roomId}/teams/users`);
+    return axios.get(`${API_URL}/${roomId}/teams`);
 }

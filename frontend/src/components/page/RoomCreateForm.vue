@@ -140,7 +140,7 @@ export default {
                     type: 'success',
                 });
                 this.$emit('close');
-                this.$router.push(`room/${response.data.room_id}`);
+                this.$router.push(`room/${response.data.id}`);
             }).catch((err) => {
                 console.error(err);
             });

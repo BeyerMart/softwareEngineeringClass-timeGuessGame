@@ -1,8 +1,40 @@
 <template>
     <div>
-        Welcome to your room {{ room }}
-        The following Users have connected: {{ players }}
-        The following Teams are in this room {{ teams }}
+        <div v-if="room">
+            <div id="Room Details">
+                <h1>{{ room.name }}</h1>
+            </div>
+            <div>
+                <h3>Payers yet to join a team</h3>
+                <div
+                    v-for="(player, index) in teamlessPlayers"
+                    :key="index"
+                >
+                    <Player
+                        :player="player"
+                        :host="player.id ? player.id === room.host_id : false"
+                    />
+                </div>
+            </div>
+            <div id="teams">
+                <div>
+                    <div
+                        v-for="team in teams"
+                        :key="team.name"
+                    >
+                        <VirtualTeam
+                            :team="team"
+                            :host-id="room.host_id"
+                        />
+                    </div>
+                </div>
+                <div>
+                    <button>
+                        Create Team
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -11,10 +43,13 @@ import { mapActions, mapGetters } from 'vuex';
 import { subChannel, unsubChannel } from '@/services/websocket.service';
 import * as RoomService from '@/services/room.service';
 import * as TopicService from '@/services/topic.service';
+import VirtualTeam from '@/components/page/VirtualTeam';
+import Player from '@/components/page/Player';
 
 export default {
 
     name: 'Room',
+    components: { Player, VirtualTeam },
     data() {
         return {
             id: this.$route.params.id,
@@ -31,6 +66,10 @@ export default {
         }),
         topic_id() {
             return this.room.topic_id;
+        },
+        teamlessPlayers() {
+            return this.players
+                .filter((player) => !this.teams.some((team) => team.players.some((teamPlayer) => this.samePlayerCheck(teamPlayer, player))));
         },
     },
     watch: {
@@ -99,6 +138,7 @@ export default {
                     type: 'error',
                 });
                 break;
+
             case 'USER_JOINED_TEAM':
                 this.$notify({
                     title: message.data.username + this.$t('game.messages.userJoined'),
@@ -123,6 +163,32 @@ export default {
         ...mapActions({
             fetchTopics: 'fetchTopics',
         }),
+        samePlayerCheck(player1, player2) {
+            if (player1.virtual_id) return player1.virtual_id === player2.virtual_id;
+            return player1.id === player2.id;
+        },
+        createTeam(teamName) {
+            if (this.teams.some((team) => team.name === team.teamName)) this.notifyError('already exists'); // TODO: translate
+            if (!this.room.game_id || this.room.game_id < 0) this.notifyError("You can't create a new Team after the Game has started"); // TODO: translate
+            RoomService.joinTeam(this.room.id, { name: teamName }).then(() => {
+                this.notifySuccess('Team created successfully'); // TODO: translate
+            }).catch((error) => {
+                console.error(error);
+                this.notifyError(error.error);
+            });
+        },
+        notifyError(message) {
+            this.$notify({
+                title: message,
+                type: 'error',
+            });
+        },
+        notifySuccess(message) {
+            this.$notify({
+                title: message,
+                type: 'success',
+            });
+        },
     },
 };
 </script>

@@ -7,8 +7,16 @@
 
             <div class="absolute top-20 right-8 mt-6">
                 <button
+                    v-show="isLoggedIn"
                     class="bg-green-600 hover:bg-green-900 text-white font-bold py-3 px-4 border order-gray-900 rounded"
                     @click="showModal = true"
+                >
+                    {{ $t('game.createGame') }}
+                </button>
+                <button
+                    v-show="!isLoggedIn"
+                    class="opacity-50 bg-green-600 text-white font-bold py-3 px-4 border order-gray-900 rounded"
+                    @click="notLoggedInHandler()"
                 >
                     {{ $t('game.createGame') }}
                 </button>
@@ -55,13 +63,13 @@
                                     <tbody>
                                         <tr
                                             v-for="(room, index) in roomsList"
-                                            :key="room.room_id"
+                                            :key="room.id"
                                             class="cursor-pointer"
                                             :class="{ 'bg-gray-50': index % 2 !== 0 }"
                                             @click="roomClickHandler(room)"
                                         >
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {{ room.room_name }}
+                                                {{ room.name }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {{ room.amountOfPlayers }}/24
@@ -105,7 +113,13 @@ export default {
             showModal: false,
         };
     },
-    computed: { ...mapGetters(['roomsList', 'topicList', 'user/isLoggedIn']) },
+    computed: {
+        ...mapGetters({
+            roomsList: 'roomsList',
+            topicList: 'topicList',
+            isLoggedIn: 'user/isLoggedIn',
+        }),
+    },
     beforeDestroy() {
         unsubChannel('/rooms');
     },
@@ -132,24 +146,27 @@ export default {
     methods: {
         ...mapActions(['fetchRooms', 'fetchTopics']),
         ...mapMutations(['removeRoom', 'addRoom', 'updateRoom']),
+        notLoggedInHandler() {
+            this.$notify({
+                title: this.$t('errors.loginRequired'),
+                type: 'error',
+            });
+        },
         roomClickHandler(room) {
-            if (!this['user/isLoggedIn']) {
-                this.$notify({
-                    title: this.$t('errors.loginRequired'),
-                    type: 'error',
-                });
+            if (!this.isLoggedIn) {
+                this.notLoggedInHandler();
             } else if (room.amountOfPlayers >= 24) {
                 this.$notify({
                     title: this.$t('game.messages.roomAlreadyFull'),
                     type: 'error',
                 });
             } else {
-                joinRoom(room.room_id).then(() => {
+                joinRoom(room.id).then(() => {
                     this.$notify({
                         title: this.$t('game.messages.youJoinedRoom'),
                         type: 'success',
                     });
-                    this.$router.push(`room/${room.room_id}`);
+                    this.$router.push(`room/${room.id}`);
                 }).catch((error) => console.error(error));
             }
         },
