@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { unsubChannel } from '@/services/websocket.service';
+import { subChannel, unsubChannel } from '@/services/websocket.service';
 import { mapActions, mapGetters } from 'vuex';
 import * as GameService from '@/services/game.service';
 import * as RoomService from '@/services/room.service';
@@ -22,6 +22,14 @@ export default {
         return {
             game: {},
             room: {},
+            status: 'WAIT_FOR_NEXT_ROUND',
+            round: 0,
+            currentTeam: '',
+            currentUser: '',
+            term: '',
+            activity: '',
+            potentialPoints: '',
+            roundTime: 0,
         };
     },
     computed: {
@@ -65,9 +73,72 @@ export default {
         }).catch((error) => {
             console.error(error);
         });
+        subChannel(`rooms/${this.$route.params.id}`, (message) => {
+            console.log('You got a room message:');
+            console.log(message);
+            switch (message.type) {
+            case 'ROOM_CHANGED':
+                this.room = (message.data);
+                break;
+            case 'ROOM_DELETED':
+                this.$router.push('/');
+                break;
+            default:
+                break;
+            }
+        });
+        subChannel(`game/${this.gameId}`, (message) => {
+            console.log('You got a games message:');
+            console.log(message);
+            switch (message.type) {
+            case 'GAME_DELETED':
+                this.$emit('leftGame');
+                break;
+            case 'ROLL_DICE':
+                this.status = 'ROLL_DICE';
+                break;
+            case 'GAMEPLAY_ROUND_START':
+                this.round = message.data.round;
+                break;
+            case 'GAMEPLAY_PRE_ROUND_TIMER':
+                this.status = 'PREPARATION_TIME';
+                console.log(message.data.message.pre_round_time);
+                // TODO: start timer
+                break;
+            case 'GAMEPLAY_TIMER':
+                this.status = 'GUESS';
+                console.log(message.data.time);
+                // TODO: start timer
+                break;
+            case 'GAME_OVER':
+                break;
+            case 'ROOM_DELETED':
+                this.$router.push('/');
+                break;
+            case 'GAMEPLAY_CUBE_INFORMATION':
+                this.potentialPoints = message.data.points;
+                this.time = message.data.time;
+                this.term = message.data.term;
+                this.activity = message.data.activity;
+                break;
+            case 'GAMEPLAY_CURRENT_TEAMUSER':
+                this.currentUser = message.data.user;
+                this.currentTeam = message.data.team;
+                break;
+            case 'POINT_VALIDATION_STOP':
+                this.status = 'WAIT_FOR_NEXT_ROUND';
+                break;
+            case 'POINT_VALIDATION_START':
+                this.status = 'validation';
+                break;
+            default:
+                break;
+            }
+        });
     },
     beforeDestroy() {
         unsubChannel(`game/${this.gameId}`);
+        unsubChannel(`rooms/${this.$route.params.id}`);
     },
 };
 </script>

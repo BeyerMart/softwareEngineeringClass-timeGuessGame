@@ -7,6 +7,7 @@
         <Game
             v-else
             :game-id="gameId"
+            @leftGame="leftGameHandler"
         />
     </div>
 </template>
@@ -26,6 +27,9 @@ export default {
     methods: {
         joinedGameHandler(gameId) {
             this.gameId = gameId;
+        },
+        leftGameHandler() {
+            this.gameId = null;
         },
     },
 };
