@@ -92,6 +92,10 @@ export default {
             required: false,
             type: Number,
         },
+        isGamePlay: {
+            default: false,
+            type: Boolean,
+        },
     },
     computed: {
         players() {

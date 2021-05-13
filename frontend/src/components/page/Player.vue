@@ -1,8 +1,8 @@
 <template>
     <router-link
-        :to="'/profile/' + player.id"
+        :to="!player.virtual_id ? '/profile/' + player.id: ''"
     >
-        <div class="w-full flex items-center justify-between p-6 space-x-6 bg-white rounded mb-2">
+        <div class="w-full flex items-center justify-between p-3 space-x-6 bg-white rounded mb-2">
             <div class="flex-1 truncate">
                 <div class="flex items-center space-x-3">
                     <h3 class="text-gray-900 text-base font-medium truncate">
