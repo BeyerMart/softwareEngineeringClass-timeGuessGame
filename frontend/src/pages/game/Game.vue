@@ -1,5 +1,8 @@
 <template>
-    <h1>{{ gameId }}</h1>
+    <div>
+        <h1>{{ gameId }}</h1>
+        <span>Timer: {{ getTimer }}</span>
+    </div>
 </template>
 
 <script>
@@ -30,6 +33,10 @@ export default {
             activity: '',
             potentialPoints: '',
             roundTime: 0,
+            timer: {
+                remainingTime: 0,
+                nonce: 0,
+            },
         };
     },
     computed: {
@@ -38,6 +45,11 @@ export default {
             getUser: 'user/getUser',
             topicList: 'topicList',
         }),
+        getTimer() {
+            const mins = Math.floor(this.timer.remainingTime / 60);
+            const seconds = this.timer.remainingTime - (mins * 60);
+            return `${mins < 10 ? `0${mins}` : mins}:${seconds < 10 ? `0${seconds}` : seconds}`;
+        },
     },
     ...mapActions({
         fetchTopics: 'fetchTopics',
@@ -156,6 +168,27 @@ export default {
     beforeDestroy() {
         unsubChannel(`game/${this.gameId}`);
         unsubChannel(`rooms/${this.$route.params.id}`);
+    },
+    methods: {
+        setCountDown(duration) {
+            this.timer.remainingTime = duration;
+            this.timer.nonce = Math.random();
+            this.countDownLoop(this.timer.nonce);
+        },
+        /**
+         * Actively reduces timer time
+         * @param nonce used to exit if multiple reductions are running
+         */
+        countDownLoop(nonce) {
+            setTimeout(() => {
+                if (nonce === this.timer.nonce) {
+                    if (this.timer.remainingTime > 0) {
+                        this.timer.remainingTime--;
+                        this.countDownLoop(nonce);
+                    }
+                }
+            }, 1000);
+        },
     },
 };
 </script>
