@@ -296,6 +296,7 @@ public class GameplayController {
                 //-1 point for cheating
                 currentTeam.setPoints(currentTeam.getPoints() - 1);
             }
+            teamService.updateTeam(currentTeam);
 
             /*
              * Primary win condition
