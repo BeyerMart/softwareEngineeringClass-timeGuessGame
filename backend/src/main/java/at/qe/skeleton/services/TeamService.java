@@ -58,7 +58,7 @@ public class TeamService {
 
             //Check if user already exists
             List<VirtualUser> sameName = virtUserArr.stream().filter(user -> user.getUsername().equalsIgnoreCase(virtualUser.getUsername())).collect(Collectors.toList());
-            List<VirtualUser> sameId = sameName.stream().filter(user -> user.getCreator_id() == virtualUser.getCreator_id()).collect(Collectors.toList());
+            List<VirtualUser> sameId = sameName.stream().filter(user -> user.getCreator_id().equals(virtualUser.getCreator_id())).collect(Collectors.toList());
             if(sameName.size() != sameId.size()) return null;
             if(sameId.size() > 0) return sameId.get(0);
 
