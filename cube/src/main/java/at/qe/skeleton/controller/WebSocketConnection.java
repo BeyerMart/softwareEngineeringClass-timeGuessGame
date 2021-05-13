@@ -52,7 +52,7 @@ public class WebSocketConnection {
         this.client = new WebSocketStompClient(new SockJsClient(list));
         this.client.setMessageConverter(new StringMessageConverter());
         session = client.connect(String.format("ws://%s:%d/websocket", URL, PORT), new StompSessionHandlerAdapter() {
-        }).get(1, TimeUnit.SECONDS);
+        }).get(3, TimeUnit.SECONDS);
         //subscribeToChannel("register");
     }
 
