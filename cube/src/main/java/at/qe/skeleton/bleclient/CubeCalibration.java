@@ -62,6 +62,7 @@ public class CubeCalibration {
             return startCalibration();
         } else {
             logger.error("No valid response. shutting down.");
+            System.exit(1);
             return false;
         }
     }
