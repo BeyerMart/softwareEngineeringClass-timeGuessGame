@@ -123,6 +123,14 @@ public class CubeController {
 		return response.toString();
 	}
 
+	public void setRoomOfPiName(String piName, int roomId){
+		Cube cubeToSend = new Cube();
+		cubeToSend.setPiName(piName);
+		cubeToSend.setRoomId(roomId);
+		WebsocketResponse request = new WebsocketResponse(cubeToSend, WSResponseType.ROOM_CREATED);
+		template.convertAndSend("/cube", request.toString());
+	}
+
 	public void cubeStartFacetNotification(Room room) {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.START_FACET_NOTIFICATION);
 		template.convertAndSend("/cube", request.toString());

@@ -38,7 +38,7 @@ public class WebSocketConnection {
     //each Pi gets own Name
     private final String piName;
     //used to only accept / process messages for me / my cube.
-    private Cube cube;
+    //private Cube cube;
 
     public WebSocketConnection(CubeCalibration cubeCalibration) throws ExecutionException, InterruptedException, TimeoutException {
         logger.info("Connecting to Backend...");
@@ -52,7 +52,7 @@ public class WebSocketConnection {
         this.client = new WebSocketStompClient(new SockJsClient(list));
         this.client.setMessageConverter(new StringMessageConverter());
         session = client.connect(String.format("ws://%s:%d/websocket", URL, PORT), new StompSessionHandlerAdapter() {
-        }).get(1, TimeUnit.SECONDS);
+        }).get(3, TimeUnit.SECONDS);
         //subscribeToChannel("register");
     }
 
@@ -67,7 +67,7 @@ public class WebSocketConnection {
                     @Override
                     public void handleFrame(StompHeaders stompHeaders, Object payload) {
                         blockingQueue.add((String) payload);
-                        logger.info("Got this in my channel: " + (String) payload);
+                        logger.debug("Got this in my channel: " + (String) payload);
                         try {
                             logicController.handler((String) payload);
                         } catch (InterruptedException e) {
@@ -107,11 +107,11 @@ public class WebSocketConnection {
         String response = handleBackendResponse(request.toString());
     }
 
-    public void sendPiConnected() throws InterruptedException, JsonProcessingException {
+    /*public void sendPiConnected() throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.PI_CONNECTED);
         sendWebsocketRequest(request);
         String response = handleBackendResponse(request.toString());
-    }
+    }*/ 
 
 
     public String sendFacetNotification(Cube cube) throws InterruptedException, JsonProcessingException {
@@ -142,11 +142,11 @@ public class WebSocketConnection {
         session.send("/cube", message.toString());
     }
 
-    public void sendCubeAck(Cube cube) {
+    /*public void sendCubeAck(Cube cube) {
         this.cube = cube;
         WebsocketResponse message = new WebsocketResponse(cube, WSResponseType.OK);
         sendWebsocketRequest(message);
-    }
+    }*/
 
     private void sendWebsocketRequest(WebsocketResponse request) {
         logger.debug("Sending this request: " + request);
@@ -190,9 +190,9 @@ public class WebSocketConnection {
         if (client.isRunning()) client.start();
     }
 
-    public void setCube(Cube cube) {
+    /*public void setCube(Cube cube) {
         this.cube = cube;
-    }
+    }*/
 
     public String getPiName(){
         return piName;
