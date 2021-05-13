@@ -207,6 +207,7 @@ export default {
                 this.setCountDown(message.data.time);
                 break;
             case 'GAME_OVER':
+                // eslint-disable-next-line no-alert
                 alert(`${message.data.winner.name} won!`);
                 break;
             case 'ROOM_DELETED':
@@ -282,6 +283,19 @@ export default {
             GameService.confirmPoints(this.gameId).then(() => {
                 this.notifySuccess('Voted: Points confirmed'); // TODO: Translate
             }).catch((error) => console.error(error));
+        },
+        leaveGameHandler() {
+            const myTeam = this.game.teams.find((team) => team.players.some((player) => player.id && player.id === this.getUser.id));
+            this.game.teams.forEach((team) => {
+                team.players.forEach((player) => {
+                    if (player.creator_id && player.creator_id === this.getUser.id) {
+                        TeamService.leaveRoom(myTeam.id, player);
+                    }
+                });
+            });
+            TeamService.leaveRoom(myTeam.id).then(() => {
+                this.notifySuccess('successfully left Room'); // TODO: translate
+            });
         },
         notifyError(message) {
             this.$notify({
