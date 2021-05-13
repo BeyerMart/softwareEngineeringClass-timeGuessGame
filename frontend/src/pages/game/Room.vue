@@ -10,23 +10,60 @@
                 <h1 class="text-4xl md:text-5xl my-5">
                     {{ room.name }} | {{ getTopicNameById(room.topic_id) }}
                 </h1>
-
                 <div v-if="room">
+                    <div
+                        v-show="isHost"
+                        class="host-options my-2"
+                    >
+                        <div
+                            v-show="connectedPi"
+                            class="shadow inline-block p-4 bg-green-400 rounded"
+                        >
+                            Mit {{ connectedPi }} verbunden!
+                        </div>
+                        <div
+                            v-show="!connectedPi"
+                            class="w-full md:w-1/3"
+                        >
+                            <label class="block text-gray-700 text-sm mb-2">Wähle den PI aus</label>
+                            <div class="flex gap-2">
+                                <multiselect
+                                    v-model="selectedPi"
+                                    :options="piNamesTest"
+                                    :searchable="false"
+                                    :close-on-select="true"
+                                    :show-labels="false"
+                                    placeholder="PI auswählen"
+                                    class="inline-block"
+                                    @select="connectPi"
+                                />
+                                <button
+                                    class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                                    @click="refreshPis"
+                                >
+                                    <font-awesome-icon
+                                        icon="sync"
+                                        class="text-l cursor-pointer"
+                                    />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <h3 class="font-bold tracking-tight sm:text-2xl my-6">
                             Players yet to join a team
                         </h3>
                         <ul
-                            class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                            class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 my-5"
                         >
                             <li
                                 v-for="(player, index) in teamlessPlayers"
                                 :key="index"
-                                class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200 my-5"
+                                class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
                             >
                                 <Player
                                     :player="player"
-                                    :badges="room.host_id && player.id === room.host_id ? [{text: 'host', colour: 'green'}] : null"
+                                    :badges="room.host_id && player.id === room.host_id ? [{text: 'Host', colour: 'green'}] : null"
                                 />
                             </li>
                         </ul>
@@ -135,10 +172,12 @@ export default {
             players: [],
             teams: [],
             piNames: [],
+            piNamesTest: ['pi1', 'pi2'],
             display: {
                 showTeamForm: false,
                 showVUserForm: false,
             },
+            selectedPi: '',
         };
     },
     computed: {
@@ -158,7 +197,7 @@ export default {
             return this.room.pi_name;
         },
         isHost() {
-            return this.room.host.id === this.getUser.id;
+            return this.room.host_id === this.getUser.id;
         },
     },
     watch: {
