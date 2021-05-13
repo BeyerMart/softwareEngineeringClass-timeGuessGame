@@ -5,17 +5,17 @@
         </div>
         <div class="sm:ml-10 text-gray-300 font-medium">
             <a
-                href="#"
+                :href="'https://www.uibk.ac.at/index.html.' + $i18n.locale"
                 class="hover:text-white block"
-            >Link 1</a>
+            >{{ $t('generic.universityOfInnsbruck') }}</a>
             <a
                 href="#"
                 class="hover:text-white block"
-            >Link 2</a>
+            >{{ $t('generic.tos') }}</a>
             <a
                 href="#"
                 class="hover:text-white block"
-            >Link 3</a>
+            >{{ $t('generic.imprint') }}</a>
         </div>
     </div>
 </template>

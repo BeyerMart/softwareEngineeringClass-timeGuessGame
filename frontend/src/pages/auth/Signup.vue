@@ -163,7 +163,7 @@ export default {
                         title: this.$t('signup.messages.signupSuccess'),
                         type: 'success',
                     });
-                    this.$router.push('/login');
+                    this.$router.push({ name: 'login' });
                 })
                 .catch((err) => {
                     this.$notify({
