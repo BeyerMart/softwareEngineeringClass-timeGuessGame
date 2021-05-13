@@ -49,7 +49,10 @@
                         </div>
                     </div>
                     <div>
-                        <h3 class="font-bold tracking-tight sm:text-2xl my-6">
+                        <h3
+                            v-show="waitForPlayers"
+                            class="font-bold tracking-tight sm:text-2xl my-6"
+                        >
                             {{ $t('room.playersNeedToJoin') }}
                         </h3>
                         <ul
@@ -234,6 +237,9 @@ export default {
         },
         myTeam() {
             return this.teams.find((team) => team.players.some((player) => this.samePlayerCheck(player, this.getUser)));
+        },
+        waitForPlayers() {
+            return this.teams.filter((team) => team.players).length <= 1;
         },
     },
     watch: {
