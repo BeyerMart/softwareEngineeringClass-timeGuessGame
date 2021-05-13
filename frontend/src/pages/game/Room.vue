@@ -13,15 +13,16 @@
 
                 <div v-if="room">
                     <div>
-                        <h3>Players yet to join a team</h3>
-
+                        <h3 class="font-bold tracking-tight sm:text-2xl my-6">
+                            Players yet to join a team
+                        </h3>
                         <ul
                             class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
                         >
                             <li
                                 v-for="(player, index) in teamlessPlayers"
                                 :key="index"
-                                class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
+                                class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200 my-5"
                             >
                                 <Player
                                     :player="player"
@@ -30,21 +31,34 @@
                             </li>
                         </ul>
                     </div>
-                    <div id="teams">
-                        <div>
-                            <div
-                                v-for="team in teams"
-                                :key="team.name"
-                            >
-                                <VirtualTeam
-                                    :team="team"
-                                    :host-id="room.host_id"
-                                />
+                    <div
+                        class="mx-auto py-y px-4 max-w-7xl sm:p-0"
+                    >
+                        <div class="space-y-12">
+                            <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none">
+                                <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl">
+                                    Teams
+                                </h2>
                             </div>
+                            <ul
+                                class="space-y-4 sm:grid sm:grid-cols-2 sm:gap-6 sm:space-y-0 lg:grid-cols-3 lg:gap-8"
+                            >
+                                <li
+                                    v-for="team in teams"
+                                    :key="team.name"
+                                    class="py-10 px-6 bg-gray-800 text-center rounded-lg xl:px-10 xl:text-left"
+                                >
+                                    <VirtualTeam
+                                        :team="team"
+                                        :host-id="room.host_id"
+                                        @joinTeam="joinTeam"
+                                    />
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <div class="my-2">
+                <div class="my-6 sm:my-10">
                     <div class="flex flex-col justify-center gap-3 md:flex-row text-base shadow p-5 bg-gray-100">
                         <button
                             class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
