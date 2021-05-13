@@ -141,7 +141,7 @@
                         </button>
 
                         <button
-                            v-if="isHost && !gameIsStarted"
+                            v-if="isHost && !gameIsStarted && room.cube"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="createGame"
                         >
