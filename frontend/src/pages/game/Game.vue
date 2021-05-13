@@ -8,6 +8,7 @@
             class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8"
         >
             <div class="sm:flex sm:flex-col sm:align-center py-y px-4 ">
+                <pre>{{ status }} </pre>
                 <h1 class="text-6xl font-extrabold text-gray-900 sm:text-center">
                     {{ getTimer }}
                 </h1>
@@ -15,7 +16,7 @@
                     Augenlied
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
-                    Runde 3 - TEAM SFS - hansp
+                    {{ round }} - TEAM SFS - hansp
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
                     2 Punkte - Pantomime
@@ -53,6 +54,7 @@
                 <div class="inline-flex flex-col justify-center gap-3 md:flex-row text-base shadow p-5 bg-gray-100">
                     <button
                         class="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white p-2 rounded"
+                        @click="confirmPointsHandler"
                     >
                         <font-awesome-icon
                             icon="check"
@@ -62,6 +64,7 @@
                     </button>
                     <button
                         class="flex items-center gap-3 bg-red-500 hover:bg-gray-600 text-white p-2 rounded"
+                        @click="rejectPointsHandlerHandler"
                     >
                         <font-awesome-icon
                             icon="times-circle"
