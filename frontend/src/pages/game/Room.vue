@@ -204,7 +204,7 @@ export default {
             teams: [],
             piNames: [],
             game: {},
-            gameTeams: {},
+            gameTeams: [],
             piNamesTest: ['pi1', 'pi2'],
             display: {
                 showTeamForm: false,
@@ -257,8 +257,10 @@ export default {
             if (!(newVal < 1) && (!this.game || this.game.id !== newVal)) {
                 GameService.getGame(newVal).then((gameResponse) => {
                     this.game = gameResponse.data;
-                    GameService.getAllTeams(this.gameId).then((teamResponse) => {
+                    GameService.getAllTeams(this.game.id).then((teamResponse) => {
                         this.gameTeams = teamResponse.data;
+                    }).catch((error) => {
+                        console.error(error);
                     });
                 }).catch((error) => {
                     console.error(error);
