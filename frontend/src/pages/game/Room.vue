@@ -35,7 +35,7 @@
                             <div class="flex gap-2">
                                 <multiselect
                                     v-model="selectedPi"
-                                    :options="piNamesTest"
+                                    :options="piNames"
                                     :searchable="false"
                                     :close-on-select="true"
                                     :show-labels="false"
@@ -153,7 +153,7 @@
                         </button>
 
                         <button
-                            v-if="gameIsStarted"
+                            v-if="gameIsStarted && room.cube"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="joinGame"
                         >
@@ -205,7 +205,6 @@ export default {
             piNames: [],
             game: {},
             gameTeams: [],
-            piNamesTest: ['pi1', 'pi2'],
             display: {
                 showTeamForm: false,
                 showVUserForm: false,
