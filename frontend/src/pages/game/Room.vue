@@ -1,11 +1,5 @@
 <template>
     <div>
-        <!-- TODO:
-            NACH GAME START
-         * nur join team, reate team -> blocked
-         * start game -> nur der host
-         * die anderen -> join game
-         -->
         <div
             v-if="room"
             class="my-8"
@@ -35,7 +29,7 @@
                             <div class="flex gap-2">
                                 <multiselect
                                     v-model="selectedPi"
-                                    :options="piNamesTest"
+                                    :options="piNames"
                                     :searchable="false"
                                     :close-on-select="true"
                                     :show-labels="false"
@@ -141,7 +135,7 @@
                         </button>
 
                         <button
-                            v-if="isHost && !gameIsStarted"
+                            v-if="isHost && !gameIsStarted && room.cube"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="createGame"
                         >
@@ -153,7 +147,7 @@
                         </button>
 
                         <button
-                            v-if="gameIsStarted"
+                            v-if="gameIsStarted && room.cube"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="joinGame"
                         >
@@ -205,7 +199,6 @@ export default {
             piNames: [],
             game: {},
             gameTeams: [],
-            piNamesTest: ['pi1', 'pi2'],
             display: {
                 showTeamForm: false,
                 showVUserForm: false,
@@ -331,11 +324,11 @@ export default {
                 break;
             case 'USER_JOINED_TEAM':
                 if (this.teams.some((team) => team.name === message.data.team.name)) { this.teams = this.teams.map((team) => (team.name === message.data.team.name ? message.data.team : team)); } else { this.teams.push(message.data.team); }
-                this.notifySuccess(`${message.data.user.username} joined team ${message.data.team.name}`); // TODO: translate
+                this.notifySuccess(`${message.data.user.username} ${this.$t('game.messages.userJoinedTeam')} ${message.data.team.name}`);
                 break;
             case 'USER_LEFT_TEAM':
                 if (!message.data.team.players.length) { this.teams = this.teams.filter((team) => team.name !== message.data.team.name); } else { this.teams = this.teams.map((team) => (team.name === message.data.team.name ? message.data.team : team)); }
-                this.notifyError(`${message.data.user.username} left team ${message.data.team.name}`); // TODO: translate
+                this.notifyError(`${message.data.user.username} ${this.$t('game.messages.userLeftTeam')} ${message.data.team.name}`);
                 break;
             case 'GAME_CREATED':
                 this.game = message.data;
@@ -361,15 +354,15 @@ export default {
         },
         createTeam(teamName) {
             if (this.teams.some((team) => team.name === team.teamName)) {
-                this.notifyError('already exists'); // TODO: translate
+                this.notifyError(`${this.$t('game.messages.teamExists')}`);
                 return;
             }
             if (this.room.game_id >= 0) {
-                this.notifyError("You can't create a new Team after the Game has started"); // TODO: translate
+                this.notifyError(`${this.$t('game.messages.gameStartedCreateTeam')}`);
                 return;
             }
             RoomService.joinTeam(this.room.id, { name: teamName }).then(() => {
-                this.notifySuccess('Team created successfully'); // TODO: translate
+                this.notifySuccess(`${this.$t('game.messages.teamCreated')}`);
                 this.newTeamName = '';
             }).catch((error) => {
                 console.error(error);
@@ -378,7 +371,7 @@ export default {
         },
         joinTeam(teamName) {
             RoomService.joinTeam(this.room.id, { name: teamName }).then(() => {
-                this.notifySuccess('Team joined successfully');
+                this.notifySuccess(`${this.$t('game.messages.teamJoined')}`);
             }).catch((error) => console.error(error));
         },
         leaveTeam(teamName) {
@@ -389,14 +382,14 @@ export default {
             if (userId !== 0 && !userId) localUserId = this.getUser.id;
             RoomService.leaveRoom(this.room.id, virtualUser, localUserId).then(() => {
                 this.$router.push('/');
-                this.notifySuccess('left room successfully'); // TODO: Translation
+                this.notifySuccess(`${this.$t('game.messages.leaveRoom')}`);
             }).catch((error) => {
                 console.error(error);
             });
         },
         addVirtualUser(username) {
             RoomService.joinRoom(this.room.id, { username }).then(() => {
-                this.notifySuccess(`${username} created successfully`); // TODO: Translation
+                this.notifySuccess(`${username} ${this.$t('game.messages.createVirtualUser')}`);
             }).catch((error) => console.error(error));
         },
         notifyError(message) {
@@ -417,39 +410,39 @@ export default {
         },
         connectPi(piName) {
             RoomService.connectPi(piName, this.room.id).then(() => {
-                this.notifySuccess(`Trying to connect Pi ${piName}`); // TODO: Translation
+                this.notifySuccess(`${this.$t('game.messages.tryConnectPi')} ${piName}`);
             }).catch((error) => {
                 console.error(error);
-                this.notifyError('Connection attempt failed'); // TODO: Translation
+                this.notifyError(`${this.$t('game.messages.connectPiFailed')}`);
             });
         },
         disconnectPi(piName) {
             RoomService.connectPi(piName, this.room.id).then(() => {
-                this.notifySuccess(`Trying to disconnect Pi ${piName}`);
+                this.notifySuccess(`${this.$t('game.messages.tryDisconnectPi')} ${piName}`);
             }).catch((error) => {
                 console.error(error);
-                this.notifyError('Disconnection attempt failed');
+                this.notifyError(`${this.$t('game.messages.disconnectPiFailed')}`);
             });
         },
         refreshPis() {
             CubeService.getCubes().then((response) => {
                 this.piNames = response.data;
-                this.notifySuccess('Pis refreshed');
+                this.notifySuccess(`${this.$t('game.messages.refreshPis')}`);
             }).catch((error) => {
                 console.error(error);
             });
         },
         createGame() {
             if (this.room.host_id !== this.getUser.id) {
-                this.notifyError('Only a host can create a new game'); // TODO: Translate
+                this.notifyError(`${this.$t('game.messages.noPermissionsToCreateGame')}`);
                 return;
             }
             if (this.teams.length < 2) {
-                this.notifyError('Bitte min. zwei Teams erstellen.'); // TODO: Translate
+                this.notifyError(`${this.$t('game.messages.twoTeamsRequired')}`);
                 return;
             }
             GameService.createGame(this.room.id).then((repsonse) => {
-                this.notifySuccess('joinedGame');
+                this.notifySuccess(this.$t('game.messages.joinedGame'));
                 this.$emit('joinedGame', repsonse.data.id);
             }).catch((error) => {
                 console.error(error);
@@ -457,7 +450,7 @@ export default {
         },
         joinGame() {
             if (!this.gameIsStarted) {
-                console.error("Game hasn't started, yet.");
+                console.error(`${this.$t('game.messages.gameNotStartedYet')}`);
             }
             const myTeamLocal = this.gameTeams.find((team) => team.name === this.myTeam.name);
             TeamService.joinTeam(myTeamLocal.id).then(() => {

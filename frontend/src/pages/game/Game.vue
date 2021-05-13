@@ -206,6 +206,7 @@ export default {
                 // TODO: start timer
                 break;
             case 'GAME_OVER':
+                // TODO
                 break;
             case 'ROOM_DELETED':
                 this.$router.push('/');
@@ -225,6 +226,22 @@ export default {
                 break;
             case 'POINT_VALIDATION_START':
                 this.status = 'validation';
+                break;
+            case 'TEAM_POINTS_CHANGED':
+                this.game.teams.map((team) => (message.data.id === team.id ? { ...team, ...message.data } : team));
+                break;
+            case 'VIRTUAL_USER_JOINED':
+            case 'USER_JOINED_TEAM':
+                this.game.teams.find((team) => team.id === message.data.team.id).users.push(message.data.user);
+                break;
+            case 'TEAM_DELETED':
+                this.game.teams.filter((team) => team.id !== message.data.id);
+                break;
+            case 'USER_LEFT_TEAM':
+                this.game.teams.find((team) => team.id === message.data.team.id).users.filter((user) => user.virtual_id || user.id !== message.data.user.id);
+                break;
+            case 'VIRTUAL_USER_LEFT':
+                this.game.teams.find((team) => team.id === message.data.team.id).users.filter((user) => user.id || user.virtual_id !== message.data.user.virtual_id);
                 break;
             default:
                 break;
@@ -254,6 +271,28 @@ export default {
                     }
                 }
             }, 1000);
+        },
+        rejectPointsHandlerHandler() { // TODO: Only during validation
+            GameService.rejectPoints(this.gameId).then(() => {
+                this.notifySuccess('Voted: Points rejected'); // TODO: Translate
+            }).catch((error) => console.error(error));
+        },
+        confirmPointsHandler() { // TODO: Only during validation
+            GameService.confirmPoints(this.gameId).then(() => {
+                this.notifySuccess('Voted: Points confirmed'); // TODO: Translate
+            }).catch((error) => console.error(error));
+        },
+        notifyError(message) {
+            this.$notify({
+                title: message,
+                type: 'error',
+            });
+        },
+        notifySuccess(message) {
+            this.$notify({
+                title: message,
+                type: 'success',
+            });
         },
     },
 };
