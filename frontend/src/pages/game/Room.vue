@@ -13,7 +13,7 @@
 
                 <div v-if="room">
                     <div>
-                        <h3>Payers yet to join a team</h3>
+                        <h3>Players yet to join a team</h3>
 
                         <ul
                             class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
@@ -25,7 +25,7 @@
                             >
                                 <Player
                                     :player="player"
-                                    :host="player.id ? player.id === room.host_id : false"
+                                    :badges="room.host_id && player.id === room.host_id ? [{text: 'host', colour: 'green'}] : null"
                                 />
                             </li>
                         </ul>
@@ -311,6 +311,14 @@ export default {
             }).catch((error) => {
                 console.error(error);
                 this.notifyError('Disconnection attempt failed');
+            });
+        },
+        refreshPis() {
+            CubeService.getCubes().then((response) => {
+                this.piNames = response.data;
+                this.notifySuccess('Pis refreshed');
+            }).catch((error) => {
+                console.error(error);
             });
         },
         createGame() {

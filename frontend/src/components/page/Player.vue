@@ -26,6 +26,7 @@ export default {
     props: {
         player: {
             required: true,
+            type: Object,
         },
         badges: {
             required: false,
