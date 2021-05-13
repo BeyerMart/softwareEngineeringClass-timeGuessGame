@@ -155,7 +155,7 @@
                         <button
                             v-if="gameIsStarted"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
-                            @click="createGame"
+                            @click="joinGame"
                         >
                             <font-awesome-icon
                                 icon="play-circle"
@@ -232,8 +232,12 @@ export default {
         isHost() {
             return this.room.host_id === this.getUser.id;
         },
+        gameId() {
+            if (!this.room) return -1;
+            return this.room.game_id;
+        },
         gameIsStarted() {
-            return !this.room.game_id < 0;
+            return !(this.gameId < 0);
         },
         myTeam() {
             return this.teams.find((team) => team.players.some((player) => this.samePlayerCheck(player, this.getUser)));
@@ -249,7 +253,18 @@ export default {
                     console.error(error);
                 });
         },
-
+        gameId(newVal) {
+            if (!(newVal < 1) && (!this.game || this.game.id !== newVal)) {
+                GameService.getGame(newVal).then((gameResponse) => {
+                    this.game = gameResponse.data;
+                    GameService.getAllTeams(this.gameId).then((teamResponse) => {
+                        this.gameTeams = teamResponse.data;
+                    });
+                }).catch((error) => {
+                    console.error(error);
+                });
+            }
+        },
     },
     mounted() {
         RoomService.fetchRoomById(this.$route.params.id)
