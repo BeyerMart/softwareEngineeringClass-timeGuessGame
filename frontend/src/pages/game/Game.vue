@@ -1,9 +1,12 @@
 <template>
     <div class="bg-white">
         <Loading
+            v-show="display.waitingForPlayers"
+            class="mt-20"
             message="Warten auf andere Spieler"
         />
         <div
+            v-show="!display.waitingForPlayers"
             class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8"
         >
             <div class="sm:flex sm:flex-col sm:align-center py-y px-4 ">
@@ -91,12 +94,14 @@ import * as GameService from '@/services/game.service';
 import * as RoomService from '@/services/room.service';
 import * as TeamService from '@/services/team.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
+import Loading from '@/components/page/Loading.vue';
 
 export default {
 
     name: 'Game',
     components: {
         VirtualTeam,
+        Loading,
     },
     props: {
         gameId: {
@@ -119,6 +124,9 @@ export default {
             timer: {
                 remainingTime: 0,
                 nonce: 0,
+            },
+            display: {
+                waitingForPlayers: true,
             },
         };
     },
@@ -232,7 +240,9 @@ export default {
                 break;
             case 'VIRTUAL_USER_JOINED':
             case 'USER_JOINED_TEAM':
+                console.log('USER_JOINED_TEAM');
                 this.game.teams.find((team) => team.id === message.data.team.id).users.push(message.data.user);
+                this.display.waitingForPlayers = false;
                 break;
             case 'TEAM_DELETED':
                 this.game.teams.filter((team) => team.id !== message.data.id);
