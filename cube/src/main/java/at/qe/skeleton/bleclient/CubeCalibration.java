@@ -117,6 +117,10 @@ public class CubeCalibration {
         }
     }
 
+    public void setPiName(String piName){
+        this.piName = piName;
+    }
+
     public void setURL() {
         System.out.println("Do you want to set an URL, for the Backend, or just go with 'localhost'? \n('u'/'URL') or ('l'/'localhost')");
         String input = scanner.next().toLowerCase();
