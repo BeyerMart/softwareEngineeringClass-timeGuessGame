@@ -56,7 +56,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold tracking-tight sm:text-2xl my-6">
-                            Players yet to join a team
+                            {{ $t('room.playersNeedToJoin') }}
                         </h3>
                         <ul
                             class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 my-5"
@@ -149,7 +149,7 @@
                                 icon="play-circle"
                                 class="text-l cursor-pointer"
                             />
-                            Spiel starten
+                            {{ $t('room.startGame') }}
                         </button>
 
                         <button
@@ -161,7 +161,7 @@
                                 icon="play-circle"
                                 class="text-l cursor-pointer"
                             />
-                            Spiel beitreten
+                            {{ $t('room.joinGame') }}
                         </button>
 
                         <CreateTeamForm
