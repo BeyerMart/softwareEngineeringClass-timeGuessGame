@@ -4,6 +4,7 @@ package at.qe.skeleton.tests.controller;
 import at.qe.skeleton.Main;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.services.GameService;
+import at.qe.skeleton.services.RoomService;
 import at.qe.skeleton.services.TeamService;
 import at.qe.skeleton.services.TopicService;
 import org.junit.jupiter.api.*;
@@ -53,6 +54,9 @@ public class GameControllerTest {
 
     Game testGame = new Game();
 
+    @MockBean
+    private RoomService roomService;
+
     @BeforeAll
     public void setup() {
         testAdmin.setRole(UserRole.ROLE_ADMIN);
@@ -72,16 +76,22 @@ public class GameControllerTest {
         mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
     }
 
+
     @Test
     @WithMockUser(roles = {"ADMIN", "MANAGER", "USER"})
-    public void testCreateGame() throws Exception, GameService.GameExistsException {
+    public void testCreateGame() throws Exception {
+        Room room = new Room(0, -1);
+        room.setRoom_name("Hell yeah");
+        room.setTopic_id(testTopic.getId());
+        Mockito.when(roomService.getRoomById(room.getRoom_id())).thenReturn(Optional.of(room));
         Mockito.when(gameService.addGame(Mockito.any(Game.class), Mockito.any())).thenReturn(testGame);
 
-        String body = "{\"name\":\"" + testGame.getName() + "\",\"topic_id\":" + testGame.getTopic().getId() + "}";
-        MvcResult result = mvc.perform(post("/api/games").contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isCreated()).andReturn();
+        String body = "{\"room_id\":" + room.getRoom_id() + "}";
+        MvcResult result = mvc.perform(post("/api/games").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
         String response = result.getResponse().getContentAsString();
         assertTrue(response.contains(testGame.getName()));
     }
+
 
     @Test
     @WithMockUser(roles = {"ADMIN", "MANAGER", "USER"})
@@ -157,6 +167,22 @@ public class GameControllerTest {
         MvcResult result = mvc.perform(get("/api/games/{gameId}/teams",testGame.getId())).andExpect(status().isOk()).andReturn();
         String response = result.getResponse().getContentAsString();
         assertTrue(response.contains("data\":[]"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testAcceptPoints() throws Exception {
+        Mockito.when(gameService.findGame(testGame.getId())).thenReturn(Optional.of(testGame));
+        Mockito.when(gameService.confirmPoints(testGame)).thenReturn(null);
+        mvc.perform(post("/api/games/{gameId}/points",testGame.getId())).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void testRejectPoints() throws Exception {
+        Mockito.when(gameService.findGame(testGame.getId())).thenReturn(Optional.of(testGame));
+        Mockito.when(gameService.confirmPoints(testGame)).thenReturn(null);
+        mvc.perform(put("/api/games/{gameId}/points",testGame.getId())).andExpect(status().isOk());
     }
 
 }

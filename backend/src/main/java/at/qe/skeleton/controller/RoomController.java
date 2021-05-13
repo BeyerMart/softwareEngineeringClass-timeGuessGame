@@ -9,6 +9,7 @@ import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import at.qe.skeleton.services.RoomService;
 import at.qe.skeleton.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -81,6 +82,8 @@ public class RoomController {
                 case "teams":
                 case "game_id":
                     break;
+                case "topic_id":
+                    v = Long.parseLong((String) v);
                 default:
                     Field field = ReflectionUtils.findField(Room.class, (String) k);
                     field.setAccessible(true);
@@ -166,8 +169,10 @@ public class RoomController {
     }
 
     @PostMapping("/rooms/{id}/connect_pi")
-    public void connectPiToRoom(@RequestBody String piName, @PathVariable String id){
+    public ResponseEntity<?> connectPiToRoom(@RequestBody String piName, @PathVariable String id){
         roomService.connectRoomAndPi(Long.valueOf(id), piName);
+        cubeController.setRoomOfPiName(piName, Integer.parseInt(id));
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping("/rooms/{id}/disconnect_pi")
@@ -175,14 +180,8 @@ public class RoomController {
         roomService.disconnectRoomAndPi(Long.valueOf(id), piName);
     }
 
-    @PostMapping("/rooms/{id}/searchCube")
-    public void searchBlueToothCube(@PathVariable String id){
-        Room room = roomService.getRoomById(Integer.parseInt(id)).get();
-        cubeController.cubeStartSearching(room);
-    }
 
-    //WS Messages to the FrontEnd
-    //TODO FrontEnd shows "Cube not found / not connected. reset battery and retry"
+    //WS Messages to the FrontEnd only used in cased where connection gets lost and reconnect is needed.
     public void cubeNotConnected(Room room){
         room.setConnectedWithPiAndCube(false);
         template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
@@ -193,13 +192,13 @@ public class RoomController {
         template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.FOUND_AND_CONNECTED.toString());
     }
 
-//    private RoomDto convertToRoomDto(Room room) {
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        return modelMapper.map(room, RoomDto.class);
-//    }
-//
-//    private Room convertToRoomEntity(RoomDto roomDto) {
-//        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//        return modelMapper.map(roomDto, Room.class);
-//    }
+/*      public RoomDto convertToRoomDto(Room room) {
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+          return modelMapper.map(room, RoomDto.class);
+      }
+
+      public Room convertToRoomEntity(RoomDto roomDto) {
+          modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+          return modelMapper.map(roomDto, Room.class);
+      }*/
 }
