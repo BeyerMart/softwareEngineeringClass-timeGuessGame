@@ -205,11 +205,11 @@ export default {
                 this.round = message.data.round;
                 break;
             case 'GAMEPLAY_PRE_ROUND_TIMER':
-                this.status = 'PREPARATION_TIME';
+                if (this.status !== 'WAIT_FOR_NEXT_ROUND') this.status = 'PREPARATION_TIME';
                 this.setCountDown(message.data.message.pre_round_time);
                 break;
             case 'GAMEPLAY_TIMER':
-                this.status = 'GUESS';
+                if (this.status !== 'WAIT_FOR_NEXT_ROUND') this.status = 'GUESS';
                 this.setCountDown(message.data.time);
                 break;
             case 'GAME_OVER':
