@@ -107,11 +107,11 @@ public class WebSocketConnection {
         String response = handleBackendResponse(request.toString());
     }
 
-    public void sendPiConnected() throws InterruptedException, JsonProcessingException {
+    /*public void sendPiConnected() throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.PI_CONNECTED);
         sendWebsocketRequest(request);
         String response = handleBackendResponse(request.toString());
-    }
+    }*/ 
 
 
     public String sendFacetNotification(Cube cube) throws InterruptedException, JsonProcessingException {

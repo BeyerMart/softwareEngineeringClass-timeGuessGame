@@ -51,9 +51,9 @@ public class LogicController {
             String piNameFromBackend = data.get("piName").asText();
             if (piNameFromBackend.equals(cubeCalibration.getPiName())){
                 int batteryLevel = cubeCalibration.getTimeCubeService().getBatteryLevel();
-                int roomId = data.get("roomId").asInt();
+                room_id = data.get("roomId").asInt();
                 int facet = cubeCalibration.getFacetFromTimeCubeService();
-                cube = new Cube(batteryLevel, roomId, facet);
+                cube = new Cube(batteryLevel, room_id, facet);
                 cube.setPiName(piNameFromBackend);
                 logger.info("Cube and pi " + cube.getPiName() + " connected to room with id " +  cube.getRoomId());
                 connection.sendFacetNotification(cube);
