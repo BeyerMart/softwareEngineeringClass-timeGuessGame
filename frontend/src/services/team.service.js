@@ -37,5 +37,5 @@ export function leaveRoom(teamId, virtualUser) {
 }
 
 export function deleteTeam(teamId) {
-    return axios.delete(`${API_URL}/${teamId`);
+    return axios.delete(`${API_URL}/${teamId}`);
 }

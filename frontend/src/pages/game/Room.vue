@@ -153,6 +153,8 @@ import { subChannel, unsubChannel } from '@/services/websocket.service';
 import * as RoomService from '@/services/room.service';
 import * as TopicService from '@/services/topic.service';
 import * as CubeService from '@/services/cube.service';
+import * as GameService from '@/services/game.service';
+import * as TeamService from '@/services/team.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
 import Player from '@/components/page/Player';
 import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
@@ -198,6 +200,9 @@ export default {
         },
         isHost() {
             return this.room.host_id === this.getUser.id;
+        },
+        gameIsStarted() {
+            return !this.room.game_id < 0;
         },
     },
     watch: {
@@ -380,10 +385,21 @@ export default {
         createGame() {
             if (this.room.host_id !== this.getUser.id) {
                 this.notifyError('Only a host can create a new game');
+                return;
             }
+            GameService.createGame(this.room.id).then((repsonse) => {
+                this.notifySuccess('joinedGame');
+                this.$emit('joinedGame', repsonse.data.id);
+            }).catch((error) => {
+                console.error(error);
+            });
         },
         joinGame() {
-            // TODO
+            if (!this.gameIsStartede) {
+                console.error("Game hasn't started, yet.");
+                return;
+            }
+            console.log('Implemnt then push');
         },
     },
 };
