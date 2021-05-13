@@ -1,5 +1,9 @@
 <template>
     <div class="bg-white">
+        <Loading
+            v-show="waitForPlayers"
+            message="Warten auf andere Spieler"
+        />
         <div
             class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8"
         >
@@ -88,12 +92,14 @@ import * as GameService from '@/services/game.service';
 import * as RoomService from '@/services/room.service';
 import * as TeamService from '@/services/team.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
+import Loading from '@/components/page/Loading.vue';
 
 export default {
 
     name: 'Game',
     components: {
         VirtualTeam,
+        Loading,
     },
     props: {
         gameId: {
@@ -134,7 +140,7 @@ export default {
             return `${mins < 10 ? `0${mins}` : mins}:${seconds < 10 ? `0${seconds}` : seconds}`;
         },
         waitForPlayers() {
-            return this.game.teams.filter((team) => team.players).length <= 1;
+            return this.game && this.game.teams && this.game.teams.filter((team) => team.players).length <= 1;
         },
     },
     ...mapActions({
