@@ -56,7 +56,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold tracking-tight sm:text-2xl my-6">
-                            Players yet to join a team
+                            {{ $t('room.playersNeedToJoin') }}
                         </h3>
                         <ul
                             class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 my-5"
@@ -149,7 +149,7 @@
                                 icon="play-circle"
                                 class="text-l cursor-pointer"
                             />
-                            Spiel starten
+                            {{ $t('room.startGame') }}
                         </button>
 
                         <button
@@ -161,7 +161,7 @@
                                 icon="play-circle"
                                 class="text-l cursor-pointer"
                             />
-                            Spiel beitreten
+                            {{ $t('room.joinGame') }}
                         </button>
 
                         <CreateTeamForm
@@ -204,7 +204,7 @@ export default {
             teams: [],
             piNames: [],
             game: {},
-            gameTeams: {},
+            gameTeams: [],
             piNamesTest: ['pi1', 'pi2'],
             display: {
                 showTeamForm: false,
@@ -257,8 +257,10 @@ export default {
             if (!(newVal < 1) && (!this.game || this.game.id !== newVal)) {
                 GameService.getGame(newVal).then((gameResponse) => {
                     this.game = gameResponse.data;
-                    GameService.getAllTeams(this.gameId).then((teamResponse) => {
+                    GameService.getAllTeams(this.game.id).then((teamResponse) => {
                         this.gameTeams = teamResponse.data;
+                    }).catch((error) => {
+                        console.error(error);
                     });
                 }).catch((error) => {
                     console.error(error);

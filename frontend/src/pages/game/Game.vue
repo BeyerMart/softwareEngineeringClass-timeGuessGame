@@ -1,9 +1,12 @@
 <template>
-    <h1>{{ gameId }}</h1>
+    <div>
+        <h1>{{ gameId }}</h1>
+        <span>Timer: {{ getTimer }}</span>
+    </div>
 </template>
 
 <script>
-import { unsubChannel } from '@/services/websocket.service';
+import { subChannel, unsubChannel } from '@/services/websocket.service';
 import { mapActions, mapGetters } from 'vuex';
 import * as GameService from '@/services/game.service';
 import * as RoomService from '@/services/room.service';
@@ -22,6 +25,18 @@ export default {
         return {
             game: {},
             room: {},
+            status: 'WAIT_FOR_NEXT_ROUND',
+            round: 0,
+            currentTeam: '',
+            currentUser: '',
+            term: '',
+            activity: '',
+            potentialPoints: '',
+            roundTime: 0,
+            timer: {
+                remainingTime: 0,
+                nonce: 0,
+            },
         };
     },
     computed: {
@@ -30,6 +45,11 @@ export default {
             getUser: 'user/getUser',
             topicList: 'topicList',
         }),
+        getTimer() {
+            const mins = Math.floor(this.timer.remainingTime / 60);
+            const seconds = this.timer.remainingTime - (mins * 60);
+            return `${mins < 10 ? `0${mins}` : mins}:${seconds < 10 ? `0${seconds}` : seconds}`;
+        },
     },
     ...mapActions({
         fetchTopics: 'fetchTopics',
@@ -65,9 +85,110 @@ export default {
         }).catch((error) => {
             console.error(error);
         });
+        subChannel(`rooms/${this.$route.params.id}`, (message) => {
+            console.log('You got a room message:');
+            console.log(message);
+            switch (message.type) {
+            case 'ROOM_CHANGED':
+                this.room = (message.data);
+                break;
+            case 'ROOM_DELETED':
+                this.$router.push('/');
+                break;
+            default:
+                break;
+            }
+        });
+        subChannel(`game/${this.gameId}`, (message) => {
+            console.log('You got a games message:');
+            console.log(message);
+            switch (message.type) {
+            case 'GAME_DELETED':
+                this.$emit('leftGame');
+                break;
+            case 'ROLL_DICE':
+                this.status = 'ROLL_DICE';
+                break;
+            case 'GAMEPLAY_ROUND_START':
+                this.round = message.data.round;
+                break;
+            case 'GAMEPLAY_PRE_ROUND_TIMER':
+                this.status = 'PREPARATION_TIME';
+                console.log(message.data.message.pre_round_time);
+                // TODO: start timer
+                break;
+            case 'GAMEPLAY_TIMER':
+                this.status = 'GUESS';
+                console.log(message.data.time);
+                // TODO: start timer
+                break;
+            case 'GAME_OVER':
+                // TODO
+                break;
+            case 'ROOM_DELETED':
+                this.$router.push('/');
+                break;
+            case 'GAMEPLAY_CUBE_INFORMATION':
+                this.potentialPoints = message.data.points;
+                this.time = message.data.time;
+                this.term = message.data.term;
+                this.activity = message.data.activity;
+                break;
+            case 'GAMEPLAY_CURRENT_TEAMUSER':
+                this.currentUser = message.data.user;
+                this.currentTeam = message.data.team;
+                break;
+            case 'POINT_VALIDATION_STOP':
+                this.status = 'WAIT_FOR_NEXT_ROUND';
+                break;
+            case 'POINT_VALIDATION_START':
+                this.status = 'validation';
+                break;
+            case 'TEAM_POINTS_CHANGED':
+                this.game.teams.map((team) => (message.data.id === team.id ? { ...team, ...message.data } : team));
+                break;
+            case 'VIRTUAL_USER_JOINED':
+            case 'USER_JOINED_TEAM':
+                this.game.teams.find((team) => team.id === message.data.team.id).users.push(message.data.user);
+                break;
+            case 'TEAM_DELETED':
+                this.game.teams.filter((team) => team.id !== message.data.id);
+                break;
+            case 'USER_LEFT_TEAM':
+                this.game.teams.find((team) => team.id === message.data.team.id).users.filter((user) => user.virtual_id || user.id !== message.data.user.id);
+                break;
+            case 'VIRTUAL_USER_LEFT':
+                this.game.teams.find((team) => team.id === message.data.team.id).users.filter((user) => user.id || user.virtual_id !== message.data.user.virtual_id);
+                break;
+            default:
+                break;
+            }
+        });
     },
     beforeDestroy() {
         unsubChannel(`game/${this.gameId}`);
+        unsubChannel(`rooms/${this.$route.params.id}`);
+    },
+    methods: {
+        setCountDown(duration) {
+            this.timer.remainingTime = duration;
+            this.timer.nonce = Math.random();
+            this.countDownLoop(this.timer.nonce);
+        },
+        /**
+         * Actively reduces timer time
+         * @param nonce used to exit if multiple reductions are running
+         */
+        countDownLoop(nonce) {
+            setTimeout(() => {
+                if (nonce === this.timer.nonce) {
+                    if (this.timer.remainingTime > 0) {
+                        this.timer.remainingTime--;
+                        this.countDownLoop(nonce);
+                    }
+                }
+            }, 1000);
+        },
     },
 };
 </script>

@@ -144,4 +144,12 @@ export default {
         lastPlayedWith: 'Zuletzt gespielt mit',
         registrationDate: 'Registrierungsdatum',
     },
+    room: {
+        playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
+        createTeam: 'Neues Team erstellen',
+        createVirtualUser: 'Virtuellen Spieler erstellen',
+        leaveRoom: 'Diesen Raum verlassen',
+        startGame: 'Spiel starten',
+        joinGame: 'Spiel beitreten',
+    },
 };
