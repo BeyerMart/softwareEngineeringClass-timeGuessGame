@@ -35,6 +35,7 @@
                                     :show-labels="false"
                                     placeholder="PI auswählen"
                                     class="inline-block"
+                                    @select="connectPi"
                                 />
                                 <button
                                     class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
