@@ -107,7 +107,7 @@ public class GameController {
             } catch (InterruptedException e) {
                 e.printStackTrace(); //Sleep timers may be interrupted
             }
-        });
+        }).start();
 
         GameDto gameDto = convertToGameDto(game);
         gameCreatedResponse(gameDto, room);
