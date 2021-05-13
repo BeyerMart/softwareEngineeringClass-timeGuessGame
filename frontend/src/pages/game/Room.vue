@@ -157,6 +157,9 @@ export default {
         connectedPi() {
             return this.room.pi_name;
         },
+        isHost() {
+            return this.room.host.id === this.getUser.id;
+        },
     },
     watch: {
         topicId(newVal) {
@@ -336,6 +339,11 @@ export default {
             });
         },
         createGame() {
+            if (this.room.host_id !== this.getUser.id) {
+                this.notifyError('Only a host can create a new game');
+            }
+        },
+        joinGame() {
             // TODO
         },
     },
