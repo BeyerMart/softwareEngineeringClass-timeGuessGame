@@ -99,6 +99,7 @@ public class TeamServiceTest {
     public void testAddVirtualUser() {
         VirtualUser virtualUser = new VirtualUser();
         virtualUser.setUsername("heyx");
+        virtualUser.setCreator_id(0L);
         VirtualUser result = teamService.addVirtualUser(team, virtualUser);
 
         ArrayList<Object> users = teamService.getAllTeamUsers(team);
