@@ -141,6 +141,9 @@ export default {
             const seconds = this.timer.remainingTime - (mins * 60);
             return `${mins < 10 ? `0${mins}` : mins}:${seconds < 10 ? `0${seconds}` : seconds}`;
         },
+        waitForPlayers() {
+            return this.game.teams.filter((team) => team.players).length <= 1;
+        },
     },
     ...mapActions({
         fetchTopics: 'fetchTopics',
@@ -205,16 +208,14 @@ export default {
                 break;
             case 'GAMEPLAY_PRE_ROUND_TIMER':
                 this.status = 'PREPARATION_TIME';
-                console.log(message.data.message.pre_round_time);
-                // TODO: start timer
+                this.setCountDown(message.data.message.pre_round_time);
                 break;
             case 'GAMEPLAY_TIMER':
                 this.status = 'GUESS';
-                console.log(message.data.time);
-                // TODO: start timer
+                this.setCountDown(message.data.time);
                 break;
             case 'GAME_OVER':
-                // TODO
+                alert(`${message.data.winner.name} won!`);
                 break;
             case 'ROOM_DELETED':
                 this.$router.push('/');
