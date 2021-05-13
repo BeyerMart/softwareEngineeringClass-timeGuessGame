@@ -236,7 +236,7 @@ export default {
                 this.notifySuccess(`${message.data.user.username} joined team ${message.data.team.name}`); // TODO: translate
                 break;
             case 'USER_LEFT_TEAM':
-                if (!message.data.team.players.length) { this.teams = this.teams.filter((team) => team.name !== message.data.team.length); } else { this.teams = this.teams.map((team) => (team.name === message.data.team.name ? message.data.team : team)); }
+                if (!message.data.team.players.length) { this.teams = this.teams.filter((team) => team.name !== message.data.team.name); } else { this.teams = this.teams.map((team) => (team.name === message.data.team.name ? message.data.team : team)); }
                 this.notifyError(`${message.data.user.username} left team ${message.data.team.name}`); // TODO: translate
                 break;
             default:

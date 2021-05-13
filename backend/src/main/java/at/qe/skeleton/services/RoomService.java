@@ -1,7 +1,6 @@
 package at.qe.skeleton.services;
 
 import at.qe.skeleton.controller.RoomController;
-import at.qe.skeleton.controller.UserController;
 import at.qe.skeleton.exceptions.RoomNotFoundException;
 import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.exceptions.TopicNotFoundException;
@@ -18,6 +17,7 @@ import javax.persistence.EntityExistsException;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class RoomService {
@@ -238,13 +238,17 @@ public class RoomService {
         Iterator<VirtualTeam> iterator = room.getTeams().values().iterator();
         while (iterator.hasNext()) {
             VirtualTeam virtualTeam = iterator.next();
-            if (virtualTeam.getPlayers().removeIf(userIdVirtualUser -> {
-                if (userIdVirtualUser.getUser_id().equals(userId)) {
-                    roomController.userLeftTeam(userIdVirtualUser, virtualTeam, room);
-                    return true;
+            Iterator<UserIdVirtualUser> playerIterator = virtualTeam.getPlayers().iterator();
+            UserIdVirtualUser removedUser = null;
+            while (playerIterator.hasNext()) {
+                UserIdVirtualUser user = playerIterator.next();
+                if (user.getUser_id().equals(userId)) {
+                    removedUser = user;
+                    playerIterator.remove();
                 }
-                return  false;
-            }));
+            }
+            if (removedUser != null)
+                roomController.userLeftTeam(removedUser, virtualTeam, room);
             if (virtualTeam.getPlayers().isEmpty()) {
                 iterator.remove();
                 roomController.roomChanged(room);

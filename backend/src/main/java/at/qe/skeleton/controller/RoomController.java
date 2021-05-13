@@ -55,7 +55,7 @@ public class RoomController {
     @PostMapping(value = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
     private ResponseEntity<?> createRoom(@RequestBody(required = false) Room roomRequest) {
         Room room;
-        if(roomRequest == null)
+        if (roomRequest == null)
             room = roomService.createNewRoom();
         else
             room = roomService.createNewRoom(roomRequest);
@@ -121,7 +121,7 @@ public class RoomController {
     }
 
     @GetMapping(value = "/rooms/{id}/users", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPlayersInRoom (@PathVariable Long id) {
+    public ResponseEntity<?> getPlayersInRoom(@PathVariable Long id) {
         ArrayList<Object> players = new ArrayList<>();
         Room room = roomService.getRoomById(id).orElseThrow(() -> new RoomNotFoundException(id));
         players.addAll(getUsersFromSet(new HashSet<>(room.getPlayers().values())));
@@ -130,7 +130,7 @@ public class RoomController {
     }
 
     @GetMapping(value = "/rooms/{id}/teams", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getVirtualTeams (@PathVariable Long id) {
+    public ResponseEntity<?> getVirtualTeams(@PathVariable Long id) {
         Room room = roomService.getRoomById(id).orElseThrow(() -> new RoomNotFoundException(id));
         List<VirtualTeamDto> teams = room.getTeams().values().stream().map(virtualTeam -> new VirtualTeamDto(virtualTeam.getName(), new ArrayList<>(getPlayersFromSet(virtualTeam.getPlayers())))).collect(Collectors.toList());
         return ResponseEntity.ok((new SuccessResponse(teams)).toString());
@@ -207,33 +207,34 @@ public class RoomController {
     }
 
     @PostMapping("/rooms/{id}/connect_pi")
-    public ResponseEntity<?>  connectPiToRoom(@RequestBody String piName, @PathVariable String id){
+    public ResponseEntity<?> connectPiToRoom(@RequestBody String piName, @PathVariable String id) {
         roomService.connectRoomAndPi(Long.valueOf(id), piName);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping("/rooms/{id}/disconnect_pi")
-    public ResponseEntity<?>  disconnectPiFromRoom(@RequestBody String piName, @PathVariable String id){
+    public ResponseEntity<?> disconnectPiFromRoom(@RequestBody String piName, @PathVariable String id) {
         roomService.disconnectRoomAndPi(Long.valueOf(id), piName);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping("/rooms/{id}/searchCube")
-    public ResponseEntity<?> searchBlueToothCube(@PathVariable String id){
+    public ResponseEntity<?> searchBlueToothCube(@PathVariable String id) {
         Room room = roomService.getRoomById(Integer.parseInt(id)).get();
         cubeController.cubeStartSearching(room);
         return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
     }
 
     //WS Messages to the FrontEnd
-    public void cubeNotConnected(int roomIdOnPi){
+    public void cubeNotConnected(int roomIdOnPi) {
         Room backendRoom = roomService.getRoomById(roomIdOnPi).get();
         backendRoom.setConnectedWithPiAndCube(false);
         backendRoom.setCube(null);
         roomService.updateRoom(backendRoom);
         template.convertAndSend("/rooms/" + backendRoom.getId(), WSResponseType.NOT_CONNECTED.toString());
     }
-    public void cubeConnected(int roomIdOnPi, Cube cube){
+
+    public void cubeConnected(int roomIdOnPi, Cube cube) {
         Room backendRoom = roomService.getRoomById(roomIdOnPi).get();
         backendRoom.setConnectedWithPiAndCube(true);
         backendRoom.setCube(cube);
