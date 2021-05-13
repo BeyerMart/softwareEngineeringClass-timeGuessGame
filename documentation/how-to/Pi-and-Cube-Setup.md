@@ -32,7 +32,7 @@ The program guides you through the calibration. However, it is neccesarry to kno
 This picture shows the label of each facet but from the outside.
 
 It is recommended to use the stickers for easy labeling. Alternatively, you can write the labels onto the cubes facet.
-![CubeCalibrationFromOutSide](https://i.imgur.com/RELicPJ.png)
+![CubeCalibrationFromOutSide](https://i.imgur.com/mRD0sOj.jpg)
 
 * At first the connection to the cube is checked. On our cube this fails about 70% of the time. A fix for this is to reset the battery. As the program shows you.
 
@@ -44,3 +44,4 @@ It is recommended to use the stickers for easy labeling. Alternatively, you can 
 * Now please enter the Ip-Address of your backend
 * In the next step you are asked for the port number of your backend application
 * You are now connected to the backend. Use the frontend to interact with the cube. It should be visible at the room creation.
+* If you receive a "timeout exception", please restart the RaspberryPi. This seems to be a bug, which (as of now) is only bypassable by restarting the RaspberryPi
