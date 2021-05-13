@@ -2,7 +2,7 @@
 
 Prerequisite (Using docker, this requirements are not needed): 
 * NodeJS >=v11.0.0
-* Java >= v15.0.0
+* v11.0.0 <= Java <= v15.0.0
 
 Follow the steps below:
  * Clone the git repository
