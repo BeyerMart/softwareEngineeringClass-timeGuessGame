@@ -134,7 +134,7 @@ export default {
             return `${mins < 10 ? `0${mins}` : mins}:${seconds < 10 ? `0${seconds}` : seconds}`;
         },
         waitForPlayers() {
-            return this.game.teams.filter((team) => team.players).length > 1;
+            return this.game.teams.filter((team) => team.players).length <= 1;
         },
     },
     ...mapActions({
