@@ -11,6 +11,7 @@ export function createRoom(form) {
         const room = {};
         if (form.roomName) room.name = form.roomName;
         if (form.topic) room.topic_id = form.topic;
+        if (form.maxPoints) room.max_points = form.maxPoints;
         return axios.post(`${API_URL}/`, room);
     }
     return axios.post(`${API_URL}/`);

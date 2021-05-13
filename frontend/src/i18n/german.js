@@ -21,6 +21,8 @@ export default {
             nameRequired: 'Name ist erforderlich',
             termNameRequired: 'Begriffsname ist erforderlich',
             topicRequired: 'Themengebiet is erforderlich',
+            maxPointsIsRequired: 'Max. Punkte ist erforderlich',
+            minPointsRequired: 'Bitte wählen Sie mindestens 5 Punkte',
         },
         loginRequired: 'Login erforderlich',
     },
@@ -68,6 +70,7 @@ export default {
             roomRemoved: 'Der Raum wurde vom Host gelöscht.',
             userJoined: ' ist beigetreten',
         },
+        maxPoints: 'Maximale Punkte',
     },
 
     login: {
