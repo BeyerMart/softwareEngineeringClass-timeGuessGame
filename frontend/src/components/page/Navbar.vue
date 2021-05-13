@@ -66,19 +66,28 @@
                             >
                                 {{ $t('generic.overview') }}
                             </router-link>
-                            <a
-                                href="#"
+                            <router-link
+                                :to="{ name: 'profile' }"
                                 class="hover:bg-gray-700 hover:text-white px-3 py-2 rounded"
-                            >Link 1</a>
-                            <a
-                                href="#"
+                                active-class="bg-gray-700 text-white"
+                                exact-path
+                            >
+                                {{ $t('profile.profile') }}
+                            </router-link>
+                            <router-link
+                                v-show="isUserLoggedIn && (isAdmin || isManager)"
+                                :to="{ name: 'Dashboard' }"
                                 class="hover:bg-gray-700 hover:text-white px-3 py-2 rounded"
-                            >Link 2</a>
+                                active-class="bg-gray-700 text-white"
+                            >
+                                {{ $t('dashboard.dashboard') }}
+                            </router-link>
                         </div>
                     </div>
                 </div>
                 <!-- profile and dropdown -->
                 <div class="absolute right-0 inset-y-0 flex items-center pr-3 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                    <language-selector />
                     <div
                         v-show="!isUserLoggedIn"
                         class="ml-3 relative"
@@ -96,7 +105,7 @@
                     >
                         <div>
                             <button
-                                class="bg-gray-900 flex rounded-full focus:outline-none text-sm focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                                class="bg-gray-900 flex rounded-full focus:outline-none text-sm focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-700 focus:ring-white"
                                 @click="showProfileDropDown = !showProfileDropDown"
                             >
                                 <img
@@ -109,19 +118,6 @@
                             v-show="showProfileDropDown"
                             class="absolute z-10 right-0 origin-top-right mt-2 w-40 rounded shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                         >
-                            <router-link
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                :to="{ name: 'userProfile' }"
-                            >
-                                {{ $t('profile.profile') }}
-                            </router-link>
-                            <router-link
-                                v-show="isUserLoggedIn && (isAdmin || isManager)"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                                :to="{ name: 'Dashboard' }"
-                            >
-                                {{ $t('dashboard.dashboard') }}
-                            </router-link>
                             <a
                                 href="#"
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
@@ -159,9 +155,11 @@
 <script>
 
 import { logout } from '@/services/auth.service';
+import LanguageSelector from './LanguageSelector.vue';
 
 export default {
     name: 'Navbar',
+    components: { LanguageSelector },
     data() {
         return {
             showProfileDropDown: false,

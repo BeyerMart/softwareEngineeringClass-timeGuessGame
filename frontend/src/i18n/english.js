@@ -9,7 +9,14 @@ export default {
         yes: 'Ja',
         no: 'Nein',
         role: 'Role',
+        universityOfInnsbruck: 'University of Innsbruck',
+        imprint: 'Imprint',
+        tos: 'Terms of Service',
         create: 'Create',
+    },
+    languages: {
+        de: 'German',
+        en: 'English',
     },
     errors: {
         back: 'Go back',

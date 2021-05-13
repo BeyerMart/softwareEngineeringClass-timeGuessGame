@@ -220,20 +220,11 @@ public class RoomController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    @PostMapping("/rooms/{id}/searchCube")
-    public ResponseEntity<?> searchBlueToothCube(@PathVariable String id) {
-        Room room = roomService.getRoomById(Integer.parseInt(id)).get();
-        cubeController.cubeStartSearching(room);
-        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-    }
 
-    //WS Messages to the FrontEnd
-    public void cubeNotConnected(int roomIdOnPi) {
-        Room backendRoom = roomService.getRoomById(roomIdOnPi).get();
-        backendRoom.setConnectedWithPiAndCube(false);
-        backendRoom.setCube(null);
-        roomService.updateRoom(backendRoom);
-        template.convertAndSend("/rooms/" + backendRoom.getId(), WSResponseType.NOT_CONNECTED.toString());
+    //WS Messages to the FrontEnd only used in cased where connection gets lost and reconnect is needed.
+    public void cubeNotConnected(Room room){
+        room.setConnectedWithPiAndCube(false);
+        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
     }
 
     public void cubeConnected(int roomIdOnPi, Cube cube) {
