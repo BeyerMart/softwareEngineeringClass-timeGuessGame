@@ -16,6 +16,12 @@
                         class="host-options my-2"
                     >
                         <div
+                            v-show="connectedPi"
+                            class="shadow inline-block p-4 bg-green-400 rounded"
+                        >
+                            Mit {{ connectedPi }} verbunden!
+                        </div>
+                        <div
                             v-show="!connectedPi"
                             class="w-full md:w-1/3"
                         >
@@ -41,9 +47,6 @@
                                     />
                                 </button>
                             </div>
-                        </div>
-                        <div v-show="connectedPi">
-                            Mit {{ connectedPi }} verbunden!
                         </div>
                     </div>
                     <div>
