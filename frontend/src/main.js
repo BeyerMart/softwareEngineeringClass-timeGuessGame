@@ -10,6 +10,7 @@ import Notifications from 'vue-notification';
 import Multiselect from 'vue-multiselect';
 import VueConfirmDialog from 'vue-confirm-dialog';
 import { initSocket } from '@/services/websocket.service';
+import * as AuthService from '@/services/auth.service';
 
 // Icon font
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -52,6 +53,14 @@ axios.interceptors.response.use((response) => {
     response.data = response.data.data;
     return response;
 }, (error) => Promise.reject(error));
+
+if (token) {
+    AuthService.getCurrentUser().then((response) => {
+        store.dispatch('user/setUser', response.data);
+    }).catch(() => {
+        localStorage.removeItem('token');
+    });
+}
 
 initSocket();
 

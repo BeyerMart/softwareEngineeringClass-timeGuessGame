@@ -33,3 +33,7 @@ export function confirmPoints(gameId) {
 export function rejectPoints(gameId) {
     return axios.put(`${API_URL}/${gameId}/points`);
 }
+
+export function getAllTeams(gameId) {
+    return axios.get(`${API_URL}/${gameId}/teams`);
+}
