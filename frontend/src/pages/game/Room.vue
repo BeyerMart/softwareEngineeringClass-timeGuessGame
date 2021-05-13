@@ -309,6 +309,7 @@ export default {
             RoomService.connectPi(piName, this.room.id).then(() => {
                 this.notifySuccess(`Trying to disconnect Pi ${piName}`);
             }).catch((error) => {
+                console.error(error);
                 this.notifyError('Disconnection attempt failed');
             });
         },

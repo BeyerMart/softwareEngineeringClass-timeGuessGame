@@ -6,7 +6,7 @@
                     <div class="sm:flex sm:items-center px-2 py-4">
                         <div class="flex-grow">
                             <h3 class="font-normal px-2 py-3 leading-tight">
-                                Contacts
+                                {{ team.name }}
                             </h3>
                             <div class="w-full">
                                 <div class="flex cursor-pointer my-1 hover:bg-blue-lightest rounded">
