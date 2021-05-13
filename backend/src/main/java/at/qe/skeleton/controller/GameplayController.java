@@ -137,6 +137,14 @@ public class GameplayController {
         }
     }
 
+    public void pointValidationStop(Game game) {
+        template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.POINT_VALIDATION_STOP)).toString());
+    }
+
+    public void pointValidationStart(Game game) {
+        template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.POINT_VALIDATION_START)).toString());
+    }
+
     public void gameplay(Game game) throws InterruptedException {
         //Cube information
         int rolledFacet;
@@ -162,14 +170,14 @@ public class GameplayController {
         //Activates cube notifications
         cubeService.startFacetNotification(game.getRoom_id().intValue());
 
-        while (round < 5) {
+        while (true) {
             /*
              * End game if game does not exist anymore
              */
             Optional<Game> gameOptional = gameService.findGame(game.getId());
             if (!gameOptional.isPresent()) {
                 gameDeletedMessage(game);
-                break;
+                return;
             }
             game = gameOptional.get();
 
@@ -273,10 +281,11 @@ public class GameplayController {
              * Time to vote whether the round was fair or not
              */
             gameService.addGamePoints(game, currentTeam);
-            TimeUnit.SECONDS.sleep(10);
+            pointValidationStart(game);
+            TimeUnit.SECONDS.sleep(30); //Todo: Quit early if everyone voted
             GamePoints gamePoints = gameService.getGamePoints(game);
+            pointValidationStop(game);
             gameService.removeGamePoints(game);
-
 
             /*
              * Add points if voting claims that the round was fair
