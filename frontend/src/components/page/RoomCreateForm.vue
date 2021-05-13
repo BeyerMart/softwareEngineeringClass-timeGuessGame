@@ -38,7 +38,7 @@
                                     v-show="submitted && $v.form.roomName.$error"
                                     class="has-errors py-1 text-xs"
                                 >
-                                    {{ $t('errors.validation.nameRequired') }}
+                                    {{ $t('errors.validation.maxPointsIsRequired') }}
                                 </div>
                                 <input
                                     id="roomName"
@@ -71,8 +71,31 @@
                                     :options="topicList"
                                     :searchable="true"
                                     :allow-empty="false"
+                                    class="mb-4"
                                     :class="{ 'border rounded border-red-500': submitted && $v.form.topic.$error }"
                                 />
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    class="block text-gray-700 text-sm mb-2"
+                                    for="topic"
+                                >{{ $t('game.maxPoints') }}</label>
+                                <div
+                                    v-show="submitted && $v.form.maxPoints.$error"
+                                    class="has-errors py-1 text-xs"
+                                >
+                                    <span v-show="!$v.form.maxPoints.minValue">{{ $t('error.validation.minPointsRequired') }}</span>
+                                    <span v-show="!$v.form.maxPoints.required">{{ $t('errors.validation.maxPointsIsRequired') }}</span>
+                                </div>
+                                <input
+                                    id="maxPoints"
+                                    v-model="form.maxPoints"
+                                    type="text"
+                                    name="room-name"
+                                    class="form-control block border border-grey-light w-full p-3 rounded mb-2"
+                                    :class="{ 'border-red-500 !important': submitted && $v.form.maxPoints.$error }"
+                                    :placeholder="$t('game.maxPoints')"
+                                >
                             </div>
                             <div class="form-group mt-5 sm:mt-6">
                                 <button
@@ -97,6 +120,7 @@ import {
 } from 'vuex';
 import {
     required,
+    minValue,
 } from 'vuelidate/lib/validators';
 
 export default {
@@ -108,6 +132,7 @@ export default {
             form: {
                 topic: '',
                 roomName: '',
+                maxPoints: 5,
             },
         };
     },
@@ -124,6 +149,7 @@ export default {
         form: {
             roomName: { required },
             topic: { required },
+            maxPoints: { required, minValue: minValue(5) },
         },
     },
     methods: {

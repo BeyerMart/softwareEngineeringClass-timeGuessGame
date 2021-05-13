@@ -20,6 +20,8 @@ export default {
             nameRequired: 'Name is required',
             termNameRequired: 'Term name is required',
             topicRequired: 'Topic is required',
+            maxPointsIsRequired: 'Max points is required.',
+            minPointsRequired: 'Please choose at least 5 points',
         },
         loginRequired: 'Login required',
     },
@@ -67,6 +69,7 @@ export default {
             roomRemoved: 'The Room was deleted by the host.',
             userJoined: ' joined',
         },
+        maxPoints: 'Max points',
     },
     login: {
         login: 'Login',
