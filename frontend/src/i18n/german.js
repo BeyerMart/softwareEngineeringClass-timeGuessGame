@@ -10,6 +10,9 @@ export default {
         yes: 'Ja',
         no: 'Nein',
         role: 'Rolle',
+        universityOfInnsbruck: 'Universität Innsbruck',
+        imprint: 'Impressum',
+        tos: 'Nutzungsbedingungen',
     },
     errors: {
         back: 'Zurück',

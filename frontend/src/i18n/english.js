@@ -9,6 +9,9 @@ export default {
         yes: 'Ja',
         no: 'Nein',
         role: 'Role',
+        universityOfInnsbruck: 'University of Innsbruck',
+        imprint: 'Imprint',
+        tos: 'Terms of Service',
     },
     errors: {
         back: 'Go back',
