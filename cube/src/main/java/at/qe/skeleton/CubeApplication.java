@@ -30,7 +30,23 @@ public class CubeApplication{
         //TimeCubeService timeCubeService = new TimeCubeService();
         //timeCubeService.setPassword();
         //System.out.println("Battery Level: " + timeCubeService.getBatteryLevel());
-        WebSocketConnection webSocketConnection = new WebSocketConnection(cubeCalibration);
+        WebSocketConnection webSocketConnection = null;
+        while (webSocketConnection == null){
+            int counter = 0;
+            try
+            {
+                webSocketConnection = new WebSocketConnection(cubeCalibration);
+            } catch (TimeoutException e){
+                e.printStackTrace();
+                counter++;
+                if (counter > 4){
+                    System.exit(1);
+                }
+                System.out.println("A Timeout Error occurred. Try again...");
+
+            }
+        }
+
         webSocketConnection.subscribeToChannel("cube");
         webSocketConnection.sendRegistration();
 

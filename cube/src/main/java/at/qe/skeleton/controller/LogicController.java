@@ -36,6 +36,7 @@ public class LogicController {
 
     public void handler(String payload) throws InterruptedException, JsonProcessingException {
         JsonNode jsonResult = null;
+        int room_id;
         try {
             jsonResult = mapper.readTree(payload);
         } catch (JsonProcessingException e) {
@@ -46,10 +47,24 @@ public class LogicController {
         if (wsType == WSResponseType.OK || wsType == WSResponseType.PI_CONNECTED || wsType == WSResponseType.PI_DISCONNECTING){
             return;
         }
-        int room_id = data.get("room_id").asInt();
-        if (data.asText().equals(connection.getPiName())) {
-            Cube cube = new Cube();
-            cube.setRoomId(room_id);
+        if (wsType == WSResponseType.ROOM_CREATED){
+            String piNameFromBackend = data.get("piName").asText();
+            if (piNameFromBackend.equals(cubeCalibration.getPiName())){
+                int batteryLevel = cubeCalibration.getTimeCubeService().getBatteryLevel();
+                room_id = data.get("roomId").asInt();
+                int facet = cubeCalibration.getFacetFromTimeCubeService();
+                cube = new Cube(batteryLevel, room_id, facet);
+                cube.setPiName(piNameFromBackend);
+                logger.info("Cube and pi " + cube.getPiName() + " connected to room with id " +  cube.getRoomId());
+                connection.sendFacetNotification(cube);
+            }
+            return;
+        }
+
+        room_id = data.get("room_id").asInt();
+        //if (data.asText().equals(connection.getPiName())) {
+        if (room_id == cube.getRoomId()){
+            //cube.setRoomId(room_id);
             switch (wsType) {
                 case START_BATTERY_NOTIFICATION:
                     cubeCalibration.getTimeCubeService().getBatteryCharacteristic().enableValueNotifications(new BatteryValueNotification(connection, cube));
@@ -69,6 +84,9 @@ public class LogicController {
                     cube.setFacet(cubeCalibration.mapFromInternalToExternalFacet(facet));
                     cube.setBatteryLevel(batteryLevel);
                     connection.sendFacetNotification(cube);
+                    break;
+                case ROOM_CREATED:
+
             }
         }
     }

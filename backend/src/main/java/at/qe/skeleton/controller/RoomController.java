@@ -169,8 +169,10 @@ public class RoomController {
     }
 
     @PostMapping("/rooms/{id}/connect_pi")
-    public void connectPiToRoom(@RequestBody String piName, @PathVariable String id){
+    public ResponseEntity<?> connectPiToRoom(@RequestBody String piName, @PathVariable String id){
         roomService.connectRoomAndPi(Long.valueOf(id), piName);
+        cubeController.setRoomOfPiName(piName, Integer.parseInt(id));
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @PostMapping("/rooms/{id}/disconnect_pi")
