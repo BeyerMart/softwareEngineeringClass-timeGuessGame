@@ -1,5 +1,11 @@
 <template>
     <div>
+        <!-- TODO:
+            NACH GAME START
+         * nur join team, reate team -> blocked
+         * start game -> nur der host
+         * die anderen -> join game
+         -->
         <div
             v-if="room"
             class="my-8"
@@ -35,7 +41,6 @@
                                     :show-labels="false"
                                     placeholder="PI auswählen"
                                     class="inline-block"
-                                    @select="connectPi"
                                 />
                                 <button
                                     class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
@@ -135,6 +140,30 @@
                             {{ $t('room.leaveRoom') }}
                         </button>
 
+                        <button
+                            v-if="isHost && !gameIsStarted"
+                            class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
+                            @click="createGame"
+                        >
+                            <font-awesome-icon
+                                icon="play-circle"
+                                class="text-l cursor-pointer"
+                            />
+                            Spiel starten
+                        </button>
+
+                        <button
+                            v-if="gameIsStarted"
+                            class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
+                            @click="createGame"
+                        >
+                            <font-awesome-icon
+                                icon="play-circle"
+                                class="text-l cursor-pointer"
+                            />
+                            Spiel beitreten
+                        </button>
+
                         <CreateTeamForm
                             v-show="display.showTeamForm"
                             @close="display.showTeamForm = false"
@@ -154,7 +183,7 @@ import * as RoomService from '@/services/room.service';
 import * as TopicService from '@/services/topic.service';
 import * as CubeService from '@/services/cube.service';
 import * as GameService from '@/services/game.service';
-import * as TeamService from '@/services/team.service';
+// import * as TeamService from '@/services/team.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
 import Player from '@/components/page/Player';
 import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
@@ -395,11 +424,11 @@ export default {
             });
         },
         joinGame() {
-            if (!this.gameIsStartede) {
+            if (!this.gameIsStarted) {
                 console.error("Game hasn't started, yet.");
                 return;
             }
-            console.log('Implemnt then push');
+            console.log('Implement then push');
         },
     },
 };

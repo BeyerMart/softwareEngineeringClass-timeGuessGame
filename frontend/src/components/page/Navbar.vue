@@ -107,7 +107,7 @@
                         </div>
                         <div
                             v-show="showProfileDropDown"
-                            class="absolute right-0 origin-top-right mt-2 w-40 rounded shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            class="absolute z-10 right-0 origin-top-right mt-2 w-40 rounded shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                         >
                             <router-link
                                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
