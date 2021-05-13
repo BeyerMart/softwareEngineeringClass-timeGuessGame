@@ -110,17 +110,16 @@ public class CubeController {
 					response = new WebsocketResponse(roomOptional3.get(), WSResponseType.OK);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
-					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
+					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_CHANGED);
 				}
 				break;
 			case BATTERY_NOTIFICATION:
 				cube = mapper.convertValue(data, Cube.class);
-				int batteryLevel = cube.getBatteryLevel();//TODO Where to send this Value?
 
 				Optional<Room> roomOptional4 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional4.isPresent()) {
 					roomService.updateCube(cube.getRoomId(), cube);
-					response = new WebsocketResponse(roomOptional4.get(), WSResponseType.OK);
+					response = new WebsocketResponse(roomOptional4.get(), WSResponseType.ROOM_CHANGED);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
 					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
@@ -133,7 +132,7 @@ public class CubeController {
 
 				Optional<Room> roomOptional5 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional5.isPresent()) {
-					response = new WebsocketResponse(roomOptional5.get(), WSResponseType.OK);
+					response = new WebsocketResponse(roomOptional5.get(), WSResponseType.ROOM_CHANGED);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
 					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
