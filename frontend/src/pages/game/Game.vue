@@ -189,6 +189,28 @@ export default {
                 }
             }, 1000);
         },
+        rejectPointsHandlerHandler() { // TODO: Only during validation
+            GameService.rejectPoints(this.gameId).then(() => {
+                this.notifySuccess('Voted: Points rejected'); // TODO: Translate
+            }).catch((error) => console.error(error));
+        },
+        confirmPointsHandler() { // TODO: Only during validation
+            GameService.confirmPoints(this.gameId).then(() => {
+                this.notifySuccess('Voted: Points confirmed'); // TODO: Translate
+            }).catch((error) => console.error(error));
+        },
+        notifyError(message) {
+            this.$notify({
+                title: message,
+                type: 'error',
+            });
+        },
+        notifySuccess(message) {
+            this.$notify({
+                title: message,
+                type: 'success',
+            });
+        },
     },
 };
 </script>

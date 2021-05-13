@@ -1,11 +1,5 @@
 <template>
     <div>
-        <!-- TODO:
-            NACH GAME START
-         * nur join team, reate team -> blocked
-         * start game -> nur der host
-         * die anderen -> join game
-         -->
         <div
             v-if="room"
             class="my-8"
