@@ -17,7 +17,7 @@ public class Room {
     private Long topic_id;
     private Cube cube;
     private boolean connectedWithPiAndCube = false;
-    private int max_points;
+    private int max_points = 20;
 
     public Room(long room_id, long host_id) {
         this.id = room_id;

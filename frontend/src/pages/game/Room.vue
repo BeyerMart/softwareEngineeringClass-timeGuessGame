@@ -274,7 +274,7 @@ export default {
                 console.error(error);
                 this.$router.push('/');
             });
-        if (!this.topicList) this.fetchTopics();
+        this.fetchTopics();
         CubeService.getCubes().then((response) => {
             this.piNames = response.data;
         });

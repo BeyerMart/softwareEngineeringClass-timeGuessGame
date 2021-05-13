@@ -64,6 +64,9 @@ public class RoomService {
                 throw new TopicNotFoundException(roomRequest.getTopic_id());
             newRoom.setTopic_id(roomRequest.getTopic_id());
         }
+        if (roomRequest.getMax_points() != 20) {
+            newRoom.setMax_points(roomRequest.getMax_points());
+        }
         rooms.put(newRoom.getId(), newRoom);
         roomController.roomCreated(newRoom);
         return newRoom;
