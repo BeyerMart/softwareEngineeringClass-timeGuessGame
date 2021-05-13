@@ -32,7 +32,7 @@ The program guides you through the calibration. However, it is neccesarry to kno
 This picture shows the label of each facet but from the outside.
 
 It is recommended to use the stickers for easy labeling. Alternatively, you can write the labels onto the cubes facet.
-![CubeCalibrationFromOutSide](uploads/5533e5c45acf9ea02eba1e330760346a/CubeCalibrationFromOutSide.png)
+![CubeCalibrationFromOutSide](https://i.imgur.com/RELicPJ.png)
 
 * At first the connection to the cube is checked. On our cube this fails about 70% of the time. A fix for this is to reset the battery. As the program shows you.
 
