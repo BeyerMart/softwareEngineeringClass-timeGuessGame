@@ -40,4 +40,4 @@ As debugging websockets isn't that easy (considering that there aren't many publ
 
 The tool itself consists of an input field for subscribing channels and an output (*There isn't a message input field as in this project, websockets are half-duplex*). To restart an existing websocket connection / init a connection, press the "Connect" button. 
 
-![chrome_nBia0rAwa9](uploads/da6bae37162fa205cf63689168c2c926/chrome_nBia0rAwa9.png)
+[![Alt text](https://i.imgur.com/iVPAo8D.png)](https://imgur.com)
