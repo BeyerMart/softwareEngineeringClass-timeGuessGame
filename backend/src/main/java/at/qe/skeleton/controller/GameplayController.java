@@ -62,7 +62,7 @@ public class GameplayController {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
 
-        node.put("preRoundTime", PRE_ROUND_TIME);
+        node.put("pre_round_time", PRE_ROUND_TIME);
 
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(node, WSResponseType.GAMEPLAY_PRE_ROUND_TIMER)).toString());
     }
@@ -226,8 +226,6 @@ public class GameplayController {
 
             //TODO
             // maybe w/ button "I ROLLED THE DICE" then continue
-            //wait until dice is rolled
-            TimeUnit.SECONDS.sleep(5);
 
             /*
              * Get information from cube (points, type and time)
@@ -266,7 +264,8 @@ public class GameplayController {
             timerStartMessage(game, availableTime);
 
             //Either time is over or word is guessed (i.e. cube is turned)
-            while (endTime.after(currentTime) || rolledFacet != room.getCube().getFacet()) {
+            rolledFacet = room.getCube().getFacet();
+            while (endTime.after(currentTime) || rolledFacet == room.getCube().getFacet()) {
                 currentTime = new Timestamp(System.currentTimeMillis());
             }
 

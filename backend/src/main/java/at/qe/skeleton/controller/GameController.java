@@ -46,7 +46,8 @@ public class GameController {
     @Autowired
     TeamService teamService;
 
-    public void gameCreatedResponse(GameDto game){
+    public void gameCreatedResponse(GameDto game, Room room) {
+        template.convertAndSend("/room/" + room.getId(), (new WebsocketResponse(game, WSResponseType.GAME_CREATED)).toString());
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(game, WSResponseType.GAME_CREATED)).toString());
     }
 
@@ -107,7 +108,7 @@ public class GameController {
         });
 
         GameDto gameDto = convertToGameDto(game);
-        gameCreatedResponse(gameDto);
+        gameCreatedResponse(gameDto, room);
         return new ResponseEntity<>((new SuccessResponse(gameDto, 201)).toString(),HttpStatus.CREATED);
     }
 
