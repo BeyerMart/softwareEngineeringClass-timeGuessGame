@@ -7,7 +7,7 @@ import Auth from '@/pages/auth/Auth';
 import Profile from '@/pages/Profile';
 import AdminDashboard from '@/pages/AdminDashboard';
 import WSDebug from '@/pages/WSDebug';
-import Room from '@/pages/game/Room';
+import RoomGame from '@/pages/game/RoomGame';
 
 const routes = [
     {
@@ -57,7 +57,7 @@ const routes = [
     {
         path: '/room/:id',
         name: 'room',
-        component: Room,
+        component: RoomGame,
         meta: {
             auth: true,
         },

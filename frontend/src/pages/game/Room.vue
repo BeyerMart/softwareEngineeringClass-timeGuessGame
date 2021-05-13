@@ -183,7 +183,7 @@ import * as RoomService from '@/services/room.service';
 import * as TopicService from '@/services/topic.service';
 import * as CubeService from '@/services/cube.service';
 import * as GameService from '@/services/game.service';
-// import * as TeamService from '@/services/team.service';
+import * as TeamService from '@/services/team.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
 import Player from '@/components/page/Player';
 import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
@@ -203,6 +203,8 @@ export default {
             players: [],
             teams: [],
             piNames: [],
+            game: {},
+            gameTeams: {},
             piNamesTest: ['pi1', 'pi2'],
             display: {
                 showTeamForm: false,
@@ -232,6 +234,9 @@ export default {
         },
         gameIsStarted() {
             return !this.room.game_id < 0;
+        },
+        myTeam() {
+            return this.teams.find((team) => team.players.some((player) => this.samePlayerCheck(player, this.getUser)));
         },
     },
     watch: {
@@ -314,6 +319,12 @@ export default {
             case 'USER_LEFT_TEAM':
                 if (!message.data.team.players.length) { this.teams = this.teams.filter((team) => team.name !== message.data.team.name); } else { this.teams = this.teams.map((team) => (team.name === message.data.team.name ? message.data.team : team)); }
                 this.notifyError(`${message.data.user.username} left team ${message.data.team.name}`); // TODO: translate
+                break;
+            case 'GAME_CREATED':
+                this.game = message.data;
+                GameService.getAllTeams().then((response) => {
+                    this.gameTeams = response.data;
+                });
                 break;
             default:
                 break;
@@ -413,7 +424,11 @@ export default {
         },
         createGame() {
             if (this.room.host_id !== this.getUser.id) {
-                this.notifyError('Only a host can create a new game');
+                this.notifyError('Only a host can create a new game'); // TODO: Translate
+                return;
+            }
+            if (this.teams.length < 2) {
+                this.notifyError('Bitte min. zwei Teams erstellen.'); // TODO: Translate
                 return;
             }
             GameService.createGame(this.room.id).then((repsonse) => {
@@ -426,9 +441,15 @@ export default {
         joinGame() {
             if (!this.gameIsStarted) {
                 console.error("Game hasn't started, yet.");
-                return;
             }
-            console.log('Implement then push');
+            const myTeamLocal = this.gameTeams.find((team) => team.name === this.myTeam.name);
+            TeamService.joinTeam(myTeamLocal.id).then(() => {
+                const myVirtualUsers = this.players.filter((player) => player.creator_id && player.creator_id === this.getUser.id);
+                myVirtualUsers.forEach((virtualUser) => {
+                    TeamService.joinTeam(myTeamLocal.id, virtualUser);
+                });
+                this.$emit('joinedGame', this.game.id);
+            });
         },
     },
 };
