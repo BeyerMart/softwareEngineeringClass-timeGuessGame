@@ -62,6 +62,7 @@ public class CubeCalibration {
             return startCalibration();
         } else {
             logger.error("No valid response. shutting down.");
+            System.exit(1);
             return false;
         }
     }
@@ -115,6 +116,10 @@ public class CubeCalibration {
         } else if (input.equals("d") || input.equals("default")) {
             piName = "piName";
         }
+    }
+
+    public void setPiName(String piName){
+        this.piName = piName;
     }
 
     public void setURL() {
