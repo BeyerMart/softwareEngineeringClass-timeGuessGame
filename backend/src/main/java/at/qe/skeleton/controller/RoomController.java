@@ -224,7 +224,7 @@ public class RoomController {
     //WS Messages to the FrontEnd only used in cased where connection gets lost and reconnect is needed.
     public void cubeNotConnected(Room room){
         room.setConnectedWithPiAndCube(false);
-        template.convertAndSend("/rooms/" + room.getRoom_id(), WSResponseType.NOT_CONNECTED.toString());
+        template.convertAndSend("/rooms/" + room.getId(), WSResponseType.NOT_CONNECTED.toString());
     }
 
     public void cubeConnected(int roomIdOnPi, Cube cube) {
