@@ -87,6 +87,7 @@
                 </div>
                 <!-- profile and dropdown -->
                 <div class="absolute right-0 inset-y-0 flex items-center pr-3 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                    <language-selector />
                     <div
                         v-show="!isUserLoggedIn"
                         class="ml-3 relative"
@@ -104,7 +105,7 @@
                     >
                         <div>
                             <button
-                                class="bg-gray-900 flex rounded-full focus:outline-none text-sm focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
+                                class="bg-gray-900 flex rounded-full focus:outline-none text-sm focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-700 focus:ring-white"
                                 @click="showProfileDropDown = !showProfileDropDown"
                             >
                                 <img
@@ -154,9 +155,11 @@
 <script>
 
 import { logout } from '@/services/auth.service';
+import LanguageSelector from './LanguageSelector.vue';
 
 export default {
     name: 'Navbar',
+    components: { LanguageSelector },
     data() {
         return {
             showProfileDropDown: false,

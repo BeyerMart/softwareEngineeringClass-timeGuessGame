@@ -14,6 +14,10 @@ export default {
         imprint: 'Impressum',
         tos: 'Nutzungsbedingungen',
     },
+    languages: {
+        de: 'Deutsch',
+        en: 'Englisch',
+    },
     errors: {
         back: 'Zurück',
         notFound: 'Entschuldigung, diese Seite existiert nicht',

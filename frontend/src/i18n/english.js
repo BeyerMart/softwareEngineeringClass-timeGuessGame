@@ -13,6 +13,10 @@ export default {
         imprint: 'Imprint',
         tos: 'Terms of Service',
     },
+    languages: {
+        de: 'German',
+        en: 'English',
+    },
     errors: {
         back: 'Go back',
         notFound: 'Sorry, this page was not found',
