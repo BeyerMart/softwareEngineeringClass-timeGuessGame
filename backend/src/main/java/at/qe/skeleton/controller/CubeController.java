@@ -81,7 +81,7 @@ public class CubeController {
 
 				Optional<Room> roomOptional3 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional3.isPresent()) {
-					roomService.updateCube(cube.getRoomId(), cube);
+					roomService.updateCube((long) cube.getRoomId(), cube);
 					response = new WebsocketResponse(roomOptional3.get(), WSResponseType.OK);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
@@ -94,7 +94,7 @@ public class CubeController {
 
 				Optional<Room> roomOptional4 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional4.isPresent()) {
-					roomService.updateCube(cube.getRoomId(), cube);
+					roomService.updateCube((long) cube.getRoomId(), cube);
 					response = new WebsocketResponse(roomOptional4.get(), WSResponseType.ROOM_CHANGED);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
@@ -127,10 +127,10 @@ public class CubeController {
 		return response.toString();
 	}
 
-	public void setRoomOfPiName(String piName, int roomId) {
+	public void setRoomOfPiName(String piName, long roomId) {
 		Cube cubeToSend = new Cube();
 		cubeToSend.setPiName(piName);
-		cubeToSend.setRoomId(roomId);
+		cubeToSend.setRoomId((int) roomId);
 		WebsocketResponse request = new WebsocketResponse(cubeToSend, WSResponseType.ROOM_CREATED);
 		template.convertAndSend("/cube", request.toString());
 	}
@@ -160,28 +160,7 @@ public class CubeController {
 		template.convertAndSend("/cube", request.toString());
 	}
 
-	@PostMapping("cubes/{roomId}")
-	public ResponseEntity<?> connectCubeAndPiFake(@PathVariable Long roomId, @RequestBody String piName) {
-		Cube cube = new Cube();
-		cube.setRoomId(Math.toIntExact(roomId));
-		cube.setPiName(piName);
-		cube.setFacet(4);
-		cube.setBatteryLevel(99);
-		roomService.connectRoomAndPi(roomId, piName);
-		roomService.updateCube(cube.getRoomId(), cube);
-		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-	}
 
-	@PostMapping("cubeUpdate/{roomId}")
-	public ResponseEntity<?> updateCubeFake(@PathVariable Long roomId, @RequestBody String piName) {
-		Cube cube = new Cube();
-		cube.setRoomId(Math.toIntExact(roomId));
-		cube.setPiName(piName);
-		cube.setFacet(4);
-		cube.setBatteryLevel(99);
-		roomService.updateCube(cube.getRoomId(), cube);
-		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-	}
 
 	@GetMapping("/cubes")
 	public ResponseEntity<?> getAllPis() {

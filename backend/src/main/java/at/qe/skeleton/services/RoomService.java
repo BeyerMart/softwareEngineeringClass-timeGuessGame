@@ -317,15 +317,26 @@ public class RoomService {
             throw new EntityExistsException(username);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+        @PreAuthorize("hasAuthority('ROLE_USER')")
     public void connectRoomAndPi(Long roomId, String piName) {
-        Long userId = userService.getAuthenticatedUser().get().getId();
-        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
-        if (userId != room.getHost_id()) {
-            throw new AccessDeniedException("Only the Host can connect the pi to a room");
+        User authenticatedUser = userService.getAuthenticatedUser().get();
+        if (authenticatedUser.getId() != getRoomById(roomId).get().getHost_id() && authenticatedUser.getRole() != UserRole.ROLE_ADMIN){
+            throw new AccessDeniedException("Only the Host (or an admin) can connect the pi to a room");
         }
+        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
         room.setPi_name(piName);
         roomController.roomChanged(room);
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void randomUpdateCube(Long roomId){
+        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
+        Cube cube = new Cube();
+        cube.setRoomId(Math.toIntExact(roomId));
+        cube.setPiName(room.getPi_name());
+        cube.setFacet((int) (Math.random()*12));
+        cube.setBatteryLevel((int) (Math.random()*100));
+        updateCube(roomId, cube);
     }
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -336,7 +347,7 @@ public class RoomService {
         roomController.roomChanged(room);
     }
 
-    public void updateCube(int roomId, Cube cube) {
+    public void updateCube(long roomId, Cube cube) {
         Optional<Room> optionalRoom = getRoomById(roomId);
         if (optionalRoom.isPresent()) {
             optionalRoom.get().setCube(cube);

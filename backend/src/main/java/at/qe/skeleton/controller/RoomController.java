@@ -206,11 +206,18 @@ public class RoomController {
         template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(data, WSResponseType.USER_LEFT_TEAM)).toString());
     }
 
+    //Allows admin to manually roll the cube
+    @PostMapping("rooms/{id}/mockCubeUpdate")
+    public ResponseEntity<?> mockCubeUpdate(@PathVariable long id) {
+        roomService.randomUpdateCube(id);
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/rooms/{id}/connect_pi")
-    public ResponseEntity<?> connectPiToRoom(@RequestBody Map<String, Object> requestBody, @PathVariable String id){
+    public ResponseEntity<?> connectPiToRoom(@RequestBody Map<String, Object> requestBody, @PathVariable long id){
         String piName = (String) requestBody.get("piName");
-        roomService.connectRoomAndPi(Long.valueOf(id), piName);
-        cubeController.setRoomOfPiName(piName, Integer.parseInt(id));
+        roomService.connectRoomAndPi(id, piName);
+        cubeController.setRoomOfPiName(piName, id);
         return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
