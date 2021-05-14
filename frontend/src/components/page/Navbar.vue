@@ -67,7 +67,7 @@
                                 {{ $t('generic.overview') }}
                             </router-link>
                             <router-link
-                                :to="{ name: 'profile' }"
+                                :to="{ name: 'userProfile' }"
                                 class="hover:bg-gray-700 hover:text-white px-3 py-2 rounded"
                                 active-class="bg-gray-700 text-white"
                                 exact-path
