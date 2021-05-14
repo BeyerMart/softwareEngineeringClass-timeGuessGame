@@ -127,6 +127,7 @@ export default {
         selectFile: 'Datei auswählen',
         createNewTopic: 'Neues Themengebiet hinzufügen',
         createTopic: 'Themengebiet hinzufügen',
+        createTeam: 'Team erstellen',
         editTopic: 'Themengebiet bearbeiten',
         createTerm: 'Begriff hinzufügen',
         options: 'Einstellungen',
