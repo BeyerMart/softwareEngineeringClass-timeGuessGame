@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RestController
+@RestController()
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GameController {
     @Autowired
@@ -78,12 +78,14 @@ public class GameController {
 
         game = gameService.addGame(game, room.getTopic_id());
 
+        HashSet<Team> gameTeam = new HashSet<>();
         //Set teams
         for(VirtualTeam virtTeam : room.getTeams().values()) {
             Team team = new Team();
             team.setGame(game);
             team.setName(virtTeam.getName());
             team = teamService.addTeam(team);
+            gameTeam.add(team);
 
             //Add (virtual) users
             for(UserIdVirtualUser user : virtTeam.getPlayers()) {
@@ -98,7 +100,7 @@ public class GameController {
                 }
             }
         }
-
+        game.setTeams(gameTeam);
         //Start gameplay in new thread
         Game finalGame = game;
         new Thread(() -> {

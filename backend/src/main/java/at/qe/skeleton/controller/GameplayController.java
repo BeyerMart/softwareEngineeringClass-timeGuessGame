@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@RestController
+@RestController()
 public class GameplayController {
 
     private final int PRE_ROUND_TIME = 10;

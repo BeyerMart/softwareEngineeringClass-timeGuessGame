@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,6 +22,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -123,7 +127,7 @@ public class CubeController {
 		return response.toString();
 	}
 
-	public void setRoomOfPiName(String piName, int roomId){
+	public void setRoomOfPiName(String piName, int roomId) {
 		Cube cubeToSend = new Cube();
 		cubeToSend.setPiName(piName);
 		cubeToSend.setRoomId(roomId);
@@ -156,6 +160,28 @@ public class CubeController {
 		template.convertAndSend("/cube", request.toString());
 	}
 
+	@PostMapping("cubes/{roomId}")
+	public ResponseEntity<?> connectCubeAndPiFake(@PathVariable Long roomId, @RequestBody String piName) {
+		Cube cube = new Cube();
+		cube.setRoomId(Math.toIntExact(roomId));
+		cube.setPiName(piName);
+		cube.setFacet(4);
+		cube.setBatteryLevel(99);
+		roomService.connectRoomAndPi(roomId, piName);
+		roomService.updateCube(cube.getRoomId(), cube);
+		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+	}
+
+	@PostMapping("cubeUpdate/{roomId}")
+	public ResponseEntity<?> updateCubeFake(@PathVariable Long roomId, @RequestBody String piName) {
+		Cube cube = new Cube();
+		cube.setRoomId(Math.toIntExact(roomId));
+		cube.setPiName(piName);
+		cube.setFacet(4);
+		cube.setBatteryLevel(99);
+		roomService.updateCube(cube.getRoomId(), cube);
+		return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+	}
 
 	@GetMapping("/cubes")
 	public ResponseEntity<?> getAllPis() {
