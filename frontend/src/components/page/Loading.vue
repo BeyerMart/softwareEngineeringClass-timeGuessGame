@@ -16,6 +16,7 @@ export default {
     name: 'Loading',
     props: {
         message: {
+            type: String,
             required: true,
             default: 'Waiting',
         },
