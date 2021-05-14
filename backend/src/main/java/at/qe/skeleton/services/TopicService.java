@@ -67,9 +67,6 @@ public class TopicService {
      * @return searched topic
      */
     public Topic findTopic(Long id) throws TopicNotFoundException {
-        if(!topicRepository.existsById(id)){
-            throw (new TopicNotFoundException(id));
-        }
         Topic topic = topicRepository.findById(id).orElseThrow(() -> new TopicNotFoundException(id));
         return topic;
     }

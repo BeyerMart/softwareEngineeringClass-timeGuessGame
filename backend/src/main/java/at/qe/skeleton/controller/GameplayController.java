@@ -1,5 +1,6 @@
 package at.qe.skeleton.controller;
 
+import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
@@ -129,11 +130,14 @@ public class GameplayController {
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(node, WSResponseType.GAMEPLAY_CURRENT_TEAMUSER)).toString());
     }
 
-    public void sleepUntilRoomNotEmpty(Game game) {
+    public void sleepUntilRoomNotEmpty(Game game) throws InterruptedException {
         boolean otherPlayerJoined = false;
         while(!otherPlayerJoined) {
-            List<Integer> teams = game.getTeams().stream().map(Team::getUsers).map(users -> users.size() > 0 ? 1 : 0).collect(Collectors.toList());
-            otherPlayerJoined = teams.stream().mapToInt(Integer::intValue).sum() >= 2;
+            otherPlayerJoined = game.getTeams().stream().mapToInt(team -> {
+                Team teamDb = teamService.findTeam(team.getId()).orElseThrow(() -> new TeamNotFoundException(team.getId()));
+                return teamDb.getUsers() != null && teamDb.getUsers().size() > 0 ? 1 : 0;
+            }).sum() >= 2;
+            TimeUnit.SECONDS.sleep(10);
         }
     }
 
