@@ -13,7 +13,7 @@
                     {{ getTimer }}
                 </h1>
                 <p class="mt-5 text-5xl text-gray-600 sm:text-center">
-                    Augenlied
+                    {{ game.name }}
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
                     {{ round }} - TEAM SFS - hansp
@@ -209,7 +209,7 @@ export default {
                 break;
             case 'GAMEPLAY_PRE_ROUND_TIMER':
                 if (this.status !== 'WAIT_FOR_NEXT_ROUND') this.status = 'PREPARATION_TIME';
-                this.setCountDown(message.data.message.pre_round_time);
+                this.setCountDown(message.data.pre_round_time);
                 break;
             case 'GAMEPLAY_TIMER':
                 if (this.status !== 'WAIT_FOR_NEXT_ROUND') this.status = 'GUESS';

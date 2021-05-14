@@ -4,6 +4,7 @@ import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
+import at.qe.skeleton.repository.TeamRepository;
 import at.qe.skeleton.services.CubeService;
 import at.qe.skeleton.services.GameService;
 import at.qe.skeleton.services.RoomService;
@@ -45,6 +46,8 @@ public class GameplayController {
     TeamService teamService;
     @Autowired
     VirtualUserController virtualUserController;
+    @Autowired
+    TeamRepository teamRepository;
 
     public void rollTheDiceMessage(Game game) {
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.ROLL_DICE)).toString());
@@ -300,7 +303,7 @@ public class GameplayController {
                 //-1 point for cheating
                 currentTeam.setPoints(currentTeam.getPoints() - 1);
             }
-            teamService.updateTeam(currentTeam);
+            teamRepository.save(currentTeam);
 
             /*
              * Primary win condition
