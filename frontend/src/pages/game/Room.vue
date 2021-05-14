@@ -339,7 +339,7 @@ export default {
                 break;
             case 'GAME_CREATED':
                 this.game = message.data;
-                GameService.getAllTeams().then((response) => {
+                GameService.getAllTeams(this.game.id).then((response) => {
                     this.gameTeams = response.data;
                 });
                 break;
