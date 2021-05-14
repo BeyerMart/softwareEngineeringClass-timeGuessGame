@@ -180,7 +180,7 @@ export default {
         }).catch((error) => {
             console.error(error);
         });
-        subChannel(`rooms/${this.$route.params.id}`, (message) => {
+        subChannel(`/rooms/${this.$route.params.id}`, (message) => {
             console.log('You got a room message:');
             console.log(message);
             switch (message.type) {
@@ -194,7 +194,7 @@ export default {
                 break;
             }
         });
-        subChannel(`game/${this.gameId}`, (message) => {
+        subChannel(`/game/${this.gameId}`, (message) => {
             console.log('You got a games message:');
             console.log(message);
             switch (message.type) {

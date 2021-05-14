@@ -125,6 +125,7 @@ export default {
         selectFile: 'Select file',
         createNewTopic: 'Create new term',
         createTopic: 'Create topic',
+        createTeam: 'Create team',
         editTopic: 'Edit topic',
         createTerm: 'Create term',
         options: 'Options',

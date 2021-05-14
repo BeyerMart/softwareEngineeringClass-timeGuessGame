@@ -348,7 +348,7 @@ export default {
             }
         });
     },
-    unmounted() {
+    beforeDestroy() {
         unsubChannel(`/rooms/${this.id}`);
     },
     methods: {
