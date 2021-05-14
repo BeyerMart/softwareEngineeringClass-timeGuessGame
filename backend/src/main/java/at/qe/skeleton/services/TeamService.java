@@ -40,7 +40,6 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ArrayList<Object> getAllTeamUsers(Team team) {
         ArrayList<Object> users = new ArrayList<>(Arrays.asList(team.getUsers().toArray()));
 
