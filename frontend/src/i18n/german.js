@@ -72,6 +72,7 @@ export default {
         numOfTeams: 'Anzahl der Teams',
         games: 'Spiele',
         teams: 'Teams',
+        leaveGame: 'Spiel verlassen',
         messages: {
             roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
             roomAlreadyFull: 'Der Raum ist bereits voll',

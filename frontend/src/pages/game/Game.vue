@@ -149,13 +149,13 @@
 
                     <button
                         class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
-                        @click="leaveRoom()"
+                        @click="leaveGameHandler()"
                     >
                         <font-awesome-icon
                             icon="sign-out-alt"
                             class="text-l cursor-pointer"
                         />
-                        {{ $t('room.leaveRoom') }}
+                        {{ $t('game.leaveGame') }}
                     </button>
                 </div>
             </div>
@@ -397,6 +397,7 @@ export default {
             const myTeam = this.game.teams.find((team) => team.players.some((player) => player.id && player.id === this.getUser.id));
             TeamService.leaveRoom(myTeam.id).then(() => {
                 this.notifySuccess('successfully left Room'); // TODO: translate
+                this.$router.push('/');
             });
         },
         notifyError(message) {
