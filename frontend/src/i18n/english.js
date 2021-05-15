@@ -55,7 +55,6 @@ export default {
     game: {
         team: 'Team',
         teamName: 'Team name',
-        punkte: 'Points',
         enemy: 'Enemy',
         points: 'Points',
         score: 'Score',
