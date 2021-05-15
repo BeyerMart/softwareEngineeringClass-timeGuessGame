@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 public class GameplayController {
 
     private final int PRE_ROUND_TIME = 10;
+    private final long VOTE_TIME = 30;
+
     @Autowired
     SimpMessagingTemplate template;
     @Autowired
@@ -280,7 +282,7 @@ public class GameplayController {
 
             //Either time is over or word is guessed (i.e. cube is turned)
             rolledFacet = room.getCube().getFacet();
-            while (endTime.after(currentTime) || rolledFacet == room.getCube().getFacet()) {
+            while (endTime.after(currentTime) && rolledFacet == room.getCube().getFacet()) {
                 currentTime = new Timestamp(System.currentTimeMillis());
             }
 
@@ -289,8 +291,16 @@ public class GameplayController {
              */
             gameService.addGamePoints(game, currentTeam);
             pointValidationStart(game);
-            TimeUnit.SECONDS.sleep(30); //Todo: Quit early if everyone voted
+            currentTime = new Timestamp(System.currentTimeMillis());
+
+            endTime = new Timestamp(System.currentTimeMillis() + (VOTE_TIME * 1000));
             GamePoints gamePoints = gameService.getGamePoints(game);
+
+            while(endTime.after((currentTime)) && ((gamePoints.getRejections() + gamePoints.getConfirmations()) != (allUsersInGame.size() - currentTeam.getUsers().size()))){
+                currentTime = new Timestamp(System.currentTimeMillis());
+                gamePoints = gameService.getGamePoints(game);
+            }
+
             pointValidationStop(game);
             gameService.removeGamePoints(game);
 
