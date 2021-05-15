@@ -8,11 +8,23 @@
                 title="Please wait"
                 message="doing some stuff..."
             />
-            <Message
+            <div
                 v-show="isPrepTime"
-                title="Prepare yourself"
-                :message="'Your term: ' + term + ' | activity: ' + activity"
-            />
+                class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-green-100"
+            >
+                <div class="text-xl p-7 inline-flex flex-col items-center">
+                    <font-awesome-icon
+                        icon="dice-d6"
+                        class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
+                    />
+                    <span class="mt-2 text-gray-700">
+                        {{ getTimer }}
+                        <p class="mt-2 italic">
+                            Your term: {{ term }} - activity: {{ activity }}
+                        </p>
+                    </span>
+                </div>
+            </div>
             <div
                 v-show="isRollingDice"
                 class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-green-100"
@@ -43,15 +55,19 @@
                     </span>
                 </div>
             </div>
+            <pre>{{ status }} </pre>
             <div
+                v-show="isGuessing"
                 class="sm:flex sm:flex-col sm:align-center py-y px-4 "
             >
-                <pre>{{ status }} </pre>
                 <h1 class="text-6xl font-extrabold text-gray-900 sm:text-center">
                     {{ getTimer }}
                 </h1>
-                <p class="mt-5 text-5xl text-gray-600 sm:text-center">
-                    {{ term || 'AUGENLIED' }}
+                <p
+                    v-show="!showTerm"
+                    class="mt-5 text-5xl text-gray-600 sm:text-center"
+                >
+                    {{ term }}
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
                     {{ round }} - {{ currentTeam.name }} - {{ currentUser.username }}
