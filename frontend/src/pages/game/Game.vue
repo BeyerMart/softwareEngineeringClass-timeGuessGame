@@ -349,7 +349,7 @@ export default {
                 this.game.teams.filter((team) => team.id !== message.data.id);
                 break;
             case 'USER_LEFT_TEAM':
-                this.game.teams.find((team) => team.id === message.data.team.id).players.filter((user) => user.virtual_id || user.id !== message.data.user.id);
+                this.game.teams.find((team) => team.id === message.data.team.id).players.filter((user) => user.creator_id !== message.data.user.id && user.id !== message.data.user.id);
                 break;
             case 'VIRTUAL_USER_LEFT':
                 this.game.teams.find((team) => team.id === message.data.team.id).players.filter((user) => user.id || user.virtual_id !== message.data.user.virtual_id);
@@ -395,13 +395,6 @@ export default {
         },
         leaveGameHandler() {
             const myTeam = this.game.teams.find((team) => team.players.some((player) => player.id && player.id === this.getUser.id));
-            this.game.teams.forEach((team) => {
-                team.players.forEach((player) => {
-                    if (player.creator_id && player.creator_id === this.getUser.id) {
-                        TeamService.leaveRoom(myTeam.id, player);
-                    }
-                });
-            });
             TeamService.leaveRoom(myTeam.id).then(() => {
                 this.notifySuccess('successfully left Room'); // TODO: translate
             });

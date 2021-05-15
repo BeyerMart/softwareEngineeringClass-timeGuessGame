@@ -37,7 +37,7 @@ public class LogicControllerTest {
         cubeCalibration.setTimeCubeService(timeCubeService);
         cubeCalibration.setInternalFacetToExternalFacetMapping(createOneToOneHashmap());
         webSocketConnection = Mockito.mock(WebSocketConnection.class);
-        when(webSocketConnection.sendFacetNotification(any() )).thenReturn(String.valueOf(true));
+        //when(webSocketConnection.sendFacetNotification(any() )).thenReturn(String.valueOf(true));
         when(timeCubeService.getCurrentFacet()).thenReturn(0);
         when(timeCubeService.getBatteryLevel()).thenReturn(69);
         logicController = new LogicController(webSocketConnection, cubeCalibration);
@@ -47,7 +47,7 @@ public class LogicControllerTest {
         setup();
         String responseFromBackendAfterConnectingCubeWithPi = "{\"type\":\"ROOM_CREATED\",\"data\":{\"facet\":0,\"piName\":\""+ piName +"\",\"roomId\":0,\"batteryLevel\":0},\"timestamp\":\"2021-05-13T17:08:38.645041500Z\"}";
         logicController.handler(responseFromBackendAfterConnectingCubeWithPi);
-        String payload = "{\"type\":\"FACET_REQUEST\",\"data\":{\"room_id\":0,\"pi_name\":\""+ piName +"\",\"host_id\":1,\"players\":{\"1\":{\"user_id\":1,\"virtualUsers\":{},\"amount\":1}},\"teams\":{},\"game_id\":-1,\"room_name\":\"Room 1\",\"topic_id\":-1,\"cube\":null,\"connectedWithPiAndCube\":false,\"amountOfPlayers\":1},\"timestamp\":\"2021-05-11T15:54:44.618077600Z\"}";
+        String payload = "{\"type\":\"FACET_REQUEST\",\"data\":{\"id\":0,\"pi_name\":\""+ piName +"\",\"host_id\":1,\"players\":{\"1\":{\"user_id\":1,\"virtualUsers\":{},\"amount\":1}},\"teams\":{},\"game_id\":-1,\"room_name\":\"Room 1\",\"topic_id\":-1,\"cube\":null,\"connectedWithPiAndCube\":false,\"amountOfPlayers\":1},\"timestamp\":\"2021-05-11T15:54:44.618077600Z\"}";
         logicController.handler(payload);
     }
 }
