@@ -1,6 +1,7 @@
 <template>
     <router-link
-        :to="!player.virtual_id ? '/profile/' + player.id: ''"
+        :to="!player.virtual_id ? '/profile/' + player.id: '/profile/' + player.creator_id"
+        target="_blank"
     >
         <div class="w-full flex items-center justify-between p-3 space-x-6 bg-white rounded mb-2">
             <div class="flex-1 truncate">
