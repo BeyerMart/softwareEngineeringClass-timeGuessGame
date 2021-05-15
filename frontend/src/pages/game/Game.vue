@@ -20,7 +20,7 @@
                     <span class="mt-2 text-gray-700">
                         {{ getTimer }}
                         <p class="mt-2 italic">
-                            <span v-show="!showTerm">Your term: {{ term }} - activity: {{ activity }}</span>
+                            <span v-show="!showTerm">{{ term }} - activity: {{ activity }}</span>
                             <span v-show="showTerm">{{ currentUser.username }} go lookup the term!</span>
                         </p>
                     </span>
@@ -59,21 +59,20 @@
                     </span>
                 </div>
             </div>
-            <pre>{{ status }} </pre>
             <div
-                v-show="isGuessing"
-                class="sm:flex sm:flex-col sm:align-center py-y px-4 "
+                v-show="!isGuessing"
+                class=" bg-gray-800  sm:flex sm:flex-col sm:align-center p-4 shadow-lg rounded my-4"
             >
-                <h1 class="text-6xl font-extrabold text-gray-900 sm:text-center">
+                <h1 class="text-6xl font-extrabold text-white sm:text-center">
                     {{ getTimer }}
                 </h1>
                 <p
                     v-show="!showTerm"
-                    class="mt-5 text-5xl text-gray-600 sm:text-center"
+                    class="mt-5 text-5xl text-gray-300 sm:text-center"
                 >
                     {{ term }}
                 </p>
-                <p class="mt-5 text-xl text-gray-600 sm:text-center">
+                <p class="mt-5 text-xl text-gray-300 sm:text-center">
                     Round: {{ round }} - {{ currentTeam.name }} - {{ currentUser.username }}
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
@@ -111,7 +110,8 @@
             <div class="my-6 sm:my-10 text-center">
                 <div class="inline-flex flex-col justify-center gap-3 md:flex-row text-base shadow p-5 bg-gray-100">
                     <button
-                        class="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white p-2 rounded"
+                        class="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white p-2 rounded disabled:opacity-70"
+                        :disabled="showTerm"
                         @click="confirmPointsHandler"
                     >
                         <font-awesome-icon
@@ -121,7 +121,8 @@
                         Begriff erraten
                     </button>
                     <button
-                        class="flex items-center gap-3 bg-red-500 hover:bg-gray-600 text-white p-2 rounded"
+                        class="flex items-center gap-3 bg-red-500 hover:bg-red-600 text-white p-2 rounded  disabled:opacity-70"
+                        :disabled="showTerm"
                         @click="rejectPointsHandlerHandler"
                     >
                         <font-awesome-icon
@@ -132,7 +133,8 @@
                     </button>
 
                     <button
-                        class="flex items-center gap-3 bg-black hover:bg-gray-600 text-white p-2 rounded"
+                        :disabled="showTerm"
+                        class="flex items-center gap-3 bg-black hover:bg-gray-600 text-white p-2 rounded disabled:opacity-70"
                     >
                         <font-awesome-icon
                             icon="skull-crossbones"
@@ -154,9 +156,6 @@ import * as RoomService from '@/services/room.service';
 import * as TeamService from '@/services/team.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
 import Message from '@/components/page/Message.vue';
-
-// TODO: isGuessingTeam computed
-// TODO: v-show -> currentUser,
 
 export default {
 
@@ -199,7 +198,7 @@ export default {
             topicList: 'topicList',
         }),
         showTerm() {
-            return this.currentUser && this.currentTeam && !this.game.teams.find((team) => this.currentTeam.id === team.id).players.some((player) => player.id === this.currentUser.creator_id || player.id === this.currentUser.id);
+            return this.currentUser && this.currentTeam && (this.getUser.id === this.currentUser.id || this.getUser.id === this.currentUser.creator_id || !this.game.teams.find((team) => this.currentTeam.id === team.id).players.some((player) => player.id === this.currentUser.creator_id || player.id === this.currentUser.id));
         },
         getTimer() {
             const mins = Math.floor(this.timer.remainingTime / 60);
@@ -297,6 +296,7 @@ export default {
             case 'GAME_OVER':
                 // eslint-disable-next-line no-alert
                 alert(`${message.data.winner.name} won!`);
+                this.$router.push('/');
                 break;
             case 'ROOM_DELETED':
                 this.$router.push('/');
@@ -318,7 +318,13 @@ export default {
                 this.status = 'POINT_VALIDATION_START';
                 break;
             case 'TEAM_POINTS_CHANGED':
-                this.game.teams.map((team) => (message.data.id === team.id ? { ...team, ...message.data } : team));
+                this.game.teams.map((team) => {
+                    if (message.data.id === team.id) {
+                        /* eslint-disable-next-line no-param-reassign */
+                        team.points = message.data.points;
+                    }
+                    return team;
+                });
                 break;
             case 'VIRTUAL_USER_JOINED':
             case 'USER_JOINED_TEAM':

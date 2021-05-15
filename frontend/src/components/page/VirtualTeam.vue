@@ -3,6 +3,10 @@
         <div class="mb-5">
             <h1 class="text-white text-3xl font-medium ">
                 {{ team.name }}
+                <p v-show="isGameplay">
+                    <span class="text-2xl font-extrabold text-white">{{ team.points }}</span>
+                    <span class="text-base font-medium text-gray-400">{{ $t('game.points') }}</span>
+                </p>
             </h1>
         </div>
         <div>

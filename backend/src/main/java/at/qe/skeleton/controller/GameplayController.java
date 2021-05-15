@@ -4,6 +4,7 @@ import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
+import at.qe.skeleton.repository.GameRepository;
 import at.qe.skeleton.repository.TeamRepository;
 import at.qe.skeleton.services.CubeService;
 import at.qe.skeleton.services.GameService;
@@ -30,6 +31,8 @@ public class GameplayController {
     SimpMessagingTemplate template;
     @Autowired
     GameService gameService;
+    @Autowired
+    GameRepository gameRepository;
     @Autowired
     GameController gameController;
     @Autowired
@@ -142,7 +145,7 @@ public class GameplayController {
                 Team teamDb = teamService.findTeam(team.getId()).orElseThrow(() -> new TeamNotFoundException(team.getId()));
                 return teamDb.getUsers() != null && teamDb.getUsers().size() > 1 ? 1 : 0;
             }).sum() >= 2;
-            TimeUnit.SECONDS.sleep(10);
+            TimeUnit.SECONDS.sleep(3);
         }
     }
 
@@ -152,6 +155,10 @@ public class GameplayController {
 
     public void pointValidationStart(Game game) {
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.POINT_VALIDATION_START)).toString());
+    }
+
+    public void updatePoints(Team currentTeam) {
+        template.convertAndSend("/game/" + currentTeam.getGame().getId(), (new WebsocketResponse(teamController.convertToTeamDto(currentTeam), WSResponseType.TEAM_POINTS_CHANGED)).toString());
     }
 
     public void gameplay(Game game) throws InterruptedException {
@@ -314,6 +321,8 @@ public class GameplayController {
                 currentTeam.setPoints(currentTeam.getPoints() - 1);
             }
             teamRepository.save(currentTeam);
+            updatePoints(currentTeam);
+
 
             /*
              * Primary win condition
@@ -335,7 +344,7 @@ public class GameplayController {
         }
 
         game.setWinner(winner);
-        gameService.updateGame(game);
+        gameRepository.save(game);
 
         /*
          * Game over socket message
