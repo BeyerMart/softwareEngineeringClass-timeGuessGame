@@ -13,6 +13,7 @@ export default {
         imprint: 'Imprint',
         tos: 'Terms of Service',
         create: 'Create',
+        pleaseWait: 'Please wait',
     },
     languages: {
         de: 'German',
@@ -69,6 +70,7 @@ export default {
         numOfPlayers: 'Number of players',
         numOfTeams: 'Number of teams',
         games: 'Games',
+        teams: 'Teams',
         messages: {
             roomCreateSuccess: 'Room was created successfully',
             roomAlreadyFull: 'Room is already full',
@@ -92,7 +94,9 @@ export default {
             gameNotStartedYet: 'Game has not started yet',
             joinedGame: 'Joined game',
             teamJoined: 'Team joined successfully',
+            waitingForNextRound: 'Waiting for next round',
         },
+        rollTheDice: 'Please roll the dice',
         maxPoints: 'Max points',
     },
     login: {

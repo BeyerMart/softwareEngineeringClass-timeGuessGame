@@ -1,11 +1,11 @@
 <template>
-    <div class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-green-100">
+    <div class="max-w-full mx-auto text-l shadow-xl text-center rounded bg-gray-800">
         <div class="text-xl p-7 inline-flex flex-col items-center">
             <font-awesome-icon
                 icon="dice-d6"
-                class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
+                class="waiting-icon text-5xl text-green-400 opacity-75 mb-2"
             />
-            <span class="mt-2 text-gray-700">
+            <span class="mt-2 text-white">
                 {{ title }}
                 <p class="mt-2 italic">{{ message }}</p>
             </span>

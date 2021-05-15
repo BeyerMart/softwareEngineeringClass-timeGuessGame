@@ -14,6 +14,7 @@ export default {
         imprint: 'Impressum',
         tos: 'Nutzungsbedingungen',
         create: 'Erstellen',
+        pleaseWait: 'Bitte warten',
     },
     languages: {
         de: 'Deutsch',
@@ -70,6 +71,7 @@ export default {
         numOfPlayers: 'Anzahl der Spieler',
         numOfTeams: 'Anzahl der Teams',
         games: 'Spiele',
+        teams: 'Teams',
         messages: {
             roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
             roomAlreadyFull: 'Der Raum ist bereits voll',
@@ -93,7 +95,9 @@ export default {
             gameNotStartedYet: 'Das Spiel ist noch nicht gestartet',
             joinedGame: 'Spiel beigetreten',
             teamJoined: 'Team erfolgreich beigetreten',
+            waitingForNextRound: 'Warten auf die nächste Runde',
         },
+        rollTheDice: 'Bitte würfeln Sie',
         maxPoints: 'Maximale Punkte',
     },
 

@@ -5,19 +5,20 @@
         >
             <Message
                 v-show="isWaitingForNextRound"
-                title="Please wait"
-                message="doing some stuff..."
+                :title="$t('generic.pleaseWait')"
+                :message="$t('game.messages.waitingForNextRound')"
+                class="my-4"
             />
             <div
                 v-show="isPrepTime"
-                class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-green-100"
+                class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-gray-800"
             >
                 <div class="text-xl p-7 inline-flex flex-col items-center">
                     <font-awesome-icon
                         icon="dice-d6"
-                        class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
+                        class="waiting-icon text-5xl text-green-400 opacity-75 mb-2"
                     />
-                    <span class="mt-2 text-gray-700">
+                    <span class="mt-2 text-white">
                         {{ getTimer }}
                         <p class="mt-2 italic">
                             <span v-show="!showTerm">{{ term }} - activity: {{ activity }}</span>
@@ -28,14 +29,14 @@
             </div>
             <div
                 v-show="isRollingDice"
-                class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-green-100"
+                class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-gray-800"
             >
                 <div class="text-xl p-7 inline-flex flex-col items-center">
                     <font-awesome-icon
                         icon="dice-d6"
-                        class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
+                        class="waiting-icon text-5xl text-green-400 opacity-75 mb-2"
                     />
-                    <span class="mt-2 text-gray-700">
+                    <span class="mt-2 text-white">
                         {{ currentUser.username }} from {{ currentTeam.name }}
                         <p class="mt-2 italic">Please roll the dice</p>
                     </span>
@@ -48,9 +49,9 @@
                 <div class="text-xl p-7 inline-flex flex-col items-center">
                     <font-awesome-icon
                         icon="dice-d6"
-                        class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
+                        class="waiting-icon text-5xl text-green-400 opacity-75 mb-2"
                     />
-                    <span class="mt-2 text-gray-700">
+                    <span class="mt-2 text-white">
                         <span v-show="!showTerm">Please validate points</span>
                         <span v-show="showTerm">
                             The points are being validated
@@ -60,12 +61,15 @@
                 </div>
             </div>
             <div
-                v-show="!isGuessing"
-                class=" bg-gray-800  sm:flex sm:flex-col sm:align-center p-4 shadow-lg rounded my-4"
+                v-show="isGuessing"
+                class="bg-gray-800  sm:flex sm:flex-col sm:align-center p-4 shadow-lg rounded my-5"
             >
-                <h1 class="text-6xl font-extrabold text-white sm:text-center">
+                <p class="mt-5 text-xl text-gray-300 sm:text-center">
+                    Round: {{ round }}
+                </p>
+                <p class="text-6xl font-extrabold text-white sm:text-center mt-4">
                     {{ getTimer }}
-                </h1>
+                </p>
                 <p
                     v-show="!showTerm"
                     class="mt-5 text-5xl text-gray-300 sm:text-center"
@@ -73,20 +77,20 @@
                     {{ term }}
                 </p>
                 <p class="mt-5 text-xl text-gray-300 sm:text-center">
-                    Round: {{ round }} - {{ currentTeam.name }} - {{ currentUser.username }}
+                    {{ currentTeam.name }} - {{ currentUser.username }}
                 </p>
-                <p class="mt-5 text-xl text-gray-600 sm:text-center">
-                    {{ activity }}
+                <p class="mt-5 text-xl text-gray-300 sm:text-center">
+                    {{ potentialPoints }} - {{ activity }}
                 </p>
             </div>
             <div>
                 <div
-                    class="mx-auto py-2 px-4 max-w-7xl sm:p-0"
+                    class="mx-auto py-2 px-4 max-w-7xl sm:p-0 mt-6"
                 >
                     <div class="space-y-2">
                         <div class="space-y-2 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none">
                             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">
-                                Teams
+                                {{ $t('game.teams') }}
                             </h2>
                         </div>
                         <ul
@@ -142,6 +146,17 @@
                         />
                         Regelverstoß
                     </button>
+
+                    <button
+                        class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                        @click="leaveRoom()"
+                    >
+                        <font-awesome-icon
+                            icon="sign-out-alt"
+                            class="text-l cursor-pointer"
+                        />
+                        {{ $t('room.leaveRoom') }}
+                    </button>
                 </div>
             </div>
         </div>
@@ -180,7 +195,7 @@ export default {
             currentUser: '',
             term: '',
             activity: '',
-            potentialPoints: '',
+            potentialPoints: 0,
             roundTime: 0,
             timer: {
                 remainingTime: 0,
