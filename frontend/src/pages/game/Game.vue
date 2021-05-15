@@ -178,6 +178,9 @@ export default {
             getUser: 'user/getUser',
             topicList: 'topicList',
         }),
+        showTerm() {
+            return this.currentUser && this.currentTeam && (this.getUser.id === this.currentUser.id || this.getUser.id === this.currentUser.creator_id || !this.game.teams.find((team) => this.currentTeam.id === team.id).players.some((player) => player.id === this.currentUser.creator_id || player.id === this.currentUser.id));
+        },
         getTimer() {
             const mins = Math.floor(this.timer.remainingTime / 60);
             const seconds = this.timer.remainingTime - (mins * 60);
