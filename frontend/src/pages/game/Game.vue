@@ -1,25 +1,63 @@
 <template>
     <div class="bg-white">
-        <Loading
-            v-show="waitForPlayers"
-            message="Warten auf andere Spieler"
-        />
         <div
             class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8"
         >
-            <div class="sm:flex sm:flex-col sm:align-center py-y px-4 ">
+            <Message
+                v-show="isWaitingForNextRound"
+                title="Please wait"
+                message="doing some stuff..."
+            />
+            <Message
+                v-show="isPrepTime"
+                title="Prepare yourself"
+                :message="'Your term: ' + term + ' | activity: ' + activity"
+            />
+            <div
+                v-show="isRollingDice"
+                class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-green-100"
+            >
+                <div class="text-xl p-7 inline-flex flex-col items-center">
+                    <font-awesome-icon
+                        icon="dice-d6"
+                        class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
+                    />
+                    <span class="mt-2 text-gray-700">
+                        {{ currentUser.username }} from {{ currentTeam.name }}
+                        <p class="mt-2 italic">Please roll the dice</p>
+                    </span>
+                </div>
+            </div>
+            <div
+                v-show="isValidating"
+                class="max-w-2xl mx-auto text-l shadow-xl text-center rounded bg-green-100"
+            >
+                <div class="text-xl p-7 inline-flex flex-col items-center">
+                    <font-awesome-icon
+                        icon="dice-d6"
+                        class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
+                    />
+                    <span class="mt-2 text-gray-700">
+                        The other team is validating...
+                        <p class="mt-2 italic">Please wait</p>
+                    </span>
+                </div>
+            </div>
+            <div
+                class="sm:flex sm:flex-col sm:align-center py-y px-4 "
+            >
                 <pre>{{ status }} </pre>
                 <h1 class="text-6xl font-extrabold text-gray-900 sm:text-center">
                     {{ getTimer }}
                 </h1>
                 <p class="mt-5 text-5xl text-gray-600 sm:text-center">
-                    {{ game.name }}
+                    {{ term || 'AUGENLIED' }}
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
-                    {{ round }} - TEAM SFS - hansp
+                    {{ round }} - {{ currentTeam.name }} - {{ currentUser.username }}
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
-                    2 Punkte - Pantomime
+                    {{ activity }}
                 </p>
             </div>
             <div>
@@ -95,14 +133,17 @@ import * as GameService from '@/services/game.service';
 import * as RoomService from '@/services/room.service';
 import * as TeamService from '@/services/team.service';
 import VirtualTeam from '@/components/page/VirtualTeam';
-import Loading from '@/components/page/Loading.vue';
+import Message from '@/components/page/Message.vue';
+
+// TODO: isGuessingTeam computed
+// TODO: v-show -> currentUser,
 
 export default {
 
     name: 'Game',
     components: {
         VirtualTeam,
-        Loading,
+        Message,
     },
     props: {
         gameId: {
@@ -144,6 +185,21 @@ export default {
         },
         waitForPlayers() {
             return this.game && this.game.teams && this.game.teams.filter((team) => team.players).length <= 1;
+        },
+        isWaitingForNextRound() {
+            return this.status === 'WAIT_FOR_NEXT_ROUND';
+        },
+        isValidating() {
+            return this.status === 'POINT_VALIDATION_START';
+        },
+        isPrepTime() {
+            return this.status === 'PREPARATION_TIME';
+        },
+        isGuessing() {
+            return this.status === 'GUESS';
+        },
+        isRollingDice() {
+            return this.status === 'ROLL_DICE';
         },
     },
     ...mapActions({
@@ -236,7 +292,7 @@ export default {
                 this.status = 'WAIT_FOR_NEXT_ROUND';
                 break;
             case 'POINT_VALIDATION_START':
-                this.status = 'validation';
+                this.status = 'POINT_VALIDATION_START';
                 break;
             case 'TEAM_POINTS_CHANGED':
                 this.game.teams.map((team) => (message.data.id === team.id ? { ...team, ...message.data } : team));
@@ -322,5 +378,17 @@ export default {
 };
 </script>
 <style scoped>
+.waiting-icon {
+  animation: spin-die 2.5s infinite;
+  display: inline-block;
+}
 
+@keyframes spin-die {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>

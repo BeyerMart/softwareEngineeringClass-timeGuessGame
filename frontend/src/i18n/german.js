@@ -56,6 +56,7 @@ export default {
     game: {
         team: 'Team',
         teamName: 'Teamname',
+        punkte: 'Punkte',
         enemy: 'Gegner',
         points: 'Punkte',
         score: 'Punktestand',

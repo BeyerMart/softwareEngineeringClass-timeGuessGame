@@ -55,6 +55,7 @@ export default {
     game: {
         team: 'Team',
         teamName: 'Team name',
+        punkte: 'Points',
         enemy: 'Enemy',
         points: 'Points',
         score: 'Score',
@@ -151,11 +152,11 @@ export default {
         registrationDate: 'Registraion date',
     },
     room: {
-        playersNeedToJoin: 'players yet to join a team',
-        createTeam: 'create new Team',
-        createVirtualUser: 'create new virtual player',
-        leaveRoom: 'leave this room',
-        startGame: 'start game',
-        joinGame: 'join game',
+        playersNeedToJoin: 'Players yet to join a team',
+        createTeam: 'Create new team',
+        createVirtualUser: 'Create new virtual player',
+        leaveRoom: 'Leave this room',
+        startGame: 'Start game',
+        joinGame: 'Join game',
     },
 };

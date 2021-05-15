@@ -38,7 +38,7 @@
                                     v-show="submitted && $v.form.roomName.$error"
                                     class="has-errors py-1 text-xs"
                                 >
-                                    {{ $t('errors.validation.maxPointsIsRequired') }}
+                                    {{ $t('errors.validation.nameRequired') }}
                                 </div>
                                 <input
                                     id="roomName"
@@ -84,7 +84,7 @@
                                     v-show="submitted && $v.form.maxPoints.$error"
                                     class="has-errors py-1 text-xs"
                                 >
-                                    <span v-show="!$v.form.maxPoints.minValue">{{ $t('error.validation.minPointsRequired') }}</span>
+                                    <span v-show="!$v.form.maxPoints.minValue">{{ $t('errors.validation.minPointsRequired') }}</span>
                                     <span v-show="!$v.form.maxPoints.required">{{ $t('errors.validation.maxPointsIsRequired') }}</span>
                                 </div>
                                 <input
