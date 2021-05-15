@@ -302,16 +302,16 @@ export default {
                 break;
             case 'VIRTUAL_USER_JOINED':
             case 'USER_JOINED_TEAM':
-                this.game.teams.find((team) => team.id === message.data.team.id).users.push(message.data.user);
+                this.game.teams.find((team) => team.id === message.data.team.id).players.push(message.data.user);
                 break;
             case 'TEAM_DELETED':
                 this.game.teams.filter((team) => team.id !== message.data.id);
                 break;
             case 'USER_LEFT_TEAM':
-                this.game.teams.find((team) => team.id === message.data.team.id).users.filter((user) => user.virtual_id || user.id !== message.data.user.id);
+                this.game.teams.find((team) => team.id === message.data.team.id).players.filter((user) => user.virtual_id || user.id !== message.data.user.id);
                 break;
             case 'VIRTUAL_USER_LEFT':
-                this.game.teams.find((team) => team.id === message.data.team.id).users.filter((user) => user.id || user.virtual_id !== message.data.user.virtual_id);
+                this.game.teams.find((team) => team.id === message.data.team.id).players.filter((user) => user.id || user.virtual_id !== message.data.user.virtual_id);
                 break;
             default:
                 break;
