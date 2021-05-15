@@ -140,7 +140,7 @@ public class GameplayController {
         while(!otherPlayerJoined) {
             otherPlayerJoined = game.getTeams().stream().mapToInt(team -> {
                 Team teamDb = teamService.findTeam(team.getId()).orElseThrow(() -> new TeamNotFoundException(team.getId()));
-                return teamDb.getUsers() != null && teamDb.getUsers().size() > 0 ? 1 : 0;
+                return teamDb.getUsers() != null && teamDb.getUsers().size() > 1 ? 1 : 0;
             }).sum() >= 2;
             TimeUnit.SECONDS.sleep(10);
         }
