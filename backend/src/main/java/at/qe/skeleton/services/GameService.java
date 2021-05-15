@@ -38,7 +38,6 @@ public class GameService {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public Game addGame (Game game, Long id) {
         Topic topic = topicService.findTopic(id);
-        //Topic topic = topicRepository.getOne(id);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         game.setCreated_at(timestamp);

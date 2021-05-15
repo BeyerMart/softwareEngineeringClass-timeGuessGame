@@ -22,6 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +71,7 @@ public class TermServiceTest {
         Mockito.when(topicRepository.save(topic)).thenReturn(topic);
         Mockito.when(topicRepository.existsById(topic.getId())).thenReturn(true);
         Mockito.when(topicRepository.existsByName(topic.getName())).thenReturn(true);
-        Mockito.when(topicRepository.getOne(topic.getId())).thenReturn(topic);
+        Mockito.when(topicRepository.findById(topic.getId())).thenReturn(Optional.of(topic));
         Mockito.when(topicRepository.findAll()).thenReturn(Collections.singletonList(topic));
 
         term = new Term();
