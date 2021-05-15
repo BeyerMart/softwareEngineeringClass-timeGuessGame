@@ -20,7 +20,8 @@
                     <span class="mt-2 text-gray-700">
                         {{ getTimer }}
                         <p class="mt-2 italic">
-                            Your term: {{ term }} - activity: {{ activity }}
+                            <span v-show="!showTerm">Your term: {{ term }} - activity: {{ activity }}</span>
+                            <span v-show="showTerm">{{ currentUser.username }} go lookup the term!</span>
                         </p>
                     </span>
                 </div>
@@ -50,8 +51,11 @@
                         class="waiting-icon text-5xl text-green-500 opacity-75 mb-2"
                     />
                     <span class="mt-2 text-gray-700">
-                        The other team is validating...
-                        <p class="mt-2 italic">Please wait</p>
+                        <span v-show="!showTerm">Please validate points</span>
+                        <span v-show="showTerm">
+                            The points are being validated
+                            <p class="mt-2 italic">Please wait</p>
+                        </span>
                     </span>
                 </div>
             </div>
@@ -70,7 +74,7 @@
                     {{ term }}
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
-                    {{ round }} - {{ currentTeam.name }} - {{ currentUser.username }}
+                    Round: {{ round }} - {{ currentTeam.name }} - {{ currentUser.username }}
                 </p>
                 <p class="mt-5 text-xl text-gray-600 sm:text-center">
                     {{ activity }}
