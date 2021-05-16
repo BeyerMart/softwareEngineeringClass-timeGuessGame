@@ -143,9 +143,9 @@ public class GameplayController {
         while(!otherPlayerJoined) {
             otherPlayerJoined = game.getTeams().stream().mapToInt(team -> {
                 Team teamDb = teamService.findTeam(team.getId()).orElseThrow(() -> new TeamNotFoundException(team.getId()));
-                return teamDb.getUsers() != null && teamDb.getUsers().size() > 1 ? 1 : 0;
+                return teamService.getAllTeamUsers(teamDb).size() > 1 ? 1 : 0;
             }).sum() >= 2;
-            TimeUnit.SECONDS.sleep(3);
+            TimeUnit.SECONDS.sleep(1);
         }
     }
 
@@ -247,9 +247,6 @@ public class GameplayController {
              * Dice has to be rolled message
              */
             rollTheDiceMessage(game);
-
-            //TODO
-            // maybe w/ button "I ROLLED THE DICE" then continue
 
             /*
              * Get information from cube (points, type and time)

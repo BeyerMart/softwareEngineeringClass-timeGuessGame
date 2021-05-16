@@ -84,6 +84,7 @@ public class GameController {
             Team team = new Team();
             team.setGame(game);
             team.setName(virtTeam.getName());
+            team.setUsers(new HashSet<>());
             team = teamService.addTeam(team);
             gameTeam.add(team);
 
