@@ -1,8 +1,11 @@
 package at.qe.skeleton.controller;
 
+import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
+import at.qe.skeleton.repository.GameRepository;
+import at.qe.skeleton.repository.TeamRepository;
 import at.qe.skeleton.services.CubeService;
 import at.qe.skeleton.services.GameService;
 import at.qe.skeleton.services.RoomService;
@@ -18,14 +21,18 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@RestController
+@RestController()
 public class GameplayController {
 
     private final int PRE_ROUND_TIME = 10;
+    private final long VOTE_TIME = 30;
+
     @Autowired
     SimpMessagingTemplate template;
     @Autowired
     GameService gameService;
+    @Autowired
+    GameRepository gameRepository;
     @Autowired
     GameController gameController;
     @Autowired
@@ -44,6 +51,9 @@ public class GameplayController {
     TeamService teamService;
     @Autowired
     VirtualUserController virtualUserController;
+    @Autowired
+    TeamRepository teamRepository;
+
 
     public void rollTheDiceMessage(Game game) {
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.ROLL_DICE)).toString());
@@ -62,7 +72,7 @@ public class GameplayController {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
 
-        node.put("preRoundTime", PRE_ROUND_TIME);
+        node.put("pre_round_time", PRE_ROUND_TIME);
 
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(node, WSResponseType.GAMEPLAY_PRE_ROUND_TIMER)).toString());
     }
@@ -129,12 +139,27 @@ public class GameplayController {
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(node, WSResponseType.GAMEPLAY_CURRENT_TEAMUSER)).toString());
     }
 
-    public void sleepUntilRoomNotEmpty(Game game) {
+    public void sleepUntilRoomNotEmpty(Game game) throws InterruptedException {
         boolean otherPlayerJoined = false;
         while(!otherPlayerJoined) {
-            List<Integer> teams = game.getTeams().stream().map(Team::getUsers).map(users -> users.size() > 0 ? 1 : 0).collect(Collectors.toList());
-            otherPlayerJoined = teams.stream().mapToInt(Integer::intValue).sum() >= 2;
+            otherPlayerJoined = game.getTeams().stream().mapToInt(team -> {
+                Team teamDb = teamService.findTeam(team.getId()).orElseThrow(() -> new TeamNotFoundException(team.getId()));
+                return teamService.getAllTeamUsers(teamDb).size() > 1 ? 1 : 0;
+            }).sum() >= 2;
+            TimeUnit.SECONDS.sleep(1);
         }
+    }
+
+    public void pointValidationStop(Game game) {
+        template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.POINT_VALIDATION_STOP)).toString());
+    }
+
+    public void pointValidationStart(Game game) {
+        template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.POINT_VALIDATION_START)).toString());
+    }
+
+    public void updatePoints(Team currentTeam) {
+        template.convertAndSend("/game/" + currentTeam.getGame().getId(), (new WebsocketResponse(teamController.convertToTeamDto(currentTeam), WSResponseType.TEAM_POINTS_CHANGED)).toString());
     }
 
     public void gameplay(Game game) throws InterruptedException {
@@ -162,21 +187,21 @@ public class GameplayController {
         //Activates cube notifications
         cubeService.startFacetNotification(game.getRoom_id().intValue());
 
-        while (round < 5) {
+        while (true) {
             /*
              * End game if game does not exist anymore
              */
             Optional<Game> gameOptional = gameService.findGame(game.getId());
             if (!gameOptional.isPresent()) {
                 gameDeletedMessage(game);
-                break;
+                return;
             }
             game = gameOptional.get();
 
             /*
              * End game if room does not exist anymore
              */
-            if (!roomService.getRoomById(room.getRoom_id()).isPresent()) {
+            if (!roomService.getRoomById(room.getId()).isPresent()) {
                 roomDeletedMessage(game, room);
                 break;
             }
@@ -224,11 +249,6 @@ public class GameplayController {
              */
             rollTheDiceMessage(game);
 
-            //TODO
-            // maybe w/ button "I ROLLED THE DICE" then continue
-            //wait until dice is rolled
-            TimeUnit.SECONDS.sleep(5);
-
             /*
              * Get information from cube (points, type and time)
              * Get random term
@@ -239,8 +259,8 @@ public class GameplayController {
             //"wait" until new facet is present
             while (rolledOldFacet == rolledFacet) {
                 rolledFacet = room.getCube().getFacet();
+                TimeUnit.SECONDS.sleep(1); //Wait another 1 second
             }
-
             potentialPoints = cubeService.getPointsFromFacet(rolledFacet);
             activity = cubeService.getActivityFromFacet(rolledFacet);
             availableTime = cubeService.getTimeFromFacet(rolledFacet);
@@ -266,7 +286,9 @@ public class GameplayController {
             timerStartMessage(game, availableTime);
 
             //Either time is over or word is guessed (i.e. cube is turned)
-            while (endTime.after(currentTime) || rolledFacet != room.getCube().getFacet()) {
+            rolledFacet = room.getCube().getFacet();
+            while (endTime.after(currentTime) && rolledFacet == room.getCube().getFacet()) {
+                TimeUnit.SECONDS.sleep(1);
                 currentTime = new Timestamp(System.currentTimeMillis());
             }
 
@@ -274,10 +296,20 @@ public class GameplayController {
              * Time to vote whether the round was fair or not
              */
             gameService.addGamePoints(game, currentTeam);
-            TimeUnit.SECONDS.sleep(10);
-            GamePoints gamePoints = gameService.getGamePoints(game);
-            gameService.removeGamePoints(game);
+            pointValidationStart(game);
+            currentTime = new Timestamp(System.currentTimeMillis());
 
+            endTime = new Timestamp(System.currentTimeMillis() + (VOTE_TIME * 1000));
+            GamePoints gamePoints = gameService.getGamePoints(game);
+
+            while(endTime.after((currentTime)) && ((gamePoints.getRejections() + gamePoints.getConfirmations()) != (allUsersInGame.size() - currentTeam.getUsers().size()))){
+                TimeUnit.SECONDS.sleep(1);
+                currentTime = new Timestamp(System.currentTimeMillis());
+                gamePoints = gameService.getGamePoints(game);
+            }
+
+            pointValidationStop(game);
+            gameService.removeGamePoints(game);
 
             /*
              * Add points if voting claims that the round was fair
@@ -288,6 +320,9 @@ public class GameplayController {
                 //-1 point for cheating
                 currentTeam.setPoints(currentTeam.getPoints() - 1);
             }
+            teamRepository.save(currentTeam);
+            updatePoints(currentTeam);
+
 
             /*
              * Primary win condition
@@ -309,7 +344,7 @@ public class GameplayController {
         }
 
         game.setWinner(winner);
-        gameService.updateGame(game);
+        gameRepository.save(game);
 
         /*
          * Game over socket message

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,9 +80,9 @@ public class GameRepositoryTest {
      * Test Get one game
      */
     @Test
-    public void testGetOne(){
-        Long searchedGame = gameRepository.getOne(game.getId()).getId();
-        assertEquals(searchedGame, game.getId());
+    public void testFindGame(){
+        Optional<Game> searchedGame = gameRepository.findById(game.getId());
+        assertNotNull(searchedGame.get());
     }
 
     /**

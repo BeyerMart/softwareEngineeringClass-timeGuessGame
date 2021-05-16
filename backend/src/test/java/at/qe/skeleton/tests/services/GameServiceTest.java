@@ -62,7 +62,7 @@ public class GameServiceTest {
         Mockito.when(topicRepository.save(topic)).thenReturn(topic);
         Mockito.when(topicRepository.existsById(topic.getId())).thenReturn(true);
         Mockito.when(topicRepository.existsByName(topic.getName())).thenReturn(true);
-        Mockito.when(topicRepository.getOne(topic.getId())).thenReturn(topic);
+        Mockito.when(topicRepository.findById(topic.getId())).thenReturn(Optional.of(topic));
         Mockito.when(topicRepository.findAll()).thenReturn(Collections.singletonList(topic));
 
         game = new Game();
@@ -73,7 +73,7 @@ public class GameServiceTest {
 
         Mockito.when(gameRepository.save(game)).thenReturn(game);
         Mockito.when(gameRepository.existsById(game.getId())).thenReturn(true);
-        Mockito.when(gameRepository.getOne(game.getId())).thenReturn(game);
+        Mockito.when(gameRepository.findById(game.getId())).thenReturn(Optional.of(game));
         Mockito.when(gameRepository.findAll()).thenReturn(Collections.singletonList(game));
 
         Mockito.when(userService.getAuthenticatedUser()).thenReturn(Optional.of(admin));
