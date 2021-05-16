@@ -7,6 +7,7 @@ import Auth from '@/pages/auth/Auth';
 import Profile from '@/pages/Profile';
 import AdminDashboard from '@/pages/AdminDashboard';
 import WSDebug from '@/pages/WSDebug';
+import RoomGame from '@/pages/game/RoomGame';
 
 const routes = [
     {
@@ -30,7 +31,7 @@ const routes = [
     },
     {
         path: '/profile',
-        name: 'profile',
+        name: 'userProfile',
         component: Profile,
         meta: {
             auth: true,
@@ -38,7 +39,7 @@ const routes = [
     },
     {
         path: '/profile/:id',
-        name: 'userProfile',
+        name: 'profile',
         component: Profile,
         meta: {
             auth: true,
@@ -51,6 +52,14 @@ const routes = [
         meta: {
             auth: true,
             role: ['ROLE_ADMIN', 'ROLE_MANAGER'],
+        },
+    },
+    {
+        path: '/room/:id',
+        name: 'room',
+        component: RoomGame,
+        meta: {
+            auth: true,
         },
     },
     /* Errors */

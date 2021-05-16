@@ -10,11 +10,12 @@ import Notifications from 'vue-notification';
 import Multiselect from 'vue-multiselect';
 import VueConfirmDialog from 'vue-confirm-dialog';
 import { initSocket } from '@/services/websocket.service';
+import * as AuthService from '@/services/auth.service';
 
 // Icon font
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-    faEllipsisV, faExclamation, faUpload, faChevronLeft, faPlus, faTimesCircle, faPen, faTrash, faFileImport,
+    faEllipsisV, faExclamation, faUpload, faChevronLeft, faPlus, faTimesCircle, faPen, faTrash, faFileImport, faSignOutAlt, faSync, faPlayCircle, faCheck, faSkullCrossbones, faDiceD6,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -28,6 +29,13 @@ library.add(faTimesCircle);
 library.add(faPen);
 library.add(faTrash);
 library.add(faFileImport);
+library.add(faSignOutAlt);
+library.add(faSync);
+library.add(faPlayCircle);
+library.add(faCheck);
+library.add(faSkullCrossbones);
+library.add(faDiceD6);
+
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 // End of icon font
 
@@ -50,6 +58,14 @@ axios.interceptors.response.use((response) => {
     response.data = response.data.data;
     return response;
 }, (error) => Promise.reject(error));
+
+if (token) {
+    AuthService.getCurrentUser().then((response) => {
+        store.dispatch('user/setUser', response.data);
+    }).catch(() => {
+        localStorage.removeItem('token');
+    });
+}
 
 initSocket();
 

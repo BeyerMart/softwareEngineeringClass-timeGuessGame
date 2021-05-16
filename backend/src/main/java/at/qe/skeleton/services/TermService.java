@@ -18,7 +18,7 @@ public class TermService {
     private static final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
     @Autowired
-    private TopicRepository topicRepository;
+    private TopicService topicService;
 
     @Autowired
     private TermRepository termRepository;
@@ -31,7 +31,7 @@ public class TermService {
      */
     @PreAuthorize("hasAuthority('ROLE_MANAGER')")
     public Term addTerm (Long id, Term term){
-        Topic topic = topicRepository.getOne(id);
+        Topic topic = topicService.findTopic(id);
 
         term.setCreated_at(timestamp);
         term.setUpdated_at(timestamp);
