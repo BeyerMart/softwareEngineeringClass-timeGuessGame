@@ -6,6 +6,7 @@ import at.qe.skeleton.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +16,9 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,7 +47,7 @@ public class UserServiceTest {
         Mockito.when(userRepository.findById(user1User.getId())).thenReturn(Optional.of(user1User));
         Mockito.when(userRepository.existsByEmail(user1User.getEmail())).thenReturn(true);
         Mockito.when(userRepository.existsByUsername(user1User.getUsername())).thenReturn(true);
-        Mockito.when(userRepository.save(user1User)).thenReturn(user1User);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
 
         Mockito.when(userRepository.findByUsername(managerUser.getUsername())).thenReturn(Optional.of(managerUser));
     }
@@ -200,9 +203,21 @@ public class UserServiceTest {
     public void testDeleteUser() {
         User testUser = new User("test_user1", "passwd", "jonass@gmail.com");
         testUser.setRole(UserRole.ROLE_ADMIN);
-        Mockito.doAnswer((i) -> null).when(userRepository).delete(testUser);
 
         assertDoesNotThrow(() -> userService.deleteUser(testUser));
     }
 
+    /**
+     * Tests that deleting an admin user as non-admin throws an exception
+     * */
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN", username = "lib")
+    public void testRestoreUser() {
+        User testUser = new User("test_user1", "passwd", "jonass@gmail.com");
+        testUser.setRole(UserRole.ROLE_ADMIN);
+        testUser.setDeletedAt(new Timestamp(System.currentTimeMillis()));
+
+        User result = userService.restoreUser(testUser);
+        assertNull(result.getDeletedAt());
+    }
 }

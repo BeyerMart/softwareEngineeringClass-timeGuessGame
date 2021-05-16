@@ -55,10 +55,8 @@ public class CubeController {
 		WSResponseType wsType = WSResponseType.valueOf(input.get("type").asText());
 		switch (wsType) {
 			case VERSION:
-				logger.error("Ask the Version at /version");
+				logger.error("Ask for the Version at /version");
 				return "";
-			//response =  new WebsocketResponse(null, WSResponseType.OK);
-			//break;
 			case PI_CONNECTED:
 				JsonNode registration = mapper.readTree(requestMessage);
 				logger.info("Pi " + registration.get("data") + " has registered");
@@ -67,42 +65,15 @@ public class CubeController {
 				break;
 
 			case PI_DISCONNECTING:
-				JsonNode deregistration = mapper.readTree(requestMessage);
-				logger.info("Pi " + deregistration.get("data") + " closed connection");
-				cubeService.removePi(deregistration.get("data").asText());
-				response = new WebsocketResponse(deregistration.get("data"), WSResponseType.OK);
-				break;
-
-			case FOUND_AND_CONNECTED:
-				cube = mapper.readValue(input.get("data").toString(), Cube.class);
-				Optional<Room> roomOptional = roomService.getRoomById(cube.getRoomId());
-				if (roomOptional.isPresent()) {
-					//updating Room
-					roomController.cubeConnected(roomOptional.get(), cube);
-					response = new WebsocketResponse(roomOptional.get(), WSResponseType.OK);
-				} else {
-					response = new WebsocketResponse(cube, WSResponseType.CUBE_ERROR);
-				}
-
-				break;
-			case NOT_FOUND:
-			case NOT_CONNECTED:
-				//roomService.getRoomById(cube.getRoomId());
-				//TODO Trigger FrontEnd "CubeNotFound, reset Battery"
-				int roomId = data.asInt();
-				Optional<Room> roomOptional1 = roomService.getRoomById(roomId);
-				if (roomOptional1.isPresent()) {
-					roomController.cubeNotConnected(roomOptional1.get());
-					response = new WebsocketResponse(roomOptional1.get(), WSResponseType.OK);
-				} else {
-					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
-					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
-				}
+				JsonNode unregistration = mapper.readTree(requestMessage);
+				logger.info("Pi " + unregistration.get("data") + " closed connection");
+				cubeService.removePi(unregistration.get("data").asText());
+				response = new WebsocketResponse(unregistration.get("data"), WSResponseType.OK);
 				break;
 
 			case FACET_NOTIFICATION:
 				cube = mapper.convertValue(data, Cube.class);
-				int facet = cube.getFacet();//TODO Where to send this Value?
+				int facet = cube.getFacet();
 
 				Optional<Room> roomOptional3 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional3.isPresent()) {
@@ -115,7 +86,7 @@ public class CubeController {
 				break;
 			case BATTERY_NOTIFICATION:
 				cube = mapper.convertValue(data, Cube.class);
-				int batteryLevel = cube.getBatteryLevel();//TODO Where to send this Value?
+				int batteryLevel = cube.getBatteryLevel();
 
 				Optional<Room> roomOptional4 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional4.isPresent()) {
@@ -152,10 +123,12 @@ public class CubeController {
 		return response.toString();
 	}
 
-	public void cubeStartSearching(Room room) {
-		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.START_SEARCHING);
+	public void setRoomOfPiName(String piName, int roomId){
+		Cube cubeToSend = new Cube();
+		cubeToSend.setPiName(piName);
+		cubeToSend.setRoomId(roomId);
+		WebsocketResponse request = new WebsocketResponse(cubeToSend, WSResponseType.ROOM_CREATED);
 		template.convertAndSend("/cube", request.toString());
-
 	}
 
 	public void cubeStartFacetNotification(Room room) {
@@ -168,17 +141,17 @@ public class CubeController {
 		template.convertAndSend("/cube", request.toString());
 	}
 
-	public void cubeStartBatteryNotification(Room room)  {
+	public void cubeStartBatteryNotification(Room room) {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.START_BATTERY_NOTIFICATION);
 		template.convertAndSend("/cube", request.toString());
 	}
 
-	public void cubeStopBatteryNotification(Room room)  {
+	public void cubeStopBatteryNotification(Room room) {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.STOP_BATTERY_NOTIFICATION);
 		template.convertAndSend("/cube", request.toString());
 	}
 
-	public void cubeGetCurrentFacet(Room room){
+	public void cubeGetCurrentFacet(Room room) {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.FACET_REQUEST);
 		template.convertAndSend("/cube", request.toString());
 	}

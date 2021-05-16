@@ -24,6 +24,8 @@ public class RoomDto {
 
     private long topicId = -1;
 
+    private int max_points;
+
     public long getRoomId() {
         return roomId;
     }
@@ -86,5 +88,13 @@ public class RoomDto {
 
     public void setTopicId(long topicId) {
         this.topicId = topicId;
+    }
+
+    public int getMax_points() {
+        return max_points;
+    }
+
+    public void setMax_points(int max_points) {
+        this.max_points = max_points;
     }
 }

@@ -19,7 +19,7 @@ public class Term {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(max = 128)
     private String name;
 
     @Column

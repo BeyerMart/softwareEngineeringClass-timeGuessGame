@@ -4,7 +4,7 @@
 
 	<groupId>at.ac.uibk</groupId>
 	<artifactId>timeguess-game</artifactId>
-	<version>0.6.0</version>
+	<version>0.8.0</version>
 	<packaging>pom</packaging>
 
 	<name>timeguess-game</name>

@@ -80,6 +80,8 @@ public class UserController {
                     v = passwordEncoder.encode((CharSequence) v);
                 case "id":
                     break;
+                case "deleted_at":
+                    if(fields.get("deleted_at") != null) break;
                 default:
                     Field field = ReflectionUtils.findField(User.class, (String) k);
                     field.setAccessible(true);

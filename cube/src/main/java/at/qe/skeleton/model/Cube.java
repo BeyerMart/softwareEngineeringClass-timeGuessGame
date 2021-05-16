@@ -9,9 +9,10 @@ public class Cube {
     public Cube() {
     }
 
-    public Cube(int batteryLevel, int roomId) {
+    public Cube(int batteryLevel, int roomId, int facet) {
         this.batteryLevel = batteryLevel;
         this.roomId = roomId;
+        this.facet = facet;
     }
 
     public int getFacet() {
@@ -34,8 +35,8 @@ public class Cube {
         return roomId;
     }
 
-    public void setRoomId(int gameId) {
-        this.roomId = gameId;
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public int getBatteryLevel() {
