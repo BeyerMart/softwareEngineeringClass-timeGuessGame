@@ -21,6 +21,7 @@ export function getCurrentUser() {
 }
 
 export function logout() {
+    axios.defaults.headers.common.Authorization = '';
     store.dispatch('user/forgetUser', null);
     localStorage.removeItem('token');
 }

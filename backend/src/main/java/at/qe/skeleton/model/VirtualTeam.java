@@ -6,11 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class VirtualTeam {
     @NotNull
-    private String team_name;
+    private String name;
     private Set<UserIdVirtualUser> players;
 
-    public VirtualTeam(String team_name, UserIdVirtualUser firstUser) {
-        this.team_name = team_name;
+    public VirtualTeam(String name, UserIdVirtualUser firstUser) {
+        this.name = name;
         this.players = ConcurrentHashMap.newKeySet();
         players.add(firstUser);
     }
@@ -22,12 +22,12 @@ public class VirtualTeam {
         return players.stream().mapToInt(UserIdVirtualUser::getAmount).sum();
     }
 
-    public String getTeam_name() {
-        return team_name;
+    public String getName() {
+        return name;
     }
 
-    public void setTeam_name(String team_name) {
-        this.team_name = team_name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<UserIdVirtualUser> getPlayers() {

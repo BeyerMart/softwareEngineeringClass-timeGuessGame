@@ -22,7 +22,7 @@ public class FacetValueNotification implements BluetoothNotification<byte[]> {
 
     public void run(byte[] facetRaw) {
         int facet = facetRaw[0];
-        logger.debug("ValueNotification new Facet: " + facet);
+        logger.info("ValueNotification new raw (uncalibrated) Facet: " + facet);
         cube.setFacet(cubeCalibration.mapFromInternalToExternalFacet(facet));
         try {
             connection.sendFacetNotification(cube);

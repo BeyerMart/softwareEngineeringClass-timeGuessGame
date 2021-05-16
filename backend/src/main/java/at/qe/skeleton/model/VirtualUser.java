@@ -76,7 +76,7 @@ public class VirtualUser {
         this.updated_at = updated_at;
     }
 
-    public long getCreator_id() {
+    public Long getCreator_id() {
         return creator_id;
     }
 

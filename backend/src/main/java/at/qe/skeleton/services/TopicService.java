@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TopicService {
@@ -66,10 +67,8 @@ public class TopicService {
      * @return searched topic
      */
     public Topic findTopic(Long id) throws TopicNotFoundException {
-        if(!topicRepository.existsById(id)){
-            throw (new TopicNotFoundException(id));
-        }
-        return topicRepository.getOne(id);
+        Topic topic = topicRepository.findById(id).orElseThrow(() -> new TopicNotFoundException(id));
+        return topic;
     }
 
 

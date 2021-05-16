@@ -7,23 +7,22 @@ Prerequisite (Using docker, this requirements are not needed):
 Follow the steps below:
  * Clone the git repository
  * `cd` into the directory
+
+## Setup using docker
+ * Create a production build using `mvn -DskipTests package` (We skip the tests as the database is setup using docker)
+ * Build the docker image using `docker build -t timeguess-webapp .`
+ * Start the container using `docker compose up --build webapp` (in this case, the app will be mounted at port `8080` and the database at `8081`)
+
+## Manual setup
+ * Install the dependencies using `mvn clean install`
  * Edit the database configuration in `/backend/src/main/resources/application.properties`. A valid configuration could be:
 ```
-spring.jpa.hibernate.ddl-auto=update
 spring.datasource.url=jdbc:mysql://localhost:3306/database?serverTimezone=UTC
 spring.datasource.username=root
 spring.datasource.password=root
 ```
 
-Hint: Don't forget to adjust the Test application properties as well
-
-## Setup using docker
- * Create a production build using `mvn clean package`
- * Build the docker image using `docker build -t timeguess .`
- * Start the container using `docker run -p 80:8080 timeguess` (in this case, the app will be mounted at port `80`)
-
-## Manual setup
- * Install the dependencies using `mvn clean install`
+ Hint: Don't forget to adjust the Test application properties as well
  * Run `mvn spring-boot:run`
 ---
 

@@ -67,7 +67,7 @@ public class WebSocketConnection {
                     @Override
                     public void handleFrame(StompHeaders stompHeaders, Object payload) {
                         blockingQueue.add((String) payload);
-                        logger.debug("Got this in my channel: " + (String) payload);
+                        logger.info("Got this in my channel: " + (String) payload);
                         try {
                             logicController.handler((String) payload);
                         } catch (InterruptedException e) {
@@ -114,18 +114,18 @@ public class WebSocketConnection {
     }*/ 
 
 
-    public String sendFacetNotification(Cube cube) throws InterruptedException, JsonProcessingException {
+    public void sendFacetNotification(Cube cube) throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.FACET_NOTIFICATION);
         sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
+        //String response = handleBackendResponse(request.toString());
+        //return response;
     }
 
-    public String sendBatteryNotification(Cube cube) throws InterruptedException, JsonProcessingException {
+    public void sendBatteryNotification(Cube cube) throws InterruptedException, JsonProcessingException {
         WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.BATTERY_NOTIFICATION);
         sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
+        //String response = handleBackendResponse(request.toString());
+        //return response;
     }
 
 

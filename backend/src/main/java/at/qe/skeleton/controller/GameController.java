@@ -6,10 +6,8 @@ import at.qe.skeleton.payload.response.ErrorResponse;
 import at.qe.skeleton.payload.response.SuccessResponse;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
-import at.qe.skeleton.repository.GameRepository;
 import at.qe.skeleton.repository.TeamRepository;
 import at.qe.skeleton.services.*;
-import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.security.access.AccessDeniedException;
 
-import javax.validation.Valid;
-import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@RestController
+@RestController()
 @RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class GameController {
     @Autowired
@@ -51,8 +45,11 @@ public class GameController {
     RoomService roomService;
     @Autowired
     TeamService teamService;
+    @Autowired
+    RoomController roomController;
 
-    public void gameCreatedResponse(GameDto game){
+    public void gameCreatedResponse(GameDto game, Room room) {
+        template.convertAndSend("/rooms/" + room.getId(), (new WebsocketResponse(game, WSResponseType.GAME_CREATED)).toString());
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(game, WSResponseType.GAME_CREATED)).toString());
     }
 
@@ -75,18 +72,21 @@ public class GameController {
 
         //Copy values from room
         Game game = new Game();
-        game.setName(room.getRoom_name());
+        game.setName(room.getName());
         game.setMax_points(room.getMax_points());
-        game.setRoom_id(room.getRoom_id());
+        game.setRoom_id(room.getId());
 
         game = gameService.addGame(game, room.getTopic_id());
 
+        HashSet<Team> gameTeam = new HashSet<>();
         //Set teams
         for(VirtualTeam virtTeam : room.getTeams().values()) {
             Team team = new Team();
             team.setGame(game);
-            team.setName(virtTeam.getTeam_name());
+            team.setName(virtTeam.getName());
+            team.setUsers(new HashSet<>());
             team = teamService.addTeam(team);
+            gameTeam.add(team);
 
             //Add (virtual) users
             for(UserIdVirtualUser user : virtTeam.getPlayers()) {
@@ -101,7 +101,7 @@ public class GameController {
                 }
             }
         }
-
+        game.setTeams(gameTeam);
         //Start gameplay in new thread
         Game finalGame = game;
         new Thread(() -> {
@@ -110,10 +110,12 @@ public class GameController {
             } catch (InterruptedException e) {
                 e.printStackTrace(); //Sleep timers may be interrupted
             }
-        });
+        }).start();
 
         GameDto gameDto = convertToGameDto(game);
-        gameCreatedResponse(gameDto);
+        gameCreatedResponse(gameDto, room);
+        room.setGame_id(gameDto.getId());
+        roomController.roomChanged(room);
         return new ResponseEntity<>((new SuccessResponse(gameDto, 201)).toString(),HttpStatus.CREATED);
     }
 

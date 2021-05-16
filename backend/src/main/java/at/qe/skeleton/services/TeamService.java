@@ -40,7 +40,6 @@ public class TeamService {
         return teamRepository.save(team);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ArrayList<Object> getAllTeamUsers(Team team) {
         ArrayList<Object> users = new ArrayList<>(Arrays.asList(team.getUsers().toArray()));
 
@@ -53,11 +52,17 @@ public class TeamService {
 
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public VirtualUser addVirtualUser(Team team, VirtualUser virtualUser) {
-        virtualUser.setVirtual_id(VirtualUser.getNextId());
-        virtualUser.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-
         synchronized (virtualUsers) {
             List<VirtualUser> virtUserArr = virtualUsers.getOrDefault(team.getId(), new ArrayList<VirtualUser>());
+
+            //Check if user already exists
+            List<VirtualUser> sameName = virtUserArr.stream().filter(user -> user.getUsername().equalsIgnoreCase(virtualUser.getUsername())).collect(Collectors.toList());
+            List<VirtualUser> sameId = sameName.stream().filter(user -> user.getCreator_id().equals(virtualUser.getCreator_id())).collect(Collectors.toList());
+            if(sameName.size() != sameId.size()) return null;
+            if(sameId.size() > 0) return sameId.get(0);
+
+            virtualUser.setVirtual_id(VirtualUser.getNextId());
+            virtualUser.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
             virtUserArr.add(virtualUser);
             virtualUsers.put(team.getId(), virtUserArr);

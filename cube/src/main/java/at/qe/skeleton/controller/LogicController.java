@@ -61,7 +61,7 @@ public class LogicController {
             return;
         }
 
-        room_id = data.get("room_id").asInt();
+        room_id = data.get("id").asInt();
         //if (data.asText().equals(connection.getPiName())) {
         if (room_id == cube.getRoomId()){
             //cube.setRoomId(room_id);
