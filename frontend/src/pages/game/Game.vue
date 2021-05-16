@@ -136,16 +136,16 @@
                         Begriff nicht erraten
                     </button>
 
-                    <button
-                        :disabled="showTerm"
-                        class="flex items-center gap-3 bg-black hover:bg-gray-600 text-white p-2 rounded disabled:opacity-70"
-                    >
-                        <font-awesome-icon
-                            icon="skull-crossbones"
-                            class="text-xl cursor-pointer"
-                        />
-                        Regelverstoß
-                    </button>
+                    <!--                    <button-->
+                    <!--                        :disabled="showTerm"-->
+                    <!--                        class="flex items-center gap-3 bg-black hover:bg-gray-600 text-white p-2 rounded disabled:opacity-70"-->
+                    <!--                    >-->
+                    <!--                        <font-awesome-icon-->
+                    <!--                            icon="skull-crossbones"-->
+                    <!--                            class="text-xl cursor-pointer"-->
+                    <!--                        />-->
+                    <!--                        Regelverstoß-->
+                    <!--                    </button>-->
 
                     <button
                         class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
@@ -343,7 +343,7 @@ export default {
                 break;
             case 'VIRTUAL_USER_JOINED':
             case 'USER_JOINED_TEAM':
-                this.game.teams.find((team) => team.id === message.data.team.id).players.push(message.data.user);
+                if (this.game.teams) this.game.teams.find((team) => team.id === message.data.team.id).players.push(message.data.user);
                 break;
             case 'TEAM_DELETED':
                 this.game.teams.filter((team) => team.id !== message.data.id);
