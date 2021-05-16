@@ -18,9 +18,9 @@ spring.datasource.password=root
 Hint: Don't forget to adjust the Test application properties as well
 
 ## Setup using docker
- * Create a production build using `mvn clean package`
- * Build the docker image using `docker build -t timeguess .`
- * Start the container using `docker run -p 80:8080 timeguess` (in this case, the app will be mounted at port `80`)
+ * Create a production build using `mvn -DskipTests package`
+ * Build the docker image using `docker build -t timeguess-webapp .`
+ * Start the container using `docker compose up --build webapp` (in this case, the app will be mounted at port `8080` and the database at `8081`)
 
 ## Manual setup
  * Install the dependencies using `mvn clean install`
