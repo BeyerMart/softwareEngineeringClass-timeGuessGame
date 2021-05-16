@@ -54,6 +54,7 @@ public class GameplayController {
     @Autowired
     TeamRepository teamRepository;
 
+
     public void rollTheDiceMessage(Game game) {
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.ROLL_DICE)).toString());
     }
@@ -258,8 +259,8 @@ public class GameplayController {
             //"wait" until new facet is present
             while (rolledOldFacet == rolledFacet) {
                 rolledFacet = room.getCube().getFacet();
+                TimeUnit.SECONDS.sleep(1); //Wait another 1 second
             }
-
             potentialPoints = cubeService.getPointsFromFacet(rolledFacet);
             activity = cubeService.getActivityFromFacet(rolledFacet);
             availableTime = cubeService.getTimeFromFacet(rolledFacet);
@@ -287,6 +288,7 @@ public class GameplayController {
             //Either time is over or word is guessed (i.e. cube is turned)
             rolledFacet = room.getCube().getFacet();
             while (endTime.after(currentTime) && rolledFacet == room.getCube().getFacet()) {
+                TimeUnit.SECONDS.sleep(1);
                 currentTime = new Timestamp(System.currentTimeMillis());
             }
 
@@ -301,6 +303,7 @@ public class GameplayController {
             GamePoints gamePoints = gameService.getGamePoints(game);
 
             while(endTime.after((currentTime)) && ((gamePoints.getRejections() + gamePoints.getConfirmations()) != (allUsersInGame.size() - currentTeam.getUsers().size()))){
+                TimeUnit.SECONDS.sleep(1);
                 currentTime = new Timestamp(System.currentTimeMillis());
                 gamePoints = gameService.getGamePoints(game);
             }
