@@ -67,7 +67,7 @@
                                 {{ $t('generic.overview') }}
                             </router-link>
                             <router-link
-                                :to="{ name: 'profile' }"
+                                :to="{ name: 'userProfile' }"
                                 class="hover:bg-gray-700 hover:text-white px-3 py-2 rounded"
                                 active-class="bg-gray-700 text-white"
                                 exact-path
@@ -116,7 +116,7 @@
                         </div>
                         <div
                             v-show="showProfileDropDown"
-                            class="absolute right-0 origin-top-right mt-2 w-40 rounded shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            class="absolute z-10 right-0 origin-top-right mt-2 w-40 rounded shadow-lg py-2 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                         >
                             <a
                                 href="#"

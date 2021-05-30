@@ -3,6 +3,7 @@ package at.qe.skeleton.controller;
 import at.qe.skeleton.exceptions.GameNotFoundException;
 import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.model.*;
+import at.qe.skeleton.payload.response.ErrorResponse;
 import at.qe.skeleton.payload.response.SuccessResponse;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
 import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
@@ -146,6 +147,8 @@ public class TeamController {
             user.setCreator_id(currentUser.get().getId());
 
             VirtualUser result = teamService.addVirtualUser(team.get(), virtualUserController.convertToEntity(user));
+
+            if(result == null) return new ResponseEntity<>(((new ErrorResponse("Virtual user already exists", 400)).toString()), HttpStatus.BAD_REQUEST);
 
             userDto = modelMapper.map(result, VirtualUserDto.class);
 

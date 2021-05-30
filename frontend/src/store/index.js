@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { user } from './user.module';
+
+import { roomModule } from './modules/room.module';
+import { topicModule } from './modules/topic.module';
+import { user } from './modules/user.module';
 
 Vue.use(Vuex);
 export default new Vuex.Store({
@@ -8,6 +11,8 @@ export default new Vuex.Store({
     mutations: {},
     actions: {},
     modules: {
+        roomModule,
+        topicModule,
         user,
     },
 });

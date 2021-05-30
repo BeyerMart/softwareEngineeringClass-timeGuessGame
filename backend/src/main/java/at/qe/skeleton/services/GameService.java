@@ -21,6 +21,9 @@ public class GameService {
     private TopicRepository topicRepository;
 
     @Autowired
+    private TopicService topicService;
+
+    @Autowired
     private GameRepository gameRepository;
 
     @Autowired
@@ -34,7 +37,7 @@ public class GameService {
      */
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public Game addGame (Game game, Long id) {
-        Topic topic = topicRepository.getOne(id);
+        Topic topic = topicService.findTopic(id);
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         game.setCreated_at(timestamp);

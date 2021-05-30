@@ -62,3 +62,7 @@ export function deleteTerm(topicId, termId) {
 export function createTerm(topicId, term) {
     return axios.post(`${API_URL}/${topicId}/terms`, { topicId, name: term });
 }
+
+export function fetchTopic(id) {
+    return axios.get(`${API_URL}/${id}`);
+}

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -21,6 +22,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -77,11 +81,11 @@ public class CubeController {
 
 				Optional<Room> roomOptional3 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional3.isPresent()) {
-					roomService.updateCube(cube.getRoomId(), cube);
+					roomService.updateCube((long) cube.getRoomId(), cube);
 					response = new WebsocketResponse(roomOptional3.get(), WSResponseType.OK);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
-					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
+					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_CHANGED);
 				}
 				break;
 			case BATTERY_NOTIFICATION:
@@ -90,8 +94,8 @@ public class CubeController {
 
 				Optional<Room> roomOptional4 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional4.isPresent()) {
-					roomService.updateCube(cube.getRoomId(), cube);
-					response = new WebsocketResponse(roomOptional4.get(), WSResponseType.OK);
+					roomService.updateCube((long) cube.getRoomId(), cube);
+					response = new WebsocketResponse(roomOptional4.get(), WSResponseType.ROOM_CHANGED);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
 					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
@@ -104,7 +108,7 @@ public class CubeController {
 
 				Optional<Room> roomOptional5 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional5.isPresent()) {
-					response = new WebsocketResponse(roomOptional5.get(), WSResponseType.OK);
+					response = new WebsocketResponse(roomOptional5.get(), WSResponseType.ROOM_CHANGED);
 				} else {
 					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
 					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
@@ -123,10 +127,10 @@ public class CubeController {
 		return response.toString();
 	}
 
-	public void setRoomOfPiName(String piName, int roomId){
+	public void setRoomOfPiName(String piName, long roomId) {
 		Cube cubeToSend = new Cube();
 		cubeToSend.setPiName(piName);
-		cubeToSend.setRoomId(roomId);
+		cubeToSend.setRoomId((int) roomId);
 		WebsocketResponse request = new WebsocketResponse(cubeToSend, WSResponseType.ROOM_CREATED);
 		template.convertAndSend("/cube", request.toString());
 	}
@@ -155,6 +159,7 @@ public class CubeController {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.FACET_REQUEST);
 		template.convertAndSend("/cube", request.toString());
 	}
+
 
 
 	@GetMapping("/cubes")
