@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,9 +21,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,9 +59,14 @@ public class CubeController {
 				return "";
 			case PI_CONNECTED:
 				JsonNode registration = mapper.readTree(requestMessage);
-				logger.info("Pi " + registration.get("data") + " has registered");
-				cubeService.addPiName(registration.get("data").asText());
-				response = new WebsocketResponse(registration.get("data"), WSResponseType.OK);
+				String piName = registration.get("data").get("piName").asText();
+				String sessionId = registration.get("data").get("sessionId").asText();
+				if (cubeService.addPiName(piName, sessionId)) {
+					logger.info("Pi " + piName + " has registered");
+					response = new WebsocketResponse(piName, WSResponseType.OK);
+				} else {
+					response = new WebsocketResponse(registration.get("data"), WSResponseType.NOT_CONNECTED);
+				}
 				break;
 
 			case PI_DISCONNECTING:
@@ -76,29 +77,41 @@ public class CubeController {
 				break;
 
 			case FACET_NOTIFICATION:
-				cube = mapper.convertValue(data, Cube.class);
+				cube = mapper.convertValue(data.get("cube"), Cube.class);
+				sessionId = data.get("sessionId").asText();
 				int facet = cube.getFacet();
 
-				Optional<Room> roomOptional3 = roomService.getRoomById(cube.getRoomId());
-				if (roomOptional3.isPresent()) {
-					roomService.updateCube((long) cube.getRoomId(), cube);
-					response = new WebsocketResponse(roomOptional3.get(), WSResponseType.OK);
+				if (cubeService.getConnectedPis().get(cube.getPiName()).equals(sessionId)) {
+					Optional<Room> roomOptional3 = roomService.getRoomById(cube.getRoomId());
+					if (roomOptional3.isPresent()) {
+						roomService.updateCube((long) cube.getRoomId(), cube);
+						response = new WebsocketResponse(roomOptional3.get(), WSResponseType.OK);
+					} else {
+						logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
+						response = new WebsocketResponse(data.get("cube").asText(), WSResponseType.ROOM_DELETED);
+					}
 				} else {
-					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
-					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_CHANGED);
+					//The sessionId does not match the sessionId of the connection which registered this cube.
+					response = new WebsocketResponse(data.get("cube").asText(), WSResponseType.NOT_FOUND);
 				}
 				break;
-			case BATTERY_NOTIFICATION:
-				cube = mapper.convertValue(data, Cube.class);
-				int batteryLevel = cube.getBatteryLevel();
 
-				Optional<Room> roomOptional4 = roomService.getRoomById(cube.getRoomId());
-				if (roomOptional4.isPresent()) {
-					roomService.updateCube((long) cube.getRoomId(), cube);
-					response = new WebsocketResponse(roomOptional4.get(), WSResponseType.ROOM_CHANGED);
+			case BATTERY_NOTIFICATION:
+				cube = mapper.convertValue(data.get("cube"), Cube.class);
+				sessionId = data.get("sessionId").asText();
+				int batteryLevel = cube.getBatteryLevel();
+				if (cubeService.getConnectedPis().get(cube.getPiName()).equals(sessionId)) {
+					Optional<Room> roomOptional4 = roomService.getRoomById(cube.getRoomId());
+					if (roomOptional4.isPresent()) {
+						roomService.updateCube((long) cube.getRoomId(), cube);
+						response = new WebsocketResponse(roomOptional4.get(), WSResponseType.ROOM_CHANGED);
+					} else {
+						logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
+						response = new WebsocketResponse(data.get("cube").asText(), WSResponseType.ROOM_DELETED);
+					}
 				} else {
-					logger.error("Room with id " + data.asText() + " is at pi but not in the Backend.");
-					response = new WebsocketResponse(data.asText(), WSResponseType.ROOM_DELETED);
+					//The sessionId does not match the sessionId of the connection which registered this cube.
+					response = new WebsocketResponse(data.get("cube").asText(), WSResponseType.NOT_FOUND);
 				}
 				break;
 
@@ -159,7 +172,6 @@ public class CubeController {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.FACET_REQUEST);
 		template.convertAndSend("/cube", request.toString());
 	}
-
 
 
 	@GetMapping("/cubes")
