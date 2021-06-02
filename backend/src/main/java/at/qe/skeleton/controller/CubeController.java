@@ -188,5 +188,4 @@ public class CubeController {
 		template.convertAndSend("/pis", new WebsocketResponse(piName, WSResponseType.PI_DISCONNECTING).toString());
 	}
 
-
 }
