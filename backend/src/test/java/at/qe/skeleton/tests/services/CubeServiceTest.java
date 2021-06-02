@@ -31,6 +31,7 @@ public class CubeServiceTest {
 	public void testRegisterPi() {
 		cubeService.addPiName("MyPi", "1234");
 		Assert.isTrue(!cubeService.getAllPis().isEmpty());
+		Assert.isTrue(cubeService.removePi("MyPi"));
 	}
 
 	/**
@@ -55,6 +56,7 @@ public class CubeServiceTest {
 		Assert.isTrue(cubeService.getConnectedPis().get("MyPi").equals("1234"));
 		Assert.isTrue(!cubeService.getConnectedPis().get("MyPi").equals("2345"));
 
+		Assert.isTrue(cubeService.removePi("MyPi"));
 	}
 
 	@Test
