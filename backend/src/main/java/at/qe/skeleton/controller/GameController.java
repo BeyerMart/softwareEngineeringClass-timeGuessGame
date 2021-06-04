@@ -70,6 +70,12 @@ public class GameController {
         Room room = optionalRoom.get();
         if(room.getTopic_id() == null) return new ResponseEntity<>(((new ErrorResponse("Room doesn't have a 'topic_id'", 400)).toString()), HttpStatus.BAD_REQUEST);
 
+        //Check if enough players joined
+        boolean enoughPlayers = room.getTeams().values().stream().mapToInt(virtualTeam -> {
+            return virtualTeam.getAmountOfPlayers() > 1 ? 1: 0;
+        }).sum() >= 2;
+        if(!enoughPlayers) return new ResponseEntity<>(((new ErrorResponse("There have to be at least two teams with at least two players each", 400)).toString()), HttpStatus.BAD_REQUEST);
+
         //Copy values from room
         Game game = new Game();
         game.setName(room.getName());
