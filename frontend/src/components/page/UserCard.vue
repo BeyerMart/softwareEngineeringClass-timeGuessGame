@@ -1,7 +1,7 @@
 <template>
     <div class="rounded-lg bg-white overflow-hidden shadow">
         <div class="bg-gray-100 shadow-xl p-6 flex justify-center sm:justify-between">
-            <div class="sm:flex sm:items-center sm:justify-between">
+            <div class="sm:flex sm:items-center sm:justify-between min-w-full">
                 <div class="sm:flex sm:space-x-5">
                     <div class="flex-shrink-0">
                         <img
@@ -14,8 +14,11 @@
                         v-show="!isEditing"
                         class="mt-4 text-center sm:mt-0 sm:pt-1 sm:text-left"
                     >
-                        <p class="text-xl font-bold text-gray-900 sm:text-2xl mt-2">
-                            {{ user.username }}
+                        <p class="text-xl font-bold text-gray-900 sm:text-2xl mt-2 flex items-center">
+                            <span class="mr-2">{{ user.username }}</span>
+                            <span
+                                class="inline-block px-2 py-0.5 text-xs font-medium rounded-full text-white bg-green-500"
+                            >{{ user.role }}</span>
                         </p>
                         <p class="text-sm font-medium text-gray-600">
                             {{ user.email }}
@@ -23,7 +26,7 @@
                     </div>
                     <form
                         v-show="isEditing"
-                        class="mt-5 sm:mt-0"
+                        class="mt-5 sm:mt-0 min-w-full"
                         @submit.prevent="handleSubmit"
                     >
                         <div class="form-group">
@@ -46,6 +49,31 @@
                                 :class="{ 'border-red-500': submitted && $v.form.username.$error }"
                                 :placeholder="$t('signup.username')"
                             >
+                        </div>
+                        <div
+                            v-show="isAdmin"
+                            class="form-group"
+                        >
+                            <label
+                                class="block text-gray-700 text-sm mb-2"
+                                for="role"
+                            >{{ $t('profile.role') }}</label>
+                            <div
+                                v-show="submitted && $v.form.role.$error"
+                                class="has-errors py-1 text-xs"
+                            >
+                                {{ $t('errors.validation.roleRequired') }}
+                            </div>
+                            <multiselect
+                                v-model="form.role"
+                                select-label=""
+                                deselect-label=""
+                                :placeholder="$t('profile.selectRole')"
+                                :options="roles"
+                                :allow-empty="false"
+                                class="mb-4"
+                                :class="{ 'border rounded border-red-500': submitted && $v.form.role.$error }"
+                            />
                         </div>
                         <div class="form-group">
                             <label
@@ -79,7 +107,7 @@
                 </div>
             </div>
             <font-awesome-icon
-                v-if="isAdmin"
+                v-if="isSelf"
                 icon="ellipsis-v"
                 class="text-2xl cursor-pointer"
                 @click="editUser"
@@ -111,11 +139,17 @@ export default {
     },
     data() {
         return {
+            roles: [
+                'ROLE_ADMIN',
+                'ROLE_MANAGER',
+                'ROLE_USER',
+            ],
             isEditing: false,
             submitted: false,
             form: {
                 email: this.user.email,
                 username: this.user.username,
+                role: this.user.role,
             },
         };
     },
@@ -123,12 +157,14 @@ export default {
         user(newUser) {
             this.form.email = newUser.email;
             this.form.username = newUser.username;
+            this.form.role = newUser.role;
         },
     },
     validations: {
         form: {
             username: { required },
             email: { required, email },
+            role: { required },
         },
     },
     methods: {
@@ -143,6 +179,7 @@ export default {
                 id: this.user.id,
                 username: this.form.username,
                 email: this.form.email,
+                role: this.form.role,
             };
             updateUser(userData).then(() => {
                 this.isEditing = false;
