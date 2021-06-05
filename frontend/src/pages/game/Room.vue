@@ -19,13 +19,13 @@
                             v-show="connectedPi"
                             class="shadow inline-block p-4 bg-green-400 rounded"
                         >
-                            Mit {{ connectedPi }} verbunden!
+                            {{ $t('room.connectedWithPi', { connectedPi: connectedPi }) }}
                         </div>
                         <div
                             v-show="!connectedPi"
                             class="w-full md:w-1/3"
                         >
-                            <label class="block text-gray-700 text-sm mb-2">Wähle den PI aus</label>
+                            <label class="block text-gray-700 text-sm mb-2">{{ $t('room.selectPi') }}</label>
                             <div class="flex gap-2">
                                 <multiselect
                                     v-model="selectedPi"
@@ -33,10 +33,15 @@
                                     :searchable="false"
                                     :close-on-select="true"
                                     :show-labels="false"
-                                    placeholder="PI auswählen"
+                                    :placeholder="$t('room.selectPiList')"
                                     class="inline-block"
+                                    no-options="weak"
                                     @select="connectPi"
-                                />
+                                >
+                                    <span slot="noOptions">
+                                        {{ $t('room.noPiFound') }}
+                                    </span>
+                                </multiselect>
                                 <button
                                     class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
                                     @click="refreshPis"
