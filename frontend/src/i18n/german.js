@@ -52,6 +52,7 @@ export default {
             passwordRequired: 'Passwort ist erforderlich',
             confirmPasswordRequired: 'Passwort bestätigen ist erforderlich',
             passwordsMatch: 'Passwörter müssen übereinstimmen',
+            passwordMinLength: 'Das Passwort muss aus mindestens {minLength} Zeichen bestehen',
         },
         messages: {
             signupSuccess: 'Registrierung erfolgreich! Bitte anmelden',
@@ -167,6 +168,8 @@ export default {
         userUpdatedSuccess: 'Benutzer wurde erfolgreich aktualisiert',
         lastPlayedWith: 'Zuletzt gespielt mit',
         registrationDate: 'Registrierungsdatum',
+        role: 'Rolle',
+        selectRole: 'Rolle auswählen',
     },
     room: {
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
@@ -175,5 +178,9 @@ export default {
         leaveRoom: 'Diesen Raum verlassen',
         startGame: 'Spiel starten',
         joinGame: 'Spiel beitreten',
+        selectPi: 'Wähle den PI aus',
+        selectPiList: 'PI auswählen',
+        noPiFound: 'Keine PIs gefunden',
+        connectedWithPi: 'Mit {connectedPi} verbunden!',
     },
 };

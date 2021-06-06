@@ -10,7 +10,6 @@ import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import at.qe.skeleton.services.RoomService;
 import at.qe.skeleton.services.UserService;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,16 +34,12 @@ public class RoomController {
 
     @Autowired
     ModelMapper modelMapper;
-
-    @Autowired
-    private RoomService roomService;
-
     @Autowired
     UserService userService;
-
     @Autowired
     VirtualUserController virtualUserController;
-
+    @Autowired
+    private RoomService roomService;
     @Autowired
     private CubeController cubeController;
 
@@ -214,7 +209,7 @@ public class RoomController {
     }
 
     @PostMapping("/rooms/{id}/connect_pi")
-    public ResponseEntity<?> connectPiToRoom(@RequestBody Map<String, Object> requestBody, @PathVariable long id){
+    public ResponseEntity<?> connectPiToRoom(@RequestBody Map<String, Object> requestBody, @PathVariable long id) {
         String piName = (String) requestBody.get("piName");
         roomService.connectRoomAndPi(id, piName);
         cubeController.setRoomOfPiName(piName, id);
@@ -229,7 +224,7 @@ public class RoomController {
 
 
     //WS Messages to the FrontEnd only used in cased where connection gets lost and reconnect is needed.
-    public void cubeNotConnected(Room room){
+    public void cubeNotConnected(Room room) {
         room.setConnectedWithPiAndCube(false);
         template.convertAndSend("/rooms/" + room.getId(), WSResponseType.NOT_CONNECTED.toString());
     }
