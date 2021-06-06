@@ -168,6 +168,8 @@ export default {
         userUpdatedSuccess: 'Benutzer wurde erfolgreich aktualisiert',
         lastPlayedWith: 'Zuletzt gespielt mit',
         registrationDate: 'Registrierungsdatum',
+        role: 'Rolle',
+        selectRole: 'Rolle auswählen',
     },
     room: {
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',

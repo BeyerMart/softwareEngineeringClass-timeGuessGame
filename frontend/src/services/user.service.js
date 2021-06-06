@@ -19,6 +19,7 @@ export function updateUser(userData) {
     return axios.patch(`${API_URL}/${userId}`, {
         username: userData.username,
         email: userData.email,
+        role: userData.role,
     });
 }
 

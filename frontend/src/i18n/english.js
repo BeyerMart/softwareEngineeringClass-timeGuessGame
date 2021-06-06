@@ -158,12 +158,14 @@ export default {
     },
     profile: {
         profile: 'Profile',
-        updateUser: 'Update user',
+        update1: 'Update user',
         logout: 'Logout',
         logoutSuccess: 'Logout successful',
         userUpdatedSuccess: 'User was updated successfully',
         lastPlayedWith: 'Last played with',
         registrationDate: 'Registraion date',
+        role: 'Rolle',
+        selectRole: 'Select role',
     },
     room: {
         playersNeedToJoin: 'Players yet to join a team',
