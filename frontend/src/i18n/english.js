@@ -51,6 +51,7 @@ export default {
             passwordRequired: 'Password is required',
             confirmPasswordRequired: 'Confirm password is required',
             confirmPasswordMatch: 'Passwords must match',
+            passwordMinLength: 'Password must have at least {minLength} characters',
         },
         messages: {
             signupSuccess: 'Signup successful! Please Login',
@@ -157,12 +158,14 @@ export default {
     },
     profile: {
         profile: 'Profile',
-        updateUser: 'Update user',
+        update1: 'Update user',
         logout: 'Logout',
         logoutSuccess: 'Logout successful',
         userUpdatedSuccess: 'User was updated successfully',
         lastPlayedWith: 'Last played with',
         registrationDate: 'Registraion date',
+        role: 'Rolle',
+        selectRole: 'Select role',
     },
     room: {
         playersNeedToJoin: 'Players yet to join a team',
@@ -171,5 +174,9 @@ export default {
         leaveRoom: 'Leave this room',
         startGame: 'Start game',
         joinGame: 'Join game',
+        selectPi: 'Select your PI',
+        selectPiList: 'Select PI',
+        noPiFound: 'No PIs found',
+        connectedWithPi: 'Connected with {connectedPi}!',
     },
 };

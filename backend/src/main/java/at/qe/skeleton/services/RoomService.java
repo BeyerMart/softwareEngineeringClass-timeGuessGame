@@ -35,7 +35,7 @@ public class RoomService {
     TopicRepository topicRepository;
 
     private ConcurrentHashMap<Long, Room> rooms = new ConcurrentHashMap<Long, Room>();
-    private long counter = 0;
+    private long counter = 1;
 
     /**
      * Creates a new room and automatically makes the executing user join and host.

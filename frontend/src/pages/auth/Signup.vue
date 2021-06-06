@@ -6,7 +6,9 @@
             <h1 class="mb-8 text-4xl md:text-5xl text-center">
                 {{ $t('signup.signup') }}
             </h1>
-
+            <pre>
+                {{ $v.user.password.$params.minLength }}
+            </pre>
             <form
                 class="bg-gray-100 shadow-xl px-6 py-8 rounded text-black w-full"
                 @submit.prevent="handleSubmit"
@@ -64,6 +66,7 @@
                         v-show="submitted && $v.user.password.$error"
                         class="has-errors py-1 text-xs"
                     >
+                        <span v-show="!$v.user.password.minLength">{{ $t('signup.errors.passwordMinLength', { minLength: $v.user.password.$params.minLength.min }) }}</span>
                         <span v-show="!$v.user.password.required">{{ $t('signup.errors.passwordRequired') }}</span>
                     </div>
                     <input
@@ -120,7 +123,7 @@
 
 <script>
 import {
-    required, email, sameAs,
+    required, email, sameAs, minLength,
 } from 'vuelidate/lib/validators';
 
 import axios from 'axios';
@@ -142,7 +145,10 @@ export default {
         user: {
             email: { required, email },
             username: { required },
-            password: { required },
+            password: {
+                required,
+                minLength: minLength(6),
+            },
             confirmPassword: {
                 required,
                 sameAsPassword: sameAs('password'),
@@ -168,7 +174,7 @@ export default {
                 .catch((err) => {
                     this.$notify({
                         title: this.$t('generic.error'),
-                        text: err.response.error,
+                        text: err.response.data.error,
                         type: 'error',
                     });
                 });
