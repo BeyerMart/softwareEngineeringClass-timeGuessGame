@@ -144,7 +144,7 @@
                         </button>
 
                         <button
-                            v-if="isHost && !gameIsStarted && room.cube && room.teams && Object.values(room.teams).length >= 2"
+                            v-if="isHost && !gameIsStarted && room.cube && room.teams && !waitForPlayers"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="createGame"
                         >
@@ -245,7 +245,7 @@ export default {
             return this.teams.find((team) => team.players.some((player) => this.samePlayerCheck(player, this.getUser)));
         },
         waitForPlayers() {
-            return this.teams.filter((team) => team.players).length <= 1;
+            return this.teams.map((team) => team.players.length > 1).reduce((a, b) => a + b, 0) < 2;
         },
     },
     watch: {
