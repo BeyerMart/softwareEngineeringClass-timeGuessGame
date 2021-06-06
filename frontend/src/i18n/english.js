@@ -51,6 +51,7 @@ export default {
             passwordRequired: 'Password is required',
             confirmPasswordRequired: 'Confirm password is required',
             confirmPasswordMatch: 'Passwords must match',
+            passwordMinLength: 'Password must have at least {minLength} characters',
         },
         messages: {
             signupSuccess: 'Signup successful! Please Login',
@@ -171,5 +172,9 @@ export default {
         leaveRoom: 'Leave this room',
         startGame: 'Start game',
         joinGame: 'Join game',
+        selectPi: 'Select your PI',
+        selectPiList: 'Select PI',
+        noPiFound: 'No PIs found',
+        connectedWithPi: 'Connected with {connectedPi}!',
     },
 };
