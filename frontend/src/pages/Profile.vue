@@ -114,10 +114,6 @@
                                                             :to="{ name: 'profile', params: { id: lpuser.id }}"
                                                             class="hover:underline focus:outline-none"
                                                         >
-                                                            <span
-                                                                class="absolute inset-0"
-                                                                aria-hidden="true"
-                                                            />
                                                             {{ lpuser.username }}
                                                         </router-link>
                                                     </h3>
@@ -144,9 +140,10 @@
                                     </h2>
                                     <div class="flow-root mt-6">
                                         <PieChart
+                                            v-show="pieData[0].value != 0"
                                             :pie-data="pieData"
                                         />
-                                        <i v-show="pieData.length == 0">
+                                        <i v-show="pieData[0].value == 0">
                                             {{ $t('profile.nothingYet') }}
                                         </i>
                                     </div>
@@ -182,9 +179,12 @@ export default {
             matchHistory: [],
             teams: [],
             pieData: [
+                { color: '#00A37A', value: 0 },
+                { color: '#365164', value: 0 },
             ],
             totalGames: 0,
             lastPlayedWithUsers: [],
+            viewKey: 1,
         };
     },
     computed: {
@@ -193,10 +193,8 @@ export default {
             return this.$store.getters['user/isAdmin'];
         },
     },
-    created() {
-        this.fetchTopics();
-    },
     mounted() {
+        this.fetchTopics();
         this.getUser();
     },
     methods: {
@@ -204,11 +202,10 @@ export default {
         gameDate(timestamp) {
             return new Date(timestamp).toLocaleDateString();
         },
-        getUser() {
+        async getUser() {
             if (this.$route.params.id) {
-                getUserById(this.$route.params.id).then((res) => {
+                await getUserById(this.$route.params.id).then((res) => {
                     this.user = res.data;
-                    this.getUserStatics();
                 }).catch((err) => {
                     this.$notify({
                         title: this.$t('generic.error'),
@@ -225,6 +222,8 @@ export default {
                 this.isSelf = true;
                 this.user = this.$store.getters['user/getUser'];
             }
+
+            this.getUserStatics();
         },
         getUserStatics() {
             this.getMatchHistory();
@@ -257,6 +256,7 @@ export default {
         getLastPlayedWithUsers() {
             getLastPlayedWithUsers(this.user.id).then((res) => {
                 this.lastPlayedWithUsers = res.data;
+                this.lastPlayedWithUsers = this.lastPlayedWithUsers.filter((lpUsr) => lpUsr.id !== this.user.id);
             }).catch((err) => {
                 console.error(err);
             });
