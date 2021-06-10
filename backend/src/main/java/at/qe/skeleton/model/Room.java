@@ -16,7 +16,6 @@ public class Room {
     private String name;
     private Long topic_id;
     private Cube cube;
-    private boolean connectedWithPiAndCube = false;
     private int max_points = 20;
 
     public Room(long room_id, long host_id) {
@@ -121,13 +120,6 @@ public class Room {
 
     public void setCube(Cube cube){
         this.cube = cube;
-    }
-    public void setConnectedWithPiAndCube(boolean connectedWithPiAndCube) {
-        this.connectedWithPiAndCube = connectedWithPiAndCube;
-    }
-
-    public boolean isConnectedWithPiAndCube() {
-        return connectedWithPiAndCube;
     }
 
     public int getMax_points() {
