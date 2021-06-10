@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class StatisticService {
@@ -31,14 +32,14 @@ public class StatisticService {
     UserController userController;
 
 
-    public int getNumberOfGames(Long userId){
+    public int getNumberOfGames(Long userId) {
         int totalNumberOfGames = 0;
 
         User user = userRepository.findById(userId).get();
         List<Team> allTeams = teamRepository.findAll();
 
-        for(Team t : allTeams){
-            if(t.getUsers().contains(user)){
+        for (Team t : allTeams) {
+            if (t.getUsers().contains(user)) {
                 totalNumberOfGames++;
             }
         }
@@ -46,35 +47,40 @@ public class StatisticService {
         return totalNumberOfGames;
     }
 
-    public int getNumberOfWins(Long userId){
+    public int getNumberOfWins(Long userId) {
         int numberOfWins = 0;
 
         User user = userRepository.findById(userId).get();
         List<Game> allGames = gameRepository.findAll();
 
-        for(Game g : allGames){
-            if(g.getWinner() == null){
+        for (Game g : allGames) {
+            if (g.getWinner() == null) {
                 continue;
             }
-            if(g.getWinner().getUsers().contains(user)) {
+            Team winner = g.getWinner();
+            Set<User> users = winner.getUsers();
+            Boolean contains = users.contains(user);
+
+            if (g.getWinner().getUsers().contains(user)) {
                 numberOfWins++;
             }
+
         }
 
         return numberOfWins;
     }
 
-    public List<GameDto> getMatchHistory(Long userId){
+    public List<GameDto> getMatchHistory(Long userId) {
         User user = userRepository.findById(userId).get();
         List<Team> allTeams = teamService.findAllTeams();
         List<Game> allGames = gameService.findAllGames();
         List<GameDto> participatedGames = new ArrayList<>();
         Game game = new Game();
 
-        for(Team t : allTeams){
-            if(t.getUsers().contains(user)){
-                for(Game g : allGames){
-                    if(g.getTeams().contains(t)){
+        for (Team t : allTeams) {
+            if (t.getUsers().contains(user)) {
+                for (Game g : allGames) {
+                    if (g.getTeams().contains(t)) {
                         participatedGames.add(gameController.convertToGameDto(g));
                     }
                 }
@@ -84,7 +90,7 @@ public class StatisticService {
         return participatedGames;
     }
 
-    public List<UserDto> getLastPlayedWith(Long userId){
+    public List<UserDto> getLastPlayedWith(Long userId) {
         User user = userRepository.findById(userId).get();
         List<GameDto> previousGames = getMatchHistory(userId);
 
@@ -93,10 +99,10 @@ public class StatisticService {
         List<User> previousUsers = new ArrayList<>();
         List<UserDto> previousUsersDTO = new ArrayList<>();
 
-        for(Team t : teams){
-            if(t.getUsers().contains(user)){
+        for (Team t : teams) {
+            if (t.getUsers().contains(user)) {
                 previousUsers.addAll(t.getUsers());
-                for(User u : previousUsers){
+                for (User u : previousUsers) {
                     previousUsersDTO.add(userController.convertToDto(u));
                 }
                 // Only information about last game played.
