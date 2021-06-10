@@ -19,13 +19,13 @@
                             v-show="connectedPi"
                             class="shadow inline-block p-4 bg-green-400 rounded"
                         >
-                            Mit {{ connectedPi }} verbunden!
+                            {{ $t('room.connectedWithPi', { connectedPi: connectedPi }) }}
                         </div>
                         <div
                             v-show="!connectedPi"
                             class="w-full md:w-1/3"
                         >
-                            <label class="block text-gray-700 text-sm mb-2">Wähle den PI aus</label>
+                            <label class="block text-gray-700 text-sm mb-2">{{ $t('room.selectPi') }}</label>
                             <div class="flex gap-2">
                                 <multiselect
                                     v-model="selectedPi"
@@ -33,10 +33,15 @@
                                     :searchable="false"
                                     :close-on-select="true"
                                     :show-labels="false"
-                                    placeholder="PI auswählen"
+                                    :placeholder="$t('room.selectPiList')"
                                     class="inline-block"
+                                    no-options="weak"
                                     @select="connectPi"
-                                />
+                                >
+                                    <span slot="noOptions">
+                                        {{ $t('room.noPiFound') }}
+                                    </span>
+                                </multiselect>
                                 <button
                                     class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
                                     @click="refreshPis"
@@ -139,7 +144,7 @@
                         </button>
 
                         <button
-                            v-if="isHost && !gameIsStarted && room.cube && room.teams && Object.values(room.teams).length >= 2"
+                            v-if="isHost && !gameIsStarted && room.cube && room.teams && !waitForPlayers"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="createGame"
                         >
@@ -240,7 +245,7 @@ export default {
             return this.teams.find((team) => team.players.some((player) => this.samePlayerCheck(player, this.getUser)));
         },
         waitForPlayers() {
-            return this.teams.filter((team) => team.players).length <= 1;
+            return this.teams.map((team) => team.players.length > 1).reduce((a, b) => a + b, 0) < 2;
         },
     },
     watch: {
