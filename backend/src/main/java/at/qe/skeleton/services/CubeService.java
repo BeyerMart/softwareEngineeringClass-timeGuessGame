@@ -11,11 +11,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CubeService {
 
-	private Map<String, String> connectedPis = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, String> connectedPis = new ConcurrentHashMap<String, String>();
+
 	@Autowired
 	private CubeController cubeController;
 
