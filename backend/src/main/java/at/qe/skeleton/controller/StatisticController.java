@@ -57,5 +57,12 @@ public class StatisticController {
         return ResponseEntity.ok((new SuccessResponse(lastUsers)).toString());
     }
 
+    @GetMapping("/users/{userId}/statistics/totalgames")
+    private ResponseEntity<?> getNumberOfTotalGames(@PathVariable Long userId){
+        int numberOfGames = statisticService.getNumberOfGames(userId);
+
+        return ResponseEntity.ok((new SuccessResponse(numberOfGames)).toString());
+    }
+
 
 }
