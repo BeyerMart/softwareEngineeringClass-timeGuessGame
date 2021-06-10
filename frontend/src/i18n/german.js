@@ -18,6 +18,7 @@ export default {
         round: 'Runde',
         from: 'vom',
         join: 'Beitreten',
+        date: 'Datum',
     },
     languages: {
         de: 'Deutsch',
@@ -78,6 +79,7 @@ export default {
         teams: 'Teams',
         leaveGame: 'Spiel verlassen',
         activity: 'Aktivität',
+        winnerTeam: 'Gewinnerteam',
         messages: {
             roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
             roomAlreadyFull: 'Der Raum ist bereits voll',
@@ -170,6 +172,9 @@ export default {
         registrationDate: 'Registrierungsdatum',
         role: 'Rolle',
         selectRole: 'Rolle auswählen',
+        stats: 'Statistiken',
+        nothingYet: 'Noch nichts',
+        noGamesPlayed: 'Noch keine Spiele gespielt',
     },
     room: {
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
