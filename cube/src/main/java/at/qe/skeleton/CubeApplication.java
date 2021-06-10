@@ -5,17 +5,19 @@ import at.qe.skeleton.controller.WebSocketConnection;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.annotation.PreDestroy;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 @SpringBootApplication
-public class CubeApplication{
+public class CubeApplication {
     private static CubeCalibration cubeCalibration;
+
     public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException {
         SpringApplication.run(CubeApplication.class, args);
 
         cubeCalibration = new CubeCalibration();
-        if(!cubeCalibration.startCalibration()){
+        if (!cubeCalibration.startCalibration()) {
             return;
         }
 
@@ -31,15 +33,14 @@ public class CubeApplication{
         //timeCubeService.setPassword();
         //System.out.println("Battery Level: " + timeCubeService.getBatteryLevel());
         WebSocketConnection webSocketConnection = null;
-        while (webSocketConnection == null){
+        while (webSocketConnection == null) {
             int counter = 0;
-            try
-            {
+            try {
                 webSocketConnection = new WebSocketConnection(cubeCalibration);
-            } catch (TimeoutException e){
+            } catch (TimeoutException e) {
                 e.printStackTrace();
                 counter++;
-                if (counter > 4){
+                if (counter > 4) {
                     System.exit(1);
                 }
                 System.out.println("A Timeout Error occurred. Try again...");
@@ -49,6 +50,10 @@ public class CubeApplication{
 
         webSocketConnection.subscribeToChannel("cube");
         webSocketConnection.sendRegistration();
+    }
 
+    @PreDestroy
+    public void destroy() {
+        cubeCalibration.getTimeCubeService().destroy();
     }
 }

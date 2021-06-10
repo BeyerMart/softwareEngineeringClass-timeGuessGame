@@ -8,6 +8,8 @@ import tinyb.BluetoothException;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
 
+import javax.annotation.PreDestroy;
+import java.net.StandardSocketOptions;
 import java.util.List;
 import java.util.Set;
 
@@ -36,14 +38,13 @@ public class TimeCubeService {
         Set<BluetoothDevice> foundDevices;
         foundDevices = BluetoothService.findTimeFlips();
 
-        BluetoothDevice device = BluetoothService.connectToTimeFlipWithBestSignal(foundDevices);
-        timecube = device;
-        informationService = device.find("0000180a-0000-1000-8000-00805f9b34fb");
-        batteryService = device.find("0000180f-0000-1000-8000-00805f9b34fb");
-        timeFlipService = device.find("f1196f50-71a4-11e6-bdf4-0800200c9a66");
+        timecube = BluetoothService.connectToTimeFlipWithBestSignal(foundDevices);
+        informationService = timecube.find("0000180a-0000-1000-8000-00805f9b34fb");
+        batteryService = timecube.find("0000180f-0000-1000-8000-00805f9b34fb");
+        timeFlipService = timecube.find("f1196f50-71a4-11e6-bdf4-0800200c9a66");
         if (timeFlipService == null) {
             logger.error("This device does not have the timeflip service we are looking for.");
-            device.disconnect();
+            timecube.disconnect();
             //System.exit(-1);
         } else {
             logger.info("Found (timeflip) service " + timeFlipService.getUUID());
@@ -118,5 +119,11 @@ public class TimeCubeService {
 
     public BluetoothGattCharacteristic getBatteryCharacteristic() {
         return batteryCharacteristic;
+    }
+
+    public void destroy(){
+        System.out.println("Closing potential Bluetooth connection");
+        timecube.disconnect();
+        timecube.remove();
     }
 }
