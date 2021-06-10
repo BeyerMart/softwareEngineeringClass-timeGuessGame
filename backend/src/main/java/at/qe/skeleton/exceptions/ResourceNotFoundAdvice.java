@@ -5,9 +5,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.HttpMessageReader;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class ResourceNotFoundAdvice {
@@ -56,6 +58,14 @@ public class ResourceNotFoundAdvice {
     @ResponseBody
     @ExceptionHandler(RoomNotFoundException.class)
     ResponseEntity<?> roomNotFoundHandler(RoomNotFoundException ex) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(StatisticsNotPresentException.class)
+    ResponseEntity<?> statisticsNotPresentHandler(StatisticsNotPresentException ex) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<String>((new ErrorResponse(ex.getMessage(), 404)).toString(), headers, HttpStatus.NOT_FOUND);

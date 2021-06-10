@@ -90,13 +90,13 @@ public class StatisticService {
         User user = userRepository.findById(userId).get();
         List<GameDto> previousGames = getMatchHistory(userId);
 
-        // If there are no previous games, just return own user (to bypass IndexOutOfBounds in previousGames.get(0))
+/*        // If there are no previous games, just return own user (to bypass IndexOutOfBounds in previousGames.get(0))
         if(previousGames.isEmpty()){
             List<UserDto> defaultList = new ArrayList<>();
             defaultList.add(userController.convertToDto(user));
 
             return defaultList;
-        }
+        }*/
 
         Collections.reverse(previousGames);
         List<Team> teams = new ArrayList<>(previousGames.get(0).getTeams());

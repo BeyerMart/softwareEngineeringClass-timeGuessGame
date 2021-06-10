@@ -1,5 +1,6 @@
 package at.qe.skeleton.controller;
 
+import at.qe.skeleton.exceptions.StatisticsNotPresentException;
 import at.qe.skeleton.model.GameDto;
 import at.qe.skeleton.model.UserDto;
 import at.qe.skeleton.payload.response.SuccessResponse;
@@ -21,30 +22,40 @@ public class StatisticController {
     @Autowired
     StatisticService statisticService;
 
-    @GetMapping("/statistics/winloss/{userId}")
+    @GetMapping("/users/{userId}/statistics/winratio")
     private ResponseEntity<?> getWinLossRatio(@PathVariable Long userId){
         int numberOfWins = statisticService.getNumberOfWins(userId);
         int numberOfGames = statisticService.getNumberOfGames(userId);
+
+        if(numberOfGames == 0){
+            throw new StatisticsNotPresentException(userId);
+        }
 
         float ratio = (float) numberOfWins / (float) numberOfGames;
 
         return ResponseEntity.ok((new SuccessResponse(ratio)).toString());
     }
 
-    @GetMapping("/statistics/matchhistory/{userId}")
+    @GetMapping("/users/{userId}/statistics/history")
     private ResponseEntity<?> getMatchHistory(@PathVariable Long userId){
         List<GameDto> matches = statisticService.getMatchHistory(userId);
+        if(matches.isEmpty()){
+            throw new StatisticsNotPresentException(userId);
+        }
 
         return ResponseEntity.ok((new SuccessResponse(matches)).toString());
     }
 
-    @GetMapping("/statistics/lastplayedwith/{userId}")
+    @GetMapping("/users/{userId}/statistics/lastplayedwith")
     private ResponseEntity<?> getLastPlayedWith(@PathVariable Long userId){
+        if(statisticService.getMatchHistory(userId).isEmpty()){
+            throw new StatisticsNotPresentException(userId);
+        }
         List<UserDto> lastUsers = statisticService.getLastPlayedWith(userId);
+
 
         return ResponseEntity.ok((new SuccessResponse(lastUsers)).toString());
     }
-
 
 
 }
