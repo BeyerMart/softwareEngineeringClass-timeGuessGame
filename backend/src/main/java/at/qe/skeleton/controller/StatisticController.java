@@ -5,7 +5,6 @@ import at.qe.skeleton.model.GameDto;
 import at.qe.skeleton.model.UserDto;
 import at.qe.skeleton.payload.response.SuccessResponse;
 import at.qe.skeleton.services.StatisticService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,12 @@ public class StatisticController {
     @Autowired
     StatisticService statisticService;
 
+
+    /**
+     * Winratio of a specific user
+     * @param userId ID of user to get winratio from
+     * @return ResponseEntity which includes the winratio
+     */
     @GetMapping("/users/{userId}/statistics/winratio")
     private ResponseEntity<?> getWinLossRatio(@PathVariable Long userId){
         int numberOfWins = statisticService.getNumberOfWins(userId);
@@ -36,6 +41,12 @@ public class StatisticController {
         return ResponseEntity.ok((new SuccessResponse(ratio)).toString());
     }
 
+    /**
+     * Matchhistory of a specific user
+     * @throws StatisticsNotPresentException if the user never played a game
+     * @param userId ID of user to get matchhistory from
+     * @return Response entity which includes all previous matches of the user
+     */
     @GetMapping("/users/{userId}/statistics/history")
     private ResponseEntity<?> getMatchHistory(@PathVariable Long userId){
         List<GameDto> matches = statisticService.getMatchHistory(userId);
@@ -46,6 +57,12 @@ public class StatisticController {
         return ResponseEntity.ok((new SuccessResponse(matches)).toString());
     }
 
+    /**
+     * Previously played with / previous teammates
+     * @throws StatisticsNotPresentException if there are no previous matches
+     * @param userId ID of user to get previous teammates from
+     * @return Response entity which includes all previous teammates of the user
+     */
     @GetMapping("/users/{userId}/statistics/lastplayedwith")
     private ResponseEntity<?> getLastPlayedWith(@PathVariable Long userId){
         if(statisticService.getMatchHistory(userId).isEmpty()){
@@ -53,16 +70,19 @@ public class StatisticController {
         }
         List<UserDto> lastUsers = statisticService.getLastPlayedWith(userId);
 
-
         return ResponseEntity.ok((new SuccessResponse(lastUsers)).toString());
     }
 
+    /**
+     * Total amount of played games
+     * @param userId ID of user to get total amount of played games from
+     * @return Response entity which includes the number of played games
+     */
     @GetMapping("/users/{userId}/statistics/totalgames")
     private ResponseEntity<?> getNumberOfTotalGames(@PathVariable Long userId){
         int numberOfGames = statisticService.getNumberOfGames(userId);
 
         return ResponseEntity.ok((new SuccessResponse(numberOfGames)).toString());
     }
-
 
 }
