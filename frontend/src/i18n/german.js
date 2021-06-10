@@ -175,6 +175,7 @@ export default {
         stats: 'Statistiken',
         nothingYet: 'Noch nichts',
         noGamesPlayed: 'Noch keine Spiele gespielt',
+        totalNumGamesPlayed: 'Gesamtzahl gespielter Spiele',
     },
     room: {
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
