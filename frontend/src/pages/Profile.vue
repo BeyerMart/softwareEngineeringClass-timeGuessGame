@@ -24,6 +24,7 @@
                         <section aria-labelledby="games-table">
                             <i
                                 v-show="matchHistory.length == 0"
+                                class="text-xl"
                             >{{ $t('profile.noGamesPlayed') }}</i>
                             <div
                                 v-show="matchHistory.length > 0"
@@ -97,7 +98,7 @@
                             <div class="rounded-lg bg-gray-100 overflow-hidden shadow">
                                 <div class="p-6">
                                     <h2
-                                        class="text-base font-medium text-gray-900"
+                                        class="text-2xl font-medium text-gray-900"
                                     >
                                         {{ $t('profile.lastPlayedWith') }}
                                     </h2>
@@ -134,18 +135,18 @@
                             <div class="rounded-lg bg-gray-100 overflow-hidden shadow">
                                 <div class="p-6">
                                     <h2
-                                        class="text-base font-medium text-gray-900"
+                                        class="text-2xl font-medium text-gray-900"
                                     >
                                         {{ $t('profile.stats') }}
                                     </h2>
+
                                     <div class="flow-root mt-6">
                                         <PieChart
-                                            v-show="pieData[0].value != 0"
+                                            v-show="pieData[0].value != -1"
+                                            class="mb-4"
                                             :pie-data="pieData"
                                         />
-                                        <i v-show="pieData[0].value == 0">
-                                            {{ $t('profile.nothingYet') }}
-                                        </i>
+                                        <span class="text-l">{{ $t('profile.totalNumGamesPlayed') }}: {{ totalGames }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -179,8 +180,8 @@ export default {
             matchHistory: [],
             teams: [],
             pieData: [
-                { color: '#00A37A', value: 0 },
-                { color: '#365164', value: 0 },
+                { color: '#00A37A', value: -1 },
+                { color: '#365164', value: -1 },
             ],
             totalGames: 0,
             lastPlayedWithUsers: [],
@@ -242,12 +243,12 @@ export default {
         },
         getWinLossRatio() {
             getUserWinRatio(this.user.id).then((res) => {
+                this.pieData = [
+                    { color: '#00A37A', value: (res.data) * 100 },
+                    { color: '#365164', value: (1 - res.data) * 100 },
+                ];
                 getUserTotalGames(this.user.id).then((totalGamesRes) => {
                     this.totalGames = totalGamesRes.data;
-                    this.pieData = [
-                        { color: '#00A37A', value: (this.totalGames * res.data) * 100 },
-                        { color: '#365164', value: (this.totalGames - res.data) * 100 },
-                    ];
                 });
             }).catch((err) => {
                 console.error(err);
