@@ -18,7 +18,7 @@
             </div>
         </div>
         <div
-            class="pie-chart w-32 h-32"
+            class="rounded-full w-32 h-32"
             :style="pieStyles"
         />
     </div>
@@ -48,9 +48,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-.pie-chart {
-  border-radius: 50%;
-}
-</style>
