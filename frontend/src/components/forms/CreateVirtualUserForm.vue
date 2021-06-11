@@ -78,6 +78,10 @@ export default {
             type: Object,
             default: () => {},
         },
+        users: {
+            type: Array,
+            default: () => [],
+        },
     },
     data() {
         return {
@@ -101,8 +105,18 @@ export default {
                 return;
             }
 
-            this.$emit('addVirtualUser', this.form.vUsername);
-            this.$emit('close');
+            if (!this.isUsernameTaken(this.form.vUsername)) {
+                this.$emit('addVirtualUser', this.form.vUsername);
+                this.$emit('close');
+            } else {
+                this.$notify({
+                    title: this.$t('game.messages.userExists', { username: this.form.vUsername }),
+                    type: 'error',
+                });
+            }
+        },
+        isUsernameTaken(username) {
+            return this.users.some((user) => user.username === username);
         },
     },
 

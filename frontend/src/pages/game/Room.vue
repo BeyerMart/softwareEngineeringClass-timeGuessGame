@@ -13,7 +13,7 @@
                 <div v-if="room">
                     <div
                         v-show="isHost"
-                        class="host-options my-2"
+                        class="host-options my-2 flex items-center"
                     >
                         <div
                             v-show="connectedPi"
@@ -21,9 +21,16 @@
                         >
                             {{ $t('room.connectedWithPi', { connectedPi: connectedPi }) }}
                         </div>
+                        <div class="inline-block ml-4">
+                            <BatteryLevel
+                                v-show="batteryLevel"
+                                :level="batteryLevel"
+                            />
+                        </div>
                         <div
                             v-show="!connectedPi"
                             class="w-full md:w-1/3"
+                            :class="{'md:w-2/3': batteryLevel }"
                         >
                             <label class="block text-gray-700 text-sm mb-2">{{ $t('room.selectPi') }}</label>
                             <div class="flex gap-2">
@@ -128,6 +135,7 @@
 
                         <CreateVirtualUser
                             v-show="display.showVUserForm"
+                            :users="players"
                             @close="display.showVUserForm = false"
                             @addVirtualUser="addVirtualUser"
                         />
@@ -169,6 +177,7 @@
 
                         <CreateTeamForm
                             v-show="display.showTeamForm"
+                            :created-teams="teams"
                             @close="display.showTeamForm = false"
                             @createTeam="createTeam"
                         />
@@ -191,12 +200,13 @@ import VirtualTeam from '@/components/page/VirtualTeam';
 import Player from '@/components/page/Player';
 import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
 import CreateVirtualUser from '@/components/forms/CreateVirtualUserForm.vue';
+import BatteryLevel from '@/components/generic/BatteryLevel.vue';
 
 export default {
 
     name: 'Room',
     components: {
-        Player, VirtualTeam, CreateTeamForm, CreateVirtualUser,
+        Player, VirtualTeam, CreateTeamForm, CreateVirtualUser, BatteryLevel,
     },
     data() {
         return {
@@ -246,6 +256,9 @@ export default {
         },
         waitForPlayers() {
             return this.teams.map((team) => team.players.length > 1).reduce((a, b) => a + b, 0) < 2;
+        },
+        batteryLevel() {
+            return this.room.cube ? this.room.cube.batteryLevel : 0;
         },
     },
     watch: {
@@ -365,7 +378,7 @@ export default {
             return player1.id === player2.id;
         },
         createTeam(teamName) {
-            if (this.teams.some((team) => team.name === team.teamName)) {
+            if (this.teams.some((team) => team.name === teamName)) {
                 this.notifyError(`${this.$t('game.messages.teamExists')}`);
                 return;
             }
@@ -402,7 +415,7 @@ export default {
         addVirtualUser(username) {
             RoomService.joinRoom(this.room.id, { username }).then(() => {
                 this.notifySuccess(`${username} ${this.$t('game.messages.createVirtualUser')}`);
-            }).catch((error) => console.error(error));
+            });
         },
         notifyError(message) {
             this.$notify({

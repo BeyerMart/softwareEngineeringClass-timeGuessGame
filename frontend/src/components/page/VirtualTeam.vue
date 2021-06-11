@@ -34,7 +34,8 @@
         >
             <p>
                 <button
-                    class="bg-gray-400 text-white py-2 px-4 outline-none rounded w-full mt-5"
+                    class="bg-gray-400 text-white py-2 px-4 outline-none rounded w-full mt-5 disabled:opacity-50"
+                    :disabled="teamContainsUser"
                     @click="$emit('joinTeam', team.name)"
                 >
                     {{ $t('generic.join') }}
@@ -46,6 +47,7 @@
 
 <script>
 import Player from '@/components/page/Player';
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'VirtualTeam',
@@ -68,6 +70,12 @@ export default {
     computed: {
         players() {
             return this.team.players;
+        },
+        ...mapGetters({
+            getUser: 'user/getUser',
+        }),
+        teamContainsUser() {
+            return this.team.players.some((player) => player.id === this.getUser.id);
         },
     },
 };
