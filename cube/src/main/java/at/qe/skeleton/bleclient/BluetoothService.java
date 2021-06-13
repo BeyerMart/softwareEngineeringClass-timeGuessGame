@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class BluetoothService {
+    private static final int CONNECTION_TRYS = 3;
     private static final Logger logger = LoggerFactory.getLogger(BluetoothService.class);
 
     public static Set<BluetoothDevice> findTimeFlips() throws RuntimeException{
@@ -25,9 +26,14 @@ public class BluetoothService {
 
         FindDevicesManager findDevicesManager = new FindDevicesManager(findDeviceName);
         logger.info("FoundDeviceManager");
-        boolean findDevicesSuccess;
+        boolean findDevicesSuccess =false;
         try {
-            findDevicesSuccess = findDevicesManager.findDevices(manager);
+            for (int i = 0; i < CONNECTION_TRYS; i++) {
+                findDevicesSuccess = findDevicesManager.findDevices(manager);
+                if (findDevicesSuccess){
+                    break;
+                }
+            }
         } catch (InterruptedException e) {
             logger.error("Could not find device.");
             findDevicesSuccess = false;
@@ -45,7 +51,6 @@ public class BluetoothService {
 
         if (!findDevicesSuccess) {
             throw new RuntimeException("No " + findDeviceName + " devices found during discovery.");
-            //System.exit(-1);
         }
         return findDevicesManager.getFoundDevices();
     }
@@ -53,7 +58,6 @@ public class BluetoothService {
     public static BluetoothDevice connectToTimeFlipWithBestSignal(Set<BluetoothDevice> timeflipSet) throws BluetoothFatalException, BluetoothException{
         Optional<BluetoothDevice> optionalBluetoothDevice = timeflipSet.stream().max(Comparator.comparing(BluetoothDevice::getRSSI));
         BluetoothDevice device = optionalBluetoothDevice.get();
-        //device.enableConnectedNotifications(new ConnectedNotification());
         boolean connected = device.connect();
         if (connected) {
             return device;

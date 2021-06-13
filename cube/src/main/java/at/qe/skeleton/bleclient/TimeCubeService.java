@@ -36,9 +36,14 @@ public class TimeCubeService {
 
     public TimeCubeService() throws BluetoothFatalException, BluetoothException, RuntimeException {
         Set<BluetoothDevice> foundDevices;
-        foundDevices = BluetoothService.findTimeFlips();
+        try{
+            foundDevices = BluetoothService.findTimeFlips();
+            timecube = BluetoothService.connectToTimeFlipWithBestSignal(foundDevices);
 
-        timecube = BluetoothService.connectToTimeFlipWithBestSignal(foundDevices);
+        } catch (Exception e){
+            throw e;
+        }
+
         informationService = timecube.find("0000180a-0000-1000-8000-00805f9b34fb");
         batteryService = timecube.find("0000180f-0000-1000-8000-00805f9b34fb");
         timeFlipService = timecube.find("f1196f50-71a4-11e6-bdf4-0800200c9a66");
@@ -63,10 +68,6 @@ public class TimeCubeService {
         this.batteryCharacteristic = batteryCharacteristic;
     }
 
-    public void main(String[] args) {
-        //facetCharacteristic.enableValueNotifications(new ValueNotification());
-        //facetCharacteristic.disableValueNotifications();
-    }
 
     public boolean setPassword() {
         BluetoothGattCharacteristic passwordCharacteristic = timeFlipService.find("f1196f57-71a4-11e6-bdf4-0800200c9a66");
