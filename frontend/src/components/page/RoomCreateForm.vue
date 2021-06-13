@@ -84,7 +84,7 @@
                                     v-show="submitted && $v.form.maxPoints.$error"
                                     class="has-errors py-1 text-xs"
                                 >
-                                    <span v-show="!$v.form.maxPoints.minValue">{{ $t('errors.validation.minPointsRequired') }}</span>
+                                    <span v-show="!$v.form.maxPoints.minValue || !$v.form.maxPoints.maxValue">{{ $t('errors.validation.minMaxPointsRequired') }}</span>
                                     <span v-show="!$v.form.maxPoints.required">{{ $t('errors.validation.maxPointsIsRequired') }}</span>
                                 </div>
                                 <input
@@ -121,6 +121,7 @@ import {
 import {
     required,
     minValue,
+    maxValue,
 } from 'vuelidate/lib/validators';
 
 export default {
@@ -149,7 +150,7 @@ export default {
         form: {
             roomName: { required },
             topic: { required },
-            maxPoints: { required, minValue: minValue(5) },
+            maxPoints: { required, minValue: minValue(5), maxValue: maxValue(10000) },
         },
     },
     methods: {
