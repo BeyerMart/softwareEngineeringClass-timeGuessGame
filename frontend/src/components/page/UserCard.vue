@@ -24,6 +24,7 @@
                             {{ user.email }}
                         </p>
                     </div>
+
                     <form
                         v-show="isEditing"
                         class="mt-5 sm:mt-0 min-w-full"
