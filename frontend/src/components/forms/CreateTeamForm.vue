@@ -78,6 +78,10 @@ export default {
             type: Object,
             default: () => {},
         },
+        createdTeams: {
+            type: Array,
+            default: () => [],
+        },
     },
     data() {
         return {
@@ -100,9 +104,19 @@ export default {
             if (this.$v.$invalid) {
                 return;
             }
+            if (this.isTeamnameTaken(this.form.teamName)) {
+                this.$notify({
+                    title: this.$t(`${this.$t('game.messages.teamExists')}`),
+                    type: 'error',
+                });
+                return;
+            }
 
             this.$emit('createTeam', this.form.teamName);
             this.$emit('close');
+        },
+        isTeamnameTaken(teamname) {
+            return this.createdTeams.some((team) => team.name === teamname);
         },
     },
 

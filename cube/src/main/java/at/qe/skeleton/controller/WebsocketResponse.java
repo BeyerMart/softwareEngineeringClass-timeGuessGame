@@ -12,7 +12,6 @@ public class WebsocketResponse {
     private final String response;
     private final Logger logger = LoggerFactory.getLogger(WebsocketResponse.class);
 
-    //TODO OverLoad Constructor (make possible to give timestamp)
     public WebsocketResponse(Object input, WSResponseType type) {
         if (type == null) throw new IllegalArgumentException();
         String response = "";

@@ -8,30 +8,42 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CubeService {
 
-	private Set<String> connectedPis = Collections.synchronizedSet(new HashSet<>());
+	private Map<String, String> connectedPis = new ConcurrentHashMap<String, String>();
+
 	@Autowired
 	private CubeController cubeController;
 
 	@Autowired
 	private RoomService roomService;
 
-	public void addPiName(String piName) {
-		connectedPis.add(piName);
+	public boolean addPiName(String piName, String sessionId) {
+		//PiName as key, so there can be maximum one device connected as a piName.
+		//This blocks attacks where one tries to send false cube updates.
+		if (connectedPis.containsKey(piName)) {
+			return false;
+		}
+		connectedPis.put(piName, sessionId);
+		return true;
 	}
 
 	public boolean removePi(String piName) {
-		return connectedPis.remove(piName);
+		return (connectedPis.remove(piName) != null);
 	}
 
 	public List<String> getAllPis() {
-		return new ArrayList<String>(connectedPis);
+		return new ArrayList<>(connectedPis.keySet());
+	}
+
+	public Map getConnectedPis() {
+		return Collections.unmodifiableMap(connectedPis);
 	}
 
 	//Static Mapping from External Cube Facet (The one that gets transmitted) to actual labeled facets
@@ -49,7 +61,7 @@ public class CubeService {
 
 	public Activity getActivityFromFacet(int facet) {
 		int type = facet / 3;
-		switch (type){
+		switch (type) {
 			case 0:
 				return Activity.PANTOMIME;
 			case 1:

@@ -84,7 +84,7 @@ public class GameController {
             return new ResponseEntity<>(((new ErrorResponse("There have to be at least two teams with at least two players each", 400)).toString()), HttpStatus.BAD_REQUEST);
 
         //Check if pi is present
-        if (!room.isConnectedWithPiAndCube())
+        if (room.getCube() == null)
             return new ResponseEntity<>(((new ErrorResponse("Pi is not connected", 400))).toString(), HttpStatus.BAD_REQUEST);
 
         //Copy values from room

@@ -2,7 +2,15 @@ package at.qe.skeleton.controller;
 
 import at.qe.skeleton.exceptions.RoomNotFoundException;
 import at.qe.skeleton.exceptions.UserNotFoundException;
-import at.qe.skeleton.model.*;
+import at.qe.skeleton.model.Cube;
+import at.qe.skeleton.model.Room;
+import at.qe.skeleton.model.User;
+import at.qe.skeleton.model.UserDto;
+import at.qe.skeleton.model.UserIdVirtualUser;
+import at.qe.skeleton.model.VirtualTeam;
+import at.qe.skeleton.model.VirtualTeamDto;
+import at.qe.skeleton.model.VirtualUser;
+import at.qe.skeleton.model.VirtualUserDto;
 import at.qe.skeleton.payload.response.ErrorResponse;
 import at.qe.skeleton.payload.response.SuccessResponse;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
@@ -16,12 +24,25 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -225,13 +246,12 @@ public class RoomController {
 
     //WS Messages to the FrontEnd only used in cased where connection gets lost and reconnect is needed.
     public void cubeNotConnected(Room room) {
-        room.setConnectedWithPiAndCube(false);
+        room.setCube(null);
         template.convertAndSend("/rooms/" + room.getId(), WSResponseType.NOT_CONNECTED.toString());
     }
 
     public void cubeConnected(int roomIdOnPi, Cube cube) {
         Room backendRoom = roomService.getRoomById(roomIdOnPi).get();
-        backendRoom.setConnectedWithPiAndCube(true);
         backendRoom.setCube(cube);
         roomService.updateRoom(backendRoom);
         template.convertAndSend("/rooms/" + backendRoom.getId(), WSResponseType.FOUND_AND_CONNECTED.toString());

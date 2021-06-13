@@ -29,8 +29,9 @@ public class CubeServiceTest {
 	 */
 	@Test
 	public void testRegisterPi() {
-		cubeService.addPiName("MyPi");
+		cubeService.addPiName("MyPi", "1234");
 		Assert.isTrue(!cubeService.getAllPis().isEmpty());
+		Assert.isTrue(cubeService.removePi("MyPi"));
 	}
 
 	/**
@@ -38,8 +39,23 @@ public class CubeServiceTest {
 	 */
 	@Test
 	public void testRemovePi() {
-		cubeService.addPiName("MyPi");
+		cubeService.addPiName("MyPi", "1234");
 		Assert.isTrue(!cubeService.removePi("NotMyPi"));
+		Assert.isTrue(cubeService.removePi("MyPi"));
+	}
+
+	/**
+	 * Test try to register with different sessionId but same piName -> thus trying to attack the pi.
+	 * Test correct sessionId corresponding to piName is stored in map
+	 */
+	@Test
+	public void testRegisterTwiceForSamePiName() {
+		Assert.isTrue(cubeService.addPiName("MyPi", "1234"));
+		Assert.isTrue(!cubeService.addPiName("MyPi", "2345"));
+
+		Assert.isTrue(cubeService.getConnectedPis().get("MyPi").equals("1234"));
+		Assert.isTrue(!cubeService.getConnectedPis().get("MyPi").equals("2345"));
+
 		Assert.isTrue(cubeService.removePi("MyPi"));
 	}
 

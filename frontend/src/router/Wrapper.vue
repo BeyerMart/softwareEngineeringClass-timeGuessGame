@@ -1,7 +1,10 @@
 <template>
     <div class="h-screen flex flex-col justify-between">
         <Navbar v-show="showNavbar" />
-        <router-view class="mb-auto" />
+        <router-view
+            :key="$route.fullPath"
+            class="mb-auto"
+        />
         <notifications
             class="vue-notf mr-2"
             position="top right"

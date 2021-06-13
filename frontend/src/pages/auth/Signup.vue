@@ -6,9 +6,6 @@
             <h1 class="mb-8 text-4xl md:text-5xl text-center">
                 {{ $t('signup.signup') }}
             </h1>
-            <pre>
-                {{ $v.user.password.$params.minLength }}
-            </pre>
             <form
                 class="bg-gray-100 shadow-xl px-6 py-8 rounded text-black w-full"
                 @submit.prevent="handleSubmit"
