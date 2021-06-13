@@ -168,7 +168,7 @@ export default {
         logout: 'Ausloggen',
         logoutSuccess: 'Ausloggen erfolgreich',
         userUpdatedSuccess: 'Benutzer wurde erfolgreich aktualisiert',
-        lastPlayedWith: 'Zuletzt gespielt mit',
+        lastPlayedWith: 'Letzten Teammitglieder',
         registrationDate: 'Registrierungsdatum',
         role: 'Rolle',
         selectRole: 'Rolle auswählen',
