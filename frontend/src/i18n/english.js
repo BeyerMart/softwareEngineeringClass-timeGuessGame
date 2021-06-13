@@ -128,7 +128,7 @@ export default {
         topics: 'Topics',
         term: 'Begriff',
         players: 'Players',
-        games: 'Gamer',
+        games: 'Games',
         createdBy: 'Created by',
         termImporter: 'Term importer',
         correctGuesses: 'Correct guesses',
