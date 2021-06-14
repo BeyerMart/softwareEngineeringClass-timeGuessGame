@@ -43,7 +43,11 @@ public class CubeApplication {
 
         webSocketConnection.subscribeToChannel("cube");
         webSocketConnection.sendRegistration();
+    }
 
+    @PreDestroy
+    public void destroy() {
+        cubeCalibration.getTimeCubeService().destroy();
     }
 
     @PreDestroy

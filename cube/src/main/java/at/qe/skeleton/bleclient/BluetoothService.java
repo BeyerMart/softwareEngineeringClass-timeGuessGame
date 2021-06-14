@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class BluetoothService {
+    private static final int CONNECTION_TRYS = 3;
     private static final Logger logger = LoggerFactory.getLogger(BluetoothService.class);
     private static final int CONNECTION_TRYS = 4;
 
@@ -50,7 +51,6 @@ public class BluetoothService {
 
         if (!findDevicesSuccess) {
             throw new RuntimeException("No " + findDeviceName + " devices found during discovery.");
-            //System.exit(-1);
         }
         return findDevicesManager.getFoundDevices();
     }

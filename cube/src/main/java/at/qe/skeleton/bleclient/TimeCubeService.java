@@ -8,6 +8,8 @@ import tinyb.BluetoothException;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
 
+import javax.annotation.PreDestroy;
+import java.net.StandardSocketOptions;
 import java.util.List;
 import java.util.Set;
 
@@ -66,10 +68,6 @@ public class TimeCubeService {
         this.batteryCharacteristic = batteryCharacteristic;
     }
 
-    public void main(String[] args) {
-        //facetCharacteristic.enableValueNotifications(new ValueNotification());
-        //facetCharacteristic.disableValueNotifications();
-    }
 
     public boolean setPassword() {
         BluetoothGattCharacteristic passwordCharacteristic = timeFlipService.find("f1196f57-71a4-11e6-bdf4-0800200c9a66");
