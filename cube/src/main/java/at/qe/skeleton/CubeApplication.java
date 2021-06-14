@@ -5,44 +5,38 @@ import at.qe.skeleton.controller.WebSocketConnection;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.annotation.PreDestroy;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 @SpringBootApplication
-public class CubeApplication{
+public class CubeApplication {
+    private static final int WEBSOCKET_CONNECTION_TRIES = 4;
     private static CubeCalibration cubeCalibration;
-    public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException {
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException, IOException {
         SpringApplication.run(CubeApplication.class, args);
 
         cubeCalibration = new CubeCalibration();
-        if(!cubeCalibration.startCalibration()){
+        if (!cubeCalibration.startCalibration()) {
             return;
         }
 
-
         cubeCalibration.calibrate();
-        cubeCalibration.setPiName();
-        cubeCalibration.setURL();
-        cubeCalibration.setPORT();
 
-
-        //TODO remove when working with web APIs
-        //TimeCubeService timeCubeService = new TimeCubeService();
-        //timeCubeService.setPassword();
-        //System.out.println("Battery Level: " + timeCubeService.getBatteryLevel());
         WebSocketConnection webSocketConnection = null;
-        while (webSocketConnection == null){
+        while (webSocketConnection == null) {
             int counter = 0;
-            try
-            {
+            try {
                 webSocketConnection = new WebSocketConnection(cubeCalibration);
-            } catch (TimeoutException e){
+            } catch (TimeoutException e) {
                 e.printStackTrace();
                 counter++;
-                if (counter > 4){
+                if (counter > WEBSOCKET_CONNECTION_TRIES) {
                     System.exit(1);
                 }
-                System.out.println("A Timeout Error occurred. Try again...");
+                System.out.println("A Timeout Error occurred. Trying again to connect...");
 
             }
         }
@@ -50,5 +44,10 @@ public class CubeApplication{
         webSocketConnection.subscribeToChannel("cube");
         webSocketConnection.sendRegistration();
 
+    }
+
+    @PreDestroy
+    public void destroy() {
+        cubeCalibration.getTimeCubeService().destroy();
     }
 }

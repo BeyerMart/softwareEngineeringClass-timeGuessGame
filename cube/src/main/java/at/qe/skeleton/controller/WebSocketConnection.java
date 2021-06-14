@@ -49,8 +49,8 @@ public class WebSocketConnection {
         this.cubeCalibration = cubeCalibration;
         this.logicController = new LogicController(this, cubeCalibration);
         piName = cubeCalibration.getPiName();
-        URL = cubeCalibration.getURL();
-        PORT = cubeCalibration.getPORT();
+        URL = cubeCalibration.getUrl();
+        PORT = cubeCalibration.getPort();
         ArrayList list = new ArrayList();
         list.add(new WebSocketTransport(new StandardWebSocketClient()));
         this.client = new WebSocketStompClient(new SockJsClient(list));
