@@ -75,7 +75,7 @@ public class CubeCalibration {
 
     public void calibrate() throws IOException {
         if (loadCalibration()) {
-            System.out.println("A stored configuration was loaded. If you want to recalibrate the cube and redefine, the PiName, Url and Port Number, type 'redo', else 'skip'.");
+            System.out.println("A stored configuration was loaded. If you want to recalibrate the cube and redefine the PiName, Url and Port Number, type 'redo' else 'skip'.");
             String input = scanner.next().toLowerCase();
             if (!input.equals("redo")) {
                 return;
@@ -162,9 +162,14 @@ public class CubeCalibration {
         if (input.equals("d") || input.equals("default")) {
             port = 8080;
         } else {
-            port = Integer.parseInt(input);
+            try {
+                port = Integer.parseInt(input);
+                System.out.println("Ok, your PORT number is " + port);
+            } catch (NumberFormatException e){
+                System.err.println("Please enter only a port number. No extra symbols.");
+                setPort();
+            }
         }
-        System.out.println("Ok, your PORT number is " + port);
     }
 
     public boolean loadCalibration() {
@@ -202,8 +207,7 @@ public class CubeCalibration {
             for (int i = 1; i < 13; i++) {
                 properties.setProperty("CALIBRATION"+i, String.valueOf(internalFacetToExternalFacetMapping.get(i)));
             }
-            //properties.setProperty("CALIBRATION", internalFacetToExternalFacetMapping.toString());
-            System.out.println(internalFacetToExternalFacetMapping.toString());
+            //System.out.println(internalFacetToExternalFacetMapping.toString());
             FileOutputStream out = new FileOutputStream(PROPERTIES_FILE_NAME);
             properties.store(out, "Configuration for Timeflip g6t3");
         } catch (Exception e) {
