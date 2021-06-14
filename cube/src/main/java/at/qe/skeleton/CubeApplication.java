@@ -49,9 +49,4 @@ public class CubeApplication {
     public void destroy() {
         cubeCalibration.getTimeCubeService().destroy();
     }
-
-    @PreDestroy
-    public void destroy() {
-        cubeCalibration.getTimeCubeService().destroy();
-    }
 }
