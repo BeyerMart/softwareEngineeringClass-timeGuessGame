@@ -19,6 +19,15 @@
                         class="flex-shrink-0 inline-block px-2 py-0.5 text-xs font-medium rounded-full"
                         :class="getClass(badge.colour)"
                     >{{ badge.text }}</span>
+                    <button
+                        v-if="showDeleteButton"
+                        class="right"
+                        @click="$emit('removePlayer', this.player)"
+                    >
+                        <font-awesome-icon
+                            icon="user-minus"
+                        />
+                    </button>
                 </div>
             </div>
         </div>
@@ -26,6 +35,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
     name: 'Player',
     props: {
@@ -40,10 +51,28 @@ export default {
                 return [];
             },
         },
+        deleteables: {
+            required: false,
+            default: false,
+            type: Boolean,
+        },
+        host: {
+            required: false,
+            default: false,
+            type: Boolean,
+        },
     },
     methods: {
         getClass(colour) {
             return `text-${colour}-100 bg-${colour}-600`;
+        },
+    },
+    computed: {
+        ...mapGetters({
+            getUser: 'user/getUser',
+        }),
+        showDeleteButton() {
+            return this.deleteables && ((this.player.creatorId && this.player.creatorId === this.getUser.id) || (this.host && this.player.id !== this.getUser.id));
         },
     },
 };

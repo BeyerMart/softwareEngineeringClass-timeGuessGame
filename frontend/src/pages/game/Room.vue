@@ -79,6 +79,9 @@
                                 <Player
                                     :player="player"
                                     :badges="room.host_id && player.id === room.host_id ? [{text: 'Host', colour: 'green'}] : null"
+                                    :deleteables="true"
+                                    :host="this.isHost"
+                                    @removePlayer="removePlayerHandler"
                                 />
                             </li>
                         </ul>
@@ -485,6 +488,13 @@ export default {
                 });
                 this.$emit('joinedGame', this.game.id);
             });
+        },
+        removePlayerHandler(player) {
+            if (player.virtual_id) {
+                this.leaveRoom(player.creator_id, player);
+            } else {
+                this.leaveRoom(player.id);
+            }
         },
     },
 };

@@ -21,6 +21,9 @@
                             <Player
                                 :player="player"
                                 :badges="hostId && player.id === hostId ? [{text: 'host', colour: 'green'}] : null"
+                                :deleteables="deleteables"
+                                :host="hostId && player.id === hostId"
+                                @removePlayer="$emit('removeUser', player)"
                             />
                         </h3>
                     </div>
@@ -65,6 +68,11 @@ export default {
         isGameplay: {
             default: false,
             type: Boolean,
+        },
+        deleteables: {
+            type: Boolean,
+            required: false,
+            default: false,
         },
     },
     computed: {
