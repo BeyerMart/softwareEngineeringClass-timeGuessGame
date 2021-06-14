@@ -93,7 +93,15 @@ public class CubeCalibration {
                         //P1,P2,P3,-S1,S2,S3,-...
                         // 0, 1, 2,  3, 4, 5, ...
                         int key = 3 * i + j;
-                        internalFacetToExternalFacetMapping.put(key, timeCubeService.getCurrentFacet());
+                        int currentFacet = timeCubeService.getCurrentFacet();
+                        while (internalFacetToExternalFacetMapping.values().contains(currentFacet)){
+                            System.out.println("This facet is already present in the mapping.\nPlease turn the cube to the side " + activity + availablePoints + " and confirm with 'y'");
+                            input = scanner.next().toLowerCase();
+                            if (input.equals("y") || input.equals("yes")) {
+                                currentFacet = timeCubeService.getCurrentFacet();
+                            }
+                        }
+                        internalFacetToExternalFacetMapping.put(key, currentFacet);
                     } else {
                         logger.error("No valid response.");
                     }
