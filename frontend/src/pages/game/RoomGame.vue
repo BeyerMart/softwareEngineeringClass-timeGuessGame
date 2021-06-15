@@ -15,6 +15,7 @@
 <script>
 import Room from '@/pages/game/Room';
 import Game from '@/pages/game/Game';
+import * as RoomService from '@/services/room.service';
 
 export default {
     name: 'RoomGame',
@@ -22,7 +23,15 @@ export default {
     data() {
         return {
             gameId: null,
+            roomId: this.$route.params.id,
         };
+    },
+    created() {
+        window.addEventListener('beforeunload', this.leaveRoom);
+    },
+    beforeDestroy() {
+        this.leaveRoom();
+        window.removeEventListener('beforeunload', this.leaveRoom);
     },
     methods: {
         joinedGameHandler(gameId) {
@@ -30,6 +39,9 @@ export default {
         },
         leftGameHandler() {
             this.gameId = null;
+        },
+        leaveRoom() {
+            RoomService.leaveRoom(this.roomId).catch((error) => console.error(error));
         },
     },
 };

@@ -25,6 +25,7 @@ export default {
         en: 'Englisch',
     },
     errors: {
+        somethingWrong: 'Etwas ist schief gegangen',
         back: 'Zurück',
         notFound: 'Entschuldigung, diese Seite existiert nicht',
         internalserror: 'Ein unerwarteter Fehler ist aufgetreten',
@@ -84,8 +85,10 @@ export default {
             roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
             roomAlreadyFull: 'Der Raum ist bereits voll',
             youJoinedRoom: 'Raum erfolgreich beigetreten',
+            youLeftGame: 'Spiel erfolgreich verlassen',
             roomRemoved: 'Der Raum wurde vom Host gelöscht.',
-            userJoined: ' ist beigetreten',
+            userJoined: '{userName} ist beigetreten',
+            userLeft: '{userName} hat den Raum verlassen',
             userJoinedTeam: 'ist dem Team beigetreten',
             userLeftTeam: 'hat das Team verlassen',
             userExists: '{username} ist bereits vorhanden',
@@ -114,6 +117,9 @@ export default {
         maxPoints: 'Maximale Punkte',
         guessedTerm: 'Begriff erraten',
         notGuessedTerm: 'Begriff nicht erraten',
+        ruleViolation: 'Regelverstoß',
+        resultConfirmed: 'Ergebnis bestätigt',
+        resultRejected: 'Regelverstoß gemeldet',
 
     },
 
@@ -189,5 +195,10 @@ export default {
         selectPiList: 'PI auswählen',
         noPiFound: 'Keine PIs gefunden',
         connectedWithPi: 'Mit {connectedPi} verbunden!',
+    },
+    copy2clipboard: {
+        copyButtonText: 'Invite URL kopieren',
+        copySuccess: 'URL erfolgreich in die Zwischenablage kopiert',
+        copyError: 'URL konnte nicht kopiert werden',
     },
 };

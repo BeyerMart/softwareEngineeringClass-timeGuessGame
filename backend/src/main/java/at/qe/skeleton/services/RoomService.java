@@ -252,7 +252,7 @@ public class RoomService {
             }
             if (removedUser != null)
                 roomController.userLeftTeam(removedUser, virtualTeam, room);
-            if (virtualTeam.getPlayers().isEmpty()) {
+            if (virtualTeam.getPlayers().isEmpty() && room.getGame_id() < 0) {
                 iterator.remove();
                 roomController.roomChanged(room);
             }
@@ -298,7 +298,7 @@ public class RoomService {
         Long userId = userService.getAuthenticatedUser().get().getId();
         UserIdVirtualUser user = room.getPlayers().get(userId);
         if (team.getPlayers().removeIf(userIdVirtualUser -> userIdVirtualUser.getUser_id().equals(userId))) {
-            if (team.getPlayers().isEmpty())
+            if (team.getPlayers().isEmpty() && room.getGame_id() >= 0)
                 room.getTeams().remove(teamName);
             roomController.roomChanged(room);
             roomController.userLeftTeam(user, team, room);

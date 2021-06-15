@@ -152,7 +152,7 @@ public class RoomController {
         return ResponseEntity.ok((new SuccessResponse(teams)).toString());
     }
 
-    @DeleteMapping("/rooms/{roomId}/users/{userId}")
+    @DeleteMapping(value= {"/rooms/{roomId}/users/{userId}","/rooms/{roomId}/users"})
     public ResponseEntity<?> userLeaveRoom(@RequestBody(required = false) VirtualUserDto virtualUserDto, @PathVariable Long roomId, @PathVariable(required = false) Long userId) throws ParseException {
         if (userId == null)
             userId = userService.getAuthenticatedUser().get().getId();
