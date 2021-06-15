@@ -7,9 +7,13 @@
             <div
                 class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8"
             >
-                <h1 class="text-4xl md:text-5xl my-5">
-                    {{ room.name }} | {{ getTopicNameById(room.topic_id) }}
-                </h1>
+                <div class="flex justify-between items-center">
+                    <h1 class="text-4xl md:text-5xl my-5">
+                        {{ room.name }} | {{ getTopicNameById(room.topic_id) }}
+                    </h1>
+                    <Copy2Clipboard />
+                </div>
+
                 <div v-if="room">
                     <div
                         v-show="isHost"
@@ -21,9 +25,10 @@
                         >
                             {{ $t('room.connectedWithPi', { connectedPi: connectedPi }) }}
                         </div>
-                        <div class="inline-block ml-4">
+                        <div class="inline-block">
                             <BatteryLevel
                                 v-show="batteryLevel"
+                                class="ml-4"
                                 :level="batteryLevel"
                             />
                         </div>
@@ -113,7 +118,8 @@
                 <div class="my-6 sm:my-10">
                     <div class="flex flex-col justify-center gap-3 md:flex-row text-base shadow p-5 bg-gray-100">
                         <button
-                            class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
+                            :disabled="room.gameId && room.gameId > 0"
+                            class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded disabled:opacity-50"
                             @click="display.showTeamForm = true"
                         >
                             <font-awesome-icon
@@ -127,7 +133,7 @@
                             @click="display.showVUserForm = true"
                         >
                             <font-awesome-icon
-                                icon="sign-out-alt"
+                                icon="plus"
                                 class="text-l cursor-pointer"
                             />
                             {{ $t('room.createVirtualUser') }}
@@ -156,11 +162,11 @@
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="createGame"
                         >
+                            {{ $t('room.startGame') }}
                             <font-awesome-icon
                                 icon="play-circle"
                                 class="text-l cursor-pointer"
                             />
-                            {{ $t('room.startGame') }}
                         </button>
 
                         <button
@@ -189,7 +195,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { subChannel, unsubChannel } from '@/services/websocket.service';
 import * as RoomService from '@/services/room.service';
 import * as TopicService from '@/services/topic.service';
@@ -201,12 +207,13 @@ import Player from '@/components/page/Player';
 import CreateTeamForm from '@/components/forms/CreateTeamForm.vue';
 import CreateVirtualUser from '@/components/forms/CreateVirtualUserForm.vue';
 import BatteryLevel from '@/components/generic/BatteryLevel.vue';
+import Copy2Clipboard from '@/components/generic/Copy2Clipboard.vue';
 
 export default {
 
     name: 'Room',
     components: {
-        Player, VirtualTeam, CreateTeamForm, CreateVirtualUser, BatteryLevel,
+        Player, VirtualTeam, CreateTeamForm, CreateVirtualUser, BatteryLevel, Copy2Clipboard,
     },
     data() {
         return {
@@ -230,6 +237,7 @@ export default {
             getUsers: 'user/getUsers',
             getUser: 'user/getUser',
             topicList: 'topicList',
+            creator: 'creator',
         }),
         topic_id() {
             return this.room.topic_id;
@@ -287,13 +295,28 @@ export default {
         },
     },
     mounted() {
-        RoomService.fetchRoomById(this.$route.params.id)
-            .then((response) => {
-                this.room = response.data;
-            }).catch((error) => {
-                console.error(error);
-                this.$router.push('/');
-            });
+        if (!this.creator) {
+            RoomService.joinRoom(this.$route.params.id)
+                .then((response) => {
+                    this.room = response.data;
+                    if (this.room.amountOfPlayers > 24) {
+                        this.notifyError(this.$t('game.messages.roomAlreadyFull'));
+                        this.$router.push('/');
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                    this.$router.push('/');
+                });
+        } else {
+            this.creatorOff();
+            RoomService.fetchRoomById(this.$route.params.id)
+                .then((response) => {
+                    this.room = response.data;
+                }).catch((error) => {
+                    console.error(error);
+                    this.$router.push('/');
+                });
+        }
         this.fetchTopics();
         CubeService.getCubes().then((response) => {
             this.piNames = response.data;
@@ -343,7 +366,7 @@ export default {
             case 'USER_LEFT_ROOM':
                 this.players = this.players.filter((playerEl) => !this.samePlayerCheck(message.data, playerEl) && !(message.data.id && playerEl.virtual_id && playerEl.creator_id === message.data.id));
                 this.$notify({
-                    title: message.data.username + this.$t('game.messages.userJoined'),
+                    title: this.$t('game.messages.userLeft', {userName: message.data.username }),
                     type: 'error',
                 });
                 break;
@@ -372,6 +395,10 @@ export default {
     methods: {
         ...mapActions({
             fetchTopics: 'fetchTopics',
+        }),
+        ...mapMutations({
+            creatorOn: 'creatorOn',
+            creatorOff: 'creatorOff',
         }),
         samePlayerCheck(player1, player2) {
             if (player1.virtual_id) return player1.virtual_id === player2.virtual_id;
@@ -403,10 +430,13 @@ export default {
             RoomService.leaveTeam(this.room.id, { name: teamName });
         },
         leaveRoom(userId, virtualUser) {
+            if (!virtualUser && userId !== 0 && !userId) {
+                this.$router.push('/');
+                return;
+            }
             let localUserId = userId;
             if (userId !== 0 && !userId) localUserId = this.getUser.id;
             RoomService.leaveRoom(this.room.id, virtualUser, localUserId).then(() => {
-                this.$router.push('/');
                 this.notifySuccess(`${this.$t('game.messages.leaveRoom')}`);
             }).catch((error) => {
                 console.error(error);

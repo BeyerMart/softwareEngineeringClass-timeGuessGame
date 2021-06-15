@@ -8,9 +8,13 @@
             <div class="absolute top-20 right-8 mt-6">
                 <button
                     v-show="isLoggedIn"
-                    class="bg-green-600 hover:bg-green-900 text-white font-bold py-3 px-4 border order-gray-900 rounded"
+                    class="flex items-center gap-3 bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 border order-gray-900 rounded"
                     @click="showModal = true"
                 >
+                    <font-awesome-icon
+                        icon="plus"
+                        class="text-l cursor-pointer"
+                    />
                     {{ $t('game.createGame') }}
                 </button>
                 <button
@@ -101,7 +105,6 @@ import {
 } from 'vuex';
 import RoomCreateForm from '@/components/page/RoomCreateForm';
 import { subChannel, unsubChannel, isConnected } from '@/services/websocket.service';
-import { joinRoom } from '@/services/room.service';
 
 export default {
     name: 'RoomSelection',
@@ -161,13 +164,7 @@ export default {
                     type: 'error',
                 });
             } else {
-                joinRoom(room.id).then(() => {
-                    this.$notify({
-                        title: this.$t('game.messages.youJoinedRoom'),
-                        type: 'success',
-                    });
-                    this.$router.push(`room/${room.id}`);
-                }).catch((error) => console.error(error));
+                this.$router.push(`room/${room.id}`);
             }
         },
     },

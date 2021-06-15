@@ -120,11 +120,6 @@ public class TeamService {
         }
 
         Team result = teamRepository.save(team);
-        if (result.getUsers().size() == 0) {
-            virtualUsers.remove(team.getId());
-            teamRepository.delete(result);
-            return null;
-        }
 
         return result;
     }
