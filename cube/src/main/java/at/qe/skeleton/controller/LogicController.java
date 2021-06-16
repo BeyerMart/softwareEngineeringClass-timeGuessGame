@@ -10,14 +10,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+
+import static at.qe.skeleton.controller.WSResponseType.CONNECTION_TEST;
+
 public class LogicController {
 
     private static final Logger logger = LoggerFactory.getLogger(LogicController.class);
     private final ObjectMapper mapper = new ObjectMapper();
-
+    private final int CONNECTION_TIMEOUT = 2; //2 seconds
+    Instant dateOfCubeSend;
     private Cube cube;
     private WebSocketConnection connection;
     private CubeCalibration cubeCalibration;
+    private boolean successfulReplyInTime;
 
     public LogicController(WebSocketConnection connection, CubeCalibration cubeCalibration) {
         this.connection = connection;
@@ -43,9 +49,27 @@ public class LogicController {
             case OK:
             case PI_CONNECTED:
             case PI_DISCONNECTING:
+                return;
             case NOT_CONNECTED:
+                logger.error("Cube could not be connected. There might be a pi with the same name connected to the backend.");
             case NOT_FOUND:
                 return;
+            case CONNECTION_TEST:
+                if (Instant.now().getEpochSecond() - dateOfCubeSend.getEpochSecond() > CONNECTION_TIMEOUT) {
+                    logger.error("Shutting down due to ConnectionTimeout between backend and this pi.");
+                    System.exit(1);
+                }
+                Thread.sleep(CONNECTION_TIMEOUT * 1000);
+                WebsocketResponse websocketResponse = new WebsocketResponse(null, CONNECTION_TEST);
+                try {
+                    connection.sendWebsocketRequest(websocketResponse);
+                    dateOfCubeSend = Instant.parse(websocketResponse.mapper.readTree(websocketResponse.toString()).get("timestamp").asText());
+                } catch (Exception e) {
+                    //e.printStackTrace();
+                    logger.error("Shutting down due to ConnectionTimeout at the backend.");
+                    System.exit(1);
+                }
+
             case ROOM_CREATED:
                 String piNameFromBackend = data.get("piName").asText();
                 if (piNameFromBackend.equals(cubeCalibration.getPiName())) {
@@ -87,6 +111,16 @@ public class LogicController {
                 case ROOM_CREATED:
 
             }
+        }
+    }
+
+    public void startTestBackendConnection() {
+        WebsocketResponse websocketResponse = new WebsocketResponse(null, CONNECTION_TEST);
+        connection.sendWebsocketRequest(websocketResponse);
+        try {
+            dateOfCubeSend = Instant.parse(websocketResponse.mapper.readTree(websocketResponse.toString()).get("timestamp").asText());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 }

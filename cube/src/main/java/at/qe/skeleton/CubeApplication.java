@@ -26,8 +26,8 @@ public class CubeApplication {
         cubeCalibration.calibrate();
 
         WebSocketConnection webSocketConnection = null;
+        int counter = 0;
         while (webSocketConnection == null) {
-            int counter = 0;
             try {
                 webSocketConnection = new WebSocketConnection(cubeCalibration);
             } catch (TimeoutException e) {
@@ -43,6 +43,7 @@ public class CubeApplication {
 
         webSocketConnection.subscribeToChannel("cube");
         webSocketConnection.sendRegistration();
+        webSocketConnection.getLogicController().startTestBackendConnection();
     }
 
     @PreDestroy

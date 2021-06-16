@@ -44,7 +44,6 @@ public class WebSocketConnection {
     public WebSocketConnection(CubeCalibration cubeCalibration) throws ExecutionException, InterruptedException, TimeoutException {
         logger.info("Connecting to Backend...");
         this.cubeCalibration = cubeCalibration;
-        this.logicController = new LogicController(this, cubeCalibration);
         piName = cubeCalibration.getPiName();
         URL = cubeCalibration.getUrl();
         PORT = cubeCalibration.getPort();
@@ -54,6 +53,7 @@ public class WebSocketConnection {
         this.client.setMessageConverter(new StringMessageConverter());
         session = client.connect(String.format("ws://%s:%d/websocket", URL, PORT), new StompSessionHandlerAdapter() {
         }).get(3, TimeUnit.SECONDS);
+        this.logicController = new LogicController(this, cubeCalibration);
     }
 
     public void subscribeToChannel(String channel) {
@@ -67,7 +67,7 @@ public class WebSocketConnection {
                     @Override
                     public void handleFrame(StompHeaders stompHeaders, Object payload) {
                         blockingQueue.add((String) payload);
-                        logger.info("Got this in my channel: " + (String) payload);
+                        logger.debug("Got this in my channel: " + (String) payload);
                         try {
                             logicController.handler((String) payload);
                         } catch (InterruptedException e) {
@@ -101,7 +101,7 @@ public class WebSocketConnection {
     }
 
 
-    private void sendWebsocketRequest(WebsocketResponse request) {
+    void sendWebsocketRequest(WebsocketResponse request) {
         logger.debug("Sending this request: " + request);
         session.send("/cube", request.toString());
     }
@@ -127,5 +127,13 @@ public class WebSocketConnection {
     @PreDestroy
     public void destroy() {
         close();
+    }
+
+    public StompSession getSession() {
+        return session;
+    }
+
+    public LogicController getLogicController() {
+        return logicController;
     }
 }

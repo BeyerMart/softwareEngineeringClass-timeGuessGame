@@ -36,5 +36,6 @@ public enum WSResponseType {
     CUBE_DISCONNECTED,
     PI_DISCONNECTING,
     OK,
+    CONNECTION_TEST,
     VERSION
 }
