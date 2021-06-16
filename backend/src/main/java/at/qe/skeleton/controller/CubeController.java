@@ -49,7 +49,7 @@ public class CubeController {
 	public String cubeCommunicationGetVersion(String requestMessage) throws JsonProcessingException {
 		Cube cube;
 		WebsocketResponse response;
-		logger.info("Got this message: " + requestMessage);
+		logger.debug("Got this message: " + requestMessage);
 		JsonNode input = mapper.readTree(requestMessage);
 		JsonNode data = input.get("data");
 		WSResponseType wsType = WSResponseType.valueOf(input.get("type").asText());
@@ -57,6 +57,9 @@ public class CubeController {
 			case VERSION:
 				logger.error("Ask for the Version at /version");
 				return "";
+			case CONNECTION_TEST:
+				response = new WebsocketResponse(null, WSResponseType.CONNECTION_TEST);
+				break;
 			case PI_CONNECTED:
 				JsonNode registration = mapper.readTree(requestMessage);
 				String piName = registration.get("data").get("piName").asText();
@@ -117,7 +120,6 @@ public class CubeController {
 
 			case CUBE_ERROR:
 				cube = mapper.convertValue(data, Cube.class);
-				//TODO call frontEnd an say unrecognized Cube Error (RunTimeException)
 
 				Optional<Room> roomOptional5 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional5.isPresent()) {
@@ -136,7 +138,7 @@ public class CubeController {
 			default:
 				return new ErrorResponse("Service not available", 404).toString();
 		}
-		logger.info("Writing into channel /cube" + response);
+		logger.debug("Writing into channel /cube" + response);
 		return response.toString();
 	}
 
