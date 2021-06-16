@@ -43,7 +43,7 @@ public class CubeApplication {
 
         webSocketConnection.subscribeToChannel("cube");
         webSocketConnection.sendRegistration();
-        webSocketConnection.getLogicController().startTestBackendConnection();
+        //webSocketConnection.getLogicController().sendTestConnection();
     }
 
     @PreDestroy
