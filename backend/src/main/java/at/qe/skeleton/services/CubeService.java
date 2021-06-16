@@ -3,6 +3,8 @@ package at.qe.skeleton.services;
 import at.qe.skeleton.controller.CubeController;
 import at.qe.skeleton.model.Activity;
 import at.qe.skeleton.model.Room;
+import at.qe.skeleton.payload.response.websocket.WSResponseType;
+import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ public class CubeService {
 	//piName and sessionId
 	private Map<String, String> connectedPis = new ConcurrentHashMap<String, String>();
 	private Map<String, String> lastUpdates = new ConcurrentHashMap<String, String>();
-	private final int TIMEOUT_THRESHOLD = 3;
+	private final int TIMEOUT_THRESHOLD = 6;
 	private static final Logger logger = LoggerFactory.getLogger(CubeService.class);
 
 
@@ -111,6 +113,7 @@ public class CubeService {
 
 	public void updateTimeouts(String sessionId, String lastHeardOf) {
 		lastUpdates.put(sessionId, lastHeardOf);
+		logger.info("updatedTimoutes " + lastHeardOf);
 	}
 
 	public void startCheckingForTimeouts(String sessionId) {
@@ -130,23 +133,35 @@ public class CubeService {
 		public void run(){
 			boolean piIsActive = true;
 			while(piIsActive){
-				try {
-					Thread.sleep(TIMEOUT_THRESHOLD * 1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				if (Instant.now().getEpochSecond() - Instant.parse((String)cubeService.getLastUpdates().get(sessionId)).getEpochSecond() > TIMEOUT_THRESHOLD){
+				long now = Instant.now().getEpochSecond();
+				long timeOfLastUpdate = Instant.parse((String)cubeService.getLastUpdates().get(sessionId)).getEpochSecond();
+				System.out.println(now + " now");
+				System.out.println(timeOfLastUpdate + "timeOfLastUpdate");
+				if ((now - timeOfLastUpdate) > TIMEOUT_THRESHOLD * 2){
+
 					AtomicReference<String> piNameToRemove = new AtomicReference<>("");
-					connectedPis.forEach((piName, session) -> {
+					connectedPis.forEach((piName, session) -> { //TODO Take WHile
 						if(sessionId.equals(session)){
 							piNameToRemove.set(piName);
 						}
 					});
 					removePi(piNameToRemove.get());
+					roomService.getAllRooms().forEach((aLong, room) -> {
+						if (room.getCube() != null){
+							if(room.getCube().getPiName().equals(piNameToRemove.get())){
+								roomService.backendDeleteRoom(aLong);
+							}
+						}
+					});
 					logger.info("Pi " + piNameToRemove + " was disconnected due to timeout.");
 					piIsActive = false;
 				}
-
+				try {
+					Thread.sleep(TIMEOUT_THRESHOLD * 1000);
+					cubeController.cubeSendConnectionTest(new WebsocketResponse(null, WSResponseType.CONNECTION_TEST_TO_PI));
+				} catch (InterruptedException e) {
+					//e.printStackTrace();
+				}
 			}
 
 		}

@@ -58,11 +58,11 @@ public class CubeController {
 			case VERSION:
 				logger.error("Ask for the Version at /version");
 				return "";
-			case CONNECTION_TEST:
+			case CONNECTION_TEST_TO_BACKEND:
 				sessionId = data.get("sessionId").asText();
 				cubeService.updateTimeouts(sessionId, input.get("timestamp").asText());
-				response = new WebsocketResponse(null, WSResponseType.CONNECTION_TEST);
-				return response.toString();
+				System.out.println(requestMessage);
+				return "";
 
 			case PI_CONNECTED:
 				JsonNode registration = mapper.readTree(requestMessage);
@@ -178,6 +178,10 @@ public class CubeController {
 	public void cubeGetCurrentFacet(Room room) {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.FACET_REQUEST);
 		template.convertAndSend("/cube", request.toString());
+	}
+
+	public void cubeSendConnectionTest(WebsocketResponse websocketResponse){
+		template.convertAndSend("/cube", websocketResponse.toString());
 	}
 
 
