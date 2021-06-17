@@ -57,14 +57,11 @@ public class LogicController {
 
             case CONNECTION_TEST_TO_PI:
                 //new TimeoutChecker().start();
-                long now = Instant.now().getEpochSecond();
-                System.out.println(now + "now");
-                dateOfCubeSend = Instant.parse(jsonResult.get("timestamp").asText());
-                System.out.println(dateOfCubeSend.getEpochSecond() + "DateOfCubeSend");
-                if ((now - dateOfCubeSend.getEpochSecond()) > BACKEND_TIMEOUT_THRESHOLD * 2) {
-                    logger.error("Shutting down due to ConnectionTimeout between backend and this pi.");
-                    System.exit(1);
+                if (dateOfCubeSend == null) {
+                    dateOfCubeSend = Instant.parse(jsonResult.get("timestamp").asText());
+                    startCheckingForTimeout();
                 }
+
                 sendTestConnection();
                 return;
 
@@ -124,6 +121,31 @@ public class LogicController {
         } catch (Exception e) {
             logger.error("Shutting down due to ConnectionException at the backend.");
             System.exit(1);
+        }
+    }
+
+    public void startCheckingForTimeout() {
+        TimeoutChecker timeoutChecker = new TimeoutChecker();
+        timeoutChecker.start();
+    }
+
+    class TimeoutChecker extends Thread {
+        public void run() {
+            while (true) {
+                long now = Instant.now().getEpochSecond();
+                logger.debug(now + " now");
+                logger.debug(dateOfCubeSend.getEpochSecond() + " DateOfCubeSend");
+
+                if ((now - dateOfCubeSend.getEpochSecond()) > BACKEND_TIMEOUT_THRESHOLD * 2) {
+                    logger.error("Shutting down due to ConnectionTimeout between backend and this pi.");
+                    System.exit(1);
+                }
+                try {
+                    Thread.sleep(BACKEND_TIMEOUT_THRESHOLD * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
