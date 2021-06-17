@@ -61,7 +61,7 @@ public class CubeController {
 			case CONNECTION_TEST_TO_BACKEND:
 				sessionId = data.get("sessionId").asText();
 				cubeService.updateTimeouts(sessionId, input.get("timestamp").asText());
-				System.out.println(requestMessage);
+
 				return "";
 
 			case PI_CONNECTED:
