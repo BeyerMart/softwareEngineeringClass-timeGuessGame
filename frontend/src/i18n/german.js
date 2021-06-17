@@ -185,6 +185,7 @@ export default {
         totalNumGamesPlayed: 'Gesamtzahl gespielter Spiele',
     },
     room: {
+        spectate: 'Zuschauhen',
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
         createTeam: 'Neues Team erstellen',
         createVirtualUser: 'Virtuellen Spieler erstellen',

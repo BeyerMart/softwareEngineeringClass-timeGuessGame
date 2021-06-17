@@ -182,6 +182,7 @@ export default {
         totalNumGamesPlayed: 'Total number of games played',
     },
     room: {
+        spectate: 'Spectate',
         playersNeedToJoin: 'Players yet to join a team',
         createTeam: 'Create new team',
         createVirtualUser: 'Create new virtual player',

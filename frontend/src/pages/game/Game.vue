@@ -185,6 +185,11 @@ export default {
             type: Number,
             required: true,
         },
+        spectator: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
     },
     data() {
         return {

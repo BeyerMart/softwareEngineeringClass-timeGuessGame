@@ -170,7 +170,7 @@
                         </button>
 
                         <button
-                            v-if="gameIsStarted && room.cube"
+                            v-if="gameIsStarted && room.cube && !teamlessPlayers.some(player => player.id && player.id === getUser.id)"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="joinGame"
                         >
@@ -179,6 +179,18 @@
                                 class="text-l cursor-pointer"
                             />
                             {{ $t('room.joinGame') }}
+                        </button>
+
+                        <button
+                            v-if="gameIsStarted && room.cube"
+                            class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
+                            @click="$emit('joinedGame', true)"
+                        >
+                            <font-awesome-icon
+                                icon="play-circle"
+                                class="text-l cursor-pointer"
+                            />
+                            {{ $t('room.spectate') }}
                         </button>
 
                         <CreateTeamForm
@@ -366,7 +378,7 @@ export default {
             case 'USER_LEFT_ROOM':
                 this.players = this.players.filter((playerEl) => !this.samePlayerCheck(message.data, playerEl) && !(message.data.id && playerEl.virtual_id && playerEl.creator_id === message.data.id));
                 this.$notify({
-                    title: this.$t('game.messages.userLeft', {userName: message.data.username }),
+                    title: this.$t('game.messages.userLeft', { userName: message.data.username }),
                     type: 'error',
                 });
                 break;
