@@ -15,24 +15,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class CubeService {
 
+	private static final Logger logger = LoggerFactory.getLogger(CubeService.class);
+	private final int TIMEOUT_THRESHOLD = 6;
 	//piName and sessionId
 	private Map<String, String> connectedPis = new ConcurrentHashMap<String, String>();
 	//sessionId and timestamp
 	private Map<String, String> lastUpdates = new ConcurrentHashMap<String, String>();
-	private final int TIMEOUT_THRESHOLD = 6;
-	private static final Logger logger = LoggerFactory.getLogger(CubeService.class);
-
-
-
 	@Autowired
 	private CubeController cubeController;
 
@@ -124,24 +118,29 @@ public class CubeService {
 		timeoutChecker.start();
 	}
 
-	class TimeoutChecker extends Thread{
+	public Map getLastUpdates() {
+		return Collections.unmodifiableMap(lastUpdates);
+	}
+
+	class TimeoutChecker extends Thread {
+
 		private final String sessionId;
 		private final CubeService cubeService;
 
-		TimeoutChecker(CubeService cubeService, String sessionId){
+		TimeoutChecker(CubeService cubeService, String sessionId) {
 			this.sessionId = sessionId;
 			this.cubeService = cubeService;
 		}
 
-		public void run(){
+		public void run() {
 			boolean piIsActive = true;
-			while(piIsActive){
+			while (piIsActive) {
 				long now = Instant.now().getEpochSecond();
-				long timeOfLastUpdate = Instant.parse((String)cubeService.getLastUpdates().get(sessionId)).getEpochSecond();
+				long timeOfLastUpdate = Instant.parse((String) cubeService.getLastUpdates().get(sessionId)).getEpochSecond();
 				//System.out.println(now + " now");
 				//System.out.println(timeOfLastUpdate + "timeOfLastUpdate");
-				if ((now - timeOfLastUpdate) > TIMEOUT_THRESHOLD * 2){
-					final String piNameToRemove = connectedPis.keySet().stream().dropWhile(piName ->(piName.equals(sessionId))).collect(Collectors.toList()).get(0);
+				if ((now - timeOfLastUpdate) > TIMEOUT_THRESHOLD * 2) {
+					final String piNameToRemove = connectedPis.keySet().stream().dropWhile(piName -> (piName.equals(sessionId))).collect(Collectors.toList()).get(0);
 					/*connectedPis.forEach((piName, session) -> {
 						if(sessionId.equals(session)){
 							piNameToRemove.set(piName);
@@ -149,8 +148,8 @@ public class CubeService {
 					});*/
 					removePi(piNameToRemove);
 					roomService.getAllRooms().forEach((aLong, room) -> {
-						if (room.getCube() != null){
-							if(room.getCube().getPiName().equals(piNameToRemove)){
+						if (room.getCube() != null) {
+							if (room.getCube().getPiName().equals(piNameToRemove)) {
 								roomService.backendDeleteRoom(aLong);
 							}
 						}
@@ -167,9 +166,5 @@ public class CubeService {
 			}
 
 		}
-	}
-
-	public Map getLastUpdates(){
-		return Collections.unmodifiableMap(lastUpdates);
 	}
 }

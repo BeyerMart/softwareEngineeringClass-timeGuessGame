@@ -180,7 +180,7 @@ public class CubeController {
 		template.convertAndSend("/cube", request.toString());
 	}
 
-	public void cubeSendConnectionTest(WebsocketResponse websocketResponse){
+	public void cubeSendConnectionTest(WebsocketResponse websocketResponse) {
 		template.convertAndSend("/cube", websocketResponse.toString());
 	}
 
