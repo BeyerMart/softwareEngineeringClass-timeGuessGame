@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.Scanner;
 public class CubeCalibration {
     private static final Logger logger = LoggerFactory.getLogger(CubeCalibration.class);
     private final char[] listOfActivities = new char[4];
+    private final String PROPERTIES_FILE_NAME = "TimeGuessConfiguration";
     private HashMap<Integer, Integer> internalFacetToExternalFacetMapping;
     private boolean connectedWithCube;
     private boolean skippedCalibration = true;
@@ -23,8 +23,6 @@ public class CubeCalibration {
     private String url = "192.168.0.242";
     private int port = 8080;
     private Properties properties = new Properties();
-    private final String PROPERTIES_FILE_NAME = "TimeGuessConfiguration";
-
 
 
     public CubeCalibration() {
@@ -67,7 +65,7 @@ public class CubeCalibration {
         if (input.equals("y") || input.equals("yes")) {
             return startCalibration();
         } else {
-            logger.error("No valid response. shutting down.");
+            logger.error("No valid response. Shutting down.");
             System.exit(1);
             return false;
         }
@@ -115,7 +113,7 @@ public class CubeCalibration {
                         // 0, 1, 2,  3, 4, 5, ...
                         int key = 3 * i + j;
                         int currentFacet = timeCubeService.getCurrentFacet();
-                        while (internalFacetToExternalFacetMapping.values().contains(currentFacet)){
+                        while (internalFacetToExternalFacetMapping.values().contains(currentFacet)) {
                             System.out.println("This facet is already present in the mapping.\nPlease turn the cube to the side " + activity + availablePoints + " and confirm with 'y'");
                             input = scanner.next().toLowerCase();
                             if (input.equals("y") || input.equals("yes")) {
@@ -165,7 +163,7 @@ public class CubeCalibration {
             try {
                 port = Integer.parseInt(input);
                 System.out.println("Ok, your PORT number is " + port);
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 System.err.println("Please enter only a port number. No extra symbols.");
                 setPort();
             }
@@ -181,7 +179,7 @@ public class CubeCalibration {
             url = properties.getProperty("URL", "localhost");
             piName = properties.getProperty("PI_NAME", "piName");
             for (int i = 1; i < 13; i++) {
-                internalFacetToExternalFacetMapping.put(i, Integer.parseInt(properties.getProperty("CALIBRATION"+i)));
+                internalFacetToExternalFacetMapping.put(i, Integer.parseInt(properties.getProperty("CALIBRATION" + i)));
             }
             //internalFacetToExternalFacetMapping = properties.getProperty("CALIBRATION");
             in.close();
@@ -205,7 +203,7 @@ public class CubeCalibration {
             properties.setProperty("PI_NAME", piName);
             //storing the mapping in a suitable way:
             for (int i = 1; i < 13; i++) {
-                properties.setProperty("CALIBRATION"+i, String.valueOf(internalFacetToExternalFacetMapping.get(i)));
+                properties.setProperty("CALIBRATION" + i, String.valueOf(internalFacetToExternalFacetMapping.get(i)));
             }
             //System.out.println(internalFacetToExternalFacetMapping.toString());
             FileOutputStream out = new FileOutputStream(PROPERTIES_FILE_NAME);

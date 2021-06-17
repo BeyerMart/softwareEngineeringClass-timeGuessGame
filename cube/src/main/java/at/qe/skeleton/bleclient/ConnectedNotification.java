@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 
 public class ConnectedNotification implements BluetoothNotification<Boolean> {
 
-	private static final Logger logger = (Logger) LoggerFactory.getLogger(ConnectedNotification.class);
+    private static final Logger logger = (Logger) LoggerFactory.getLogger(ConnectedNotification.class);
 
-	public void run(Boolean connected) {
-		logger.info("ConnectedNotification");
-	}
+    public void run(Boolean connected) {
+        logger.info("ConnectedNotification");
+    }
 
 }
