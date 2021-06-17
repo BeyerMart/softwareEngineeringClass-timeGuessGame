@@ -184,10 +184,10 @@
                         <button
                             v-if="gameIsStarted && room.cube"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
-                            @click="$emit('joinedGame', true)"
+                            @click="$emit('joinedGame', gameId, true)"
                         >
                             <font-awesome-icon
-                                icon="play-circle"
+                                icon="eye"
                                 class="text-l cursor-pointer"
                             />
                             {{ $t('room.spectate') }}
