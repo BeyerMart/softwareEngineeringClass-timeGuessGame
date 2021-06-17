@@ -320,10 +320,10 @@ public class RoomService {
         @PreAuthorize("hasAuthority('ROLE_USER')")
     public void connectRoomAndPi(Long roomId, String piName) {
         User authenticatedUser = userService.getAuthenticatedUser().get();
-        if (authenticatedUser.getId() != getRoomById(roomId).get().getHost_id() && authenticatedUser.getRole() != UserRole.ROLE_ADMIN){
+        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
+        if (authenticatedUser.getId() != room.getHost_id() && authenticatedUser.getRole() != UserRole.ROLE_ADMIN){
             throw new AccessDeniedException("Only the Host (or an admin) can connect the pi to a room");
         }
-        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
         room.setPi_name(piName);
         roomController.roomChanged(room);
     }
