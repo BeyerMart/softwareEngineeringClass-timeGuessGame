@@ -45,7 +45,10 @@ public class CubeService {
 	}
 
 	public boolean removePi(String piName) {
-		lastUpdates.remove(connectedPis.get(piName));
+		String sessionId = connectedPis.get(piName);
+		if (sessionId != null) {
+			lastUpdates.remove(sessionId);
+		}
 		return (connectedPis.remove(piName) != null);
 	}
 
@@ -61,8 +64,6 @@ public class CubeService {
 	//Static Mapping from External Cube Facet (The one that gets transmitted) to actual labeled facets
 	//P1-P2-P3-S1-S2-S3-R1-R2-R3-Z1-Z2-Z3
 	//00-01-02-03-04-05-06-07-08-09-10-11
-
-
 	public int getTimeFromFacet(int facet) {
 		return (facet >= 9 ? 2 : 1);
 	}
@@ -137,15 +138,9 @@ public class CubeService {
 			while (piIsActive) {
 				long now = Instant.now().getEpochSecond();
 				long timeOfLastUpdate = Instant.parse((String) cubeService.getLastUpdates().get(sessionId)).getEpochSecond();
-				//System.out.println(now + " now");
-				//System.out.println(timeOfLastUpdate + "timeOfLastUpdate");
 				if ((now - timeOfLastUpdate) > TIMEOUT_THRESHOLD * 2) {
 					final String piNameToRemove = connectedPis.keySet().stream().dropWhile(piName -> (piName.equals(sessionId))).collect(Collectors.toList()).get(0);
-					/*connectedPis.forEach((piName, session) -> {
-						if(sessionId.equals(session)){
-							piNameToRemove.set(piName);
-						}
-					});*/
+
 					removePi(piNameToRemove);
 					roomService.getAllRooms().forEach((aLong, room) -> {
 						if (room.getCube() != null) {
@@ -160,8 +155,7 @@ public class CubeService {
 				try {
 					Thread.sleep(TIMEOUT_THRESHOLD * 1000);
 					cubeController.cubeSendConnectionTest(new WebsocketResponse(null, WSResponseType.CONNECTION_TEST_TO_PI));
-				} catch (InterruptedException e) {
-					//e.printStackTrace();
+				} catch (InterruptedException ignored) {
 				}
 			}
 
