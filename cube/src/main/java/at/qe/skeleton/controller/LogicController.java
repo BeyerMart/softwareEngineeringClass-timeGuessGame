@@ -7,18 +7,18 @@ import at.qe.skeleton.model.Cube;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 
-import static at.qe.skeleton.controller.WSResponseType.CONNECTION_TEST;
-
 public class LogicController {
 
     private static final Logger logger = LoggerFactory.getLogger(LogicController.class);
+    private static final int BACKEND_TIMEOUT_THRESHOLD = 4;
     private final ObjectMapper mapper = new ObjectMapper();
-    private final int CONNECTION_TIMEOUT = 2; //2 seconds
+    private final int CONNECTION_TIMEOUT = 6; //2 seconds
     Instant dateOfCubeSend;
     private Cube cube;
     private WebSocketConnection connection;
@@ -49,26 +49,21 @@ public class LogicController {
             case OK:
             case PI_CONNECTED:
             case PI_DISCONNECTING:
+            case NOT_FOUND:
+            case CONNECTION_TEST_TO_BACKEND:
                 return;
             case NOT_CONNECTED:
                 logger.error("Cube could not be connected. There might be a pi with the same name connected to the backend.");
-            case NOT_FOUND:
+
+            case CONNECTION_TEST_TO_PI:
+                //new TimeoutChecker().start();
+                if (dateOfCubeSend == null) {
+                    dateOfCubeSend = Instant.parse(jsonResult.get("timestamp").asText());
+                    startCheckingForTimeout();
+                }
+
+                sendTestConnection();
                 return;
-            case CONNECTION_TEST:
-                if (Instant.now().getEpochSecond() - dateOfCubeSend.getEpochSecond() > CONNECTION_TIMEOUT) {
-                    logger.error("Shutting down due to ConnectionTimeout between backend and this pi.");
-                    System.exit(1);
-                }
-                Thread.sleep(CONNECTION_TIMEOUT * 1000);
-                WebsocketResponse websocketResponse = new WebsocketResponse(null, CONNECTION_TEST);
-                try {
-                    connection.sendWebsocketRequest(websocketResponse);
-                    dateOfCubeSend = Instant.parse(websocketResponse.mapper.readTree(websocketResponse.toString()).get("timestamp").asText());
-                } catch (Exception e) {
-                    //e.printStackTrace();
-                    logger.error("Shutting down due to ConnectionTimeout at the backend.");
-                    System.exit(1);
-                }
 
             case ROOM_CREATED:
                 String piNameFromBackend = data.get("piName").asText();
@@ -114,13 +109,43 @@ public class LogicController {
         }
     }
 
-    public void startTestBackendConnection() {
-        WebsocketResponse websocketResponse = new WebsocketResponse(null, CONNECTION_TEST);
-        connection.sendWebsocketRequest(websocketResponse);
+    public void sendTestConnection() {
+        String sessionId = connection.getSession().getSessionId();
+        ObjectNode message = mapper.createObjectNode();
+        message.put("sessionId", sessionId);
+        message.put("piName", cubeCalibration.getPiName());
+        WebsocketResponse sendingMessage = new WebsocketResponse(message, WSResponseType.CONNECTION_TEST_TO_BACKEND);
         try {
-            dateOfCubeSend = Instant.parse(websocketResponse.mapper.readTree(websocketResponse.toString()).get("timestamp").asText());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            connection.getSession().send("/cube", sendingMessage.toString());
+            dateOfCubeSend = Instant.parse(sendingMessage.mapper.readTree(sendingMessage.toString()).get("timestamp").asText());
+        } catch (Exception e) {
+            logger.error("Shutting down due to ConnectionException at the backend.");
+            System.exit(1);
+        }
+    }
+
+    public void startCheckingForTimeout() {
+        TimeoutChecker timeoutChecker = new TimeoutChecker();
+        timeoutChecker.start();
+    }
+
+    class TimeoutChecker extends Thread {
+        public void run() {
+            while (true) {
+                long now = Instant.now().getEpochSecond();
+                logger.debug(now + " now");
+                logger.debug(dateOfCubeSend.getEpochSecond() + " DateOfCubeSend");
+
+                if ((now - dateOfCubeSend.getEpochSecond()) > BACKEND_TIMEOUT_THRESHOLD * 2) {
+                    logger.error("Shutting down due to ConnectionTimeout between backend and this pi.");
+                    System.exit(1);
+                }
+                try {
+                    Thread.sleep(BACKEND_TIMEOUT_THRESHOLD * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

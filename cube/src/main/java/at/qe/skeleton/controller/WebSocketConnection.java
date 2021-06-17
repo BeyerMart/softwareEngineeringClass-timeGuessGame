@@ -67,7 +67,7 @@ public class WebSocketConnection {
                     @Override
                     public void handleFrame(StompHeaders stompHeaders, Object payload) {
                         blockingQueue.add((String) payload);
-                        logger.debug("Got this in my channel: " + (String) payload);
+                        logger.info("Got this in my channel: " + (String) payload);
                         try {
                             logicController.handler((String) payload);
                         } catch (InterruptedException e) {
