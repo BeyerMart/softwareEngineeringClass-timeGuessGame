@@ -82,6 +82,7 @@ export default {
         activity: 'Activity',
         winnerTeam: 'Winning team',
         messages: {
+            youHaveBeenKicked: 'You have been kicked by the host.',
             roomCreateSuccess: 'Room was created successfully',
             roomAlreadyFull: 'Room is already full',
             youJoinedRoom: 'You joined the room successfully',
@@ -182,6 +183,7 @@ export default {
         totalNumGamesPlayed: 'Total number of games played',
     },
     room: {
+        virtualUser: 'Virtual User',
         playersNeedToJoin: 'Players yet to join a team',
         createTeam: 'Create new team',
         createVirtualUser: 'Create new virtual player',
