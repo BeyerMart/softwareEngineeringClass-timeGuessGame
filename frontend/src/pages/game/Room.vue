@@ -79,11 +79,14 @@
                             <li
                                 v-for="(player, index) in teamlessPlayers"
                                 :key="index"
-                                class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200"
+                                class="col-span-1 bg-white rounded-lg shadow divide-y divide-gray-200 flex items-center"
                             >
                                 <Player
                                     :player="player"
                                     :badges="room.host_id && player.id === room.host_id ? [{text: 'Host', colour: 'green'}] : null"
+                                    :deleteables="gameId < 1"
+                                    :host="isHost"
+                                    @removePlayer="leaveRoom"
                                 />
                             </li>
                         </ul>
@@ -108,6 +111,7 @@
                                     <VirtualTeam
                                         :team="team"
                                         :host-id="room.host_id"
+                                        :deleteables="gameId < 1"
                                         @joinTeam="joinTeam"
                                     />
                                 </li>
@@ -359,14 +363,19 @@ export default {
                     });
                 }
                 this.$notify({
-                    title: message.data.username + this.$t('game.messages.userJoined'),
+                    title: this.$t('game.messages.userJoined', { userName: message.data.username }),
                     type: 'success',
                 });
                 break;
             case 'USER_LEFT_ROOM':
+                if (message.data.id && message.data.id === this.getUser.id) {
+                    this.notifyError(this.$t('game.messages.youHaveBeenKicked'));
+                    this.$router.push('/');
+                    break;
+                }
                 this.players = this.players.filter((playerEl) => !this.samePlayerCheck(message.data, playerEl) && !(message.data.id && playerEl.virtual_id && playerEl.creator_id === message.data.id));
                 this.$notify({
-                    title: this.$t('game.messages.userLeft', {userName: message.data.username }),
+                    title: this.$t('game.messages.userLeft', { userName: message.data.username }),
                     type: 'error',
                 });
                 break;
@@ -436,9 +445,7 @@ export default {
             }
             let localUserId = userId;
             if (userId !== 0 && !userId) localUserId = this.getUser.id;
-            RoomService.leaveRoom(this.room.id, virtualUser, localUserId).then(() => {
-                this.notifySuccess(`${this.$t('game.messages.leaveRoom')}`);
-            }).catch((error) => {
+            RoomService.leaveRoom(this.room.id, virtualUser, localUserId).catch((error) => {
                 console.error(error);
             });
         },
@@ -515,6 +522,13 @@ export default {
                 });
                 this.$emit('joinedGame', this.game.id);
             });
+        },
+        removePlayerHandler(player) {
+            if (player.virtual_id) {
+                this.leaveRoom(player.creator_id, player);
+            } else {
+                this.leaveRoom(player.id);
+            }
         },
     },
 };

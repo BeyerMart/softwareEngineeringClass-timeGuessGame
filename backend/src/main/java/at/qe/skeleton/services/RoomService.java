@@ -192,7 +192,7 @@ public class RoomService {
             throw new UserNotFoundException(virtualUser.getCreator_id());
         if (room.getHost_id() != userService.getAuthenticatedUser().get().getId() && !userService.getAuthenticatedUser().get().getId().equals(parentUser.getUser_id()))
             throw new AccessDeniedException("Only the host can force a user leave");
-        if (!parentUser.getVirtualUsers().values().removeIf(virtualUserValue -> virtualUserValue.getVirtual_id().equals(virtualUser.getVirtual_id()) && virtualUserValue.getCreator_id() == virtualUser.getCreator_id()))
+        if (!parentUser.getVirtualUsers().values().removeIf(virtualUserValue -> virtualUserValue.getVirtual_id().equals(virtualUser.getVirtual_id()) && virtualUserValue.getCreator_id().equals(virtualUser.getCreator_id())))
             throw new UserNotFoundException(virtualUser.getVirtual_id());
         roomController.roomChanged(room);
         roomController.userLeftRoom(virtualUser, room);

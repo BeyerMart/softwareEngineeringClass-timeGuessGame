@@ -17,10 +17,14 @@
             >
                 <div class="space-y-2">
                     <div class="font-medium text-lg leading-6 space-y-1">
-                        <h3 class="text-white">
+                        <h3 class="text-white mb-2">
                             <Player
                                 :player="player"
                                 :badges="hostId && player.id === hostId ? [{text: 'host', colour: 'green'}] : null"
+                                :deleteables="deleteables"
+                                :host="hostId && getUser.id === hostId"
+                                class="mb-2"
+                                @removePlayer="player.id ? $emit('removePlayer', player.id) : $emit('removePlayer', null, player)"
                             />
                         </h3>
                     </div>
@@ -65,6 +69,11 @@ export default {
         isGameplay: {
             default: false,
             type: Boolean,
+        },
+        deleteables: {
+            type: Boolean,
+            required: false,
+            default: false,
         },
     },
     computed: {

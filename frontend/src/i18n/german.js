@@ -61,6 +61,7 @@ export default {
         },
     },
     game: {
+        virtualUser: 'Lokaler Spieler',
         team: 'Team',
         teamName: 'Teamname',
         enemy: 'Gegner',
@@ -82,6 +83,7 @@ export default {
         activity: 'Aktivität',
         winnerTeam: 'Gewinnerteam',
         messages: {
+            youHaveBeenKicked: 'Der Host hat dich aus dem Raum entfernt!',
             roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
             roomAlreadyFull: 'Der Raum ist bereits voll',
             youJoinedRoom: 'Raum erfolgreich beigetreten',
@@ -187,7 +189,7 @@ export default {
     room: {
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
         createTeam: 'Neues Team erstellen',
-        createVirtualUser: 'Virtuellen Spieler erstellen',
+        createVirtualUser: 'Lokalen Spieler erstellen',
         leaveRoom: 'Diesen Raum verlassen',
         startGame: 'Spiel starten',
         joinGame: 'Spiel beitreten',
