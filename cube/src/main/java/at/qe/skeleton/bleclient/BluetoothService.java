@@ -1,6 +1,5 @@
 package at.qe.skeleton.bleclient;
 
-import at.qe.skeleton.controller.LogicController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sputnikdev.bluetooth.manager.BluetoothFatalException;
@@ -14,8 +13,9 @@ import java.util.Set;
 
 public class BluetoothService {
     private static final Logger logger = LoggerFactory.getLogger(BluetoothService.class);
+    private static final int CONNECTION_TRYS = 4;
 
-    public static Set<BluetoothDevice> findTimeFlips() throws RuntimeException{
+    public static Set<BluetoothDevice> findTimeFlips() throws RuntimeException {
         BluetoothManager manager = BluetoothManager.getBluetoothManager();
 
         final String findDeviceName = "TimeFlip";
@@ -25,9 +25,14 @@ public class BluetoothService {
 
         FindDevicesManager findDevicesManager = new FindDevicesManager(findDeviceName);
         logger.info("FoundDeviceManager");
-        boolean findDevicesSuccess;
+        boolean findDevicesSuccess = false;
         try {
-            findDevicesSuccess = findDevicesManager.findDevices(manager);
+            for (int i = 0; i < CONNECTION_TRYS; i++) {
+                findDevicesSuccess = findDevicesManager.findDevices(manager);
+                if (findDevicesSuccess) {
+                    break;
+                }
+            }
         } catch (InterruptedException e) {
             logger.error("Could not find device.");
             findDevicesSuccess = false;
@@ -45,15 +50,13 @@ public class BluetoothService {
 
         if (!findDevicesSuccess) {
             throw new RuntimeException("No " + findDeviceName + " devices found during discovery.");
-            //System.exit(-1);
         }
         return findDevicesManager.getFoundDevices();
     }
 
-    public static BluetoothDevice connectToTimeFlipWithBestSignal(Set<BluetoothDevice> timeflipSet) throws BluetoothFatalException, BluetoothException{
+    public static BluetoothDevice connectToTimeFlipWithBestSignal(Set<BluetoothDevice> timeflipSet) throws BluetoothFatalException, BluetoothException {
         Optional<BluetoothDevice> optionalBluetoothDevice = timeflipSet.stream().max(Comparator.comparing(BluetoothDevice::getRSSI));
         BluetoothDevice device = optionalBluetoothDevice.get();
-        //device.enableConnectedNotifications(new ConnectedNotification());
         boolean connected = device.connect();
         if (connected) {
             return device;

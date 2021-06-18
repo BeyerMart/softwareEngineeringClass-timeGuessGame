@@ -22,12 +22,12 @@ public class WebsocketConnectionTest {
     private CubeCalibration cubeCalibration = new CubeCalibration("piName", "192.168.0.242", 8080);
 
 
-    @Test
+    /*@Test
     public void testOpenAndCloseWebSocket() throws ExecutionException, InterruptedException, TimeoutException {
         webSocketConnection = new WebSocketConnection(cubeCalibration);
         webSocketConnection.subscribeToChannel("cube");
         webSocketConnection.sendRegistration();
         Thread.sleep(1000);
         webSocketConnection.close();
-    }
+    }*/
 }

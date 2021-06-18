@@ -21,12 +21,10 @@ public class FindDevicesManager {
 
     private static final int ATTEMPTS_TO_FIND = 3;
 
-    private static final long SECONDS_BETWEEN_ATTEMPTS = 4L;
-
-    private final String searchDevice;
-
-    private final Set<BluetoothDevice> foundDevices = new HashSet<>();
+    private static final long SECONDS_BETWEEN_ATTEMPTS = 2L;
     private static final Logger logger = LoggerFactory.getLogger(FindDevicesManager.class);
+    private final String searchDevice;
+    private final Set<BluetoothDevice> foundDevices = new HashSet<>();
 
 
     public FindDevicesManager(final String searchDeviceName) {
