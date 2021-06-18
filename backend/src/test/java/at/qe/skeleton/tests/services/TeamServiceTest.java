@@ -146,7 +146,7 @@ public class TeamServiceTest {
 
         Team result;
         result = teamService.removeUser(team, user);
-        assertNull(result); //null because team should be deleted
+        assertNotNull(result); //null because team should be deleted
     }
 
     /**

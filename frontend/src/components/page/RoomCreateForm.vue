@@ -116,7 +116,7 @@
 <script>
 import {
     mapGetters,
-    mapActions,
+    mapActions, mapMutations,
 } from 'vuex';
 import {
     required,
@@ -154,6 +154,9 @@ export default {
         },
     },
     methods: {
+        ...mapMutations({
+            creatorOn: 'creatorOn',
+        }),
         ...mapActions(['fetchTopics', 'createRoom']),
         handleSubmit() {
             this.submitted = true;
@@ -166,6 +169,7 @@ export default {
                     title: this.$t('game.messages.roomCreateSuccess'),
                     type: 'success',
                 });
+                this.creatorOn();
                 this.$emit('close');
                 this.$router.push(`room/${response.data.id}`);
             }).catch((err) => {

@@ -31,7 +31,7 @@ export function joinTeam(teamId, virtualUser) {
     return axios.post(`${API_URL}/${teamId}/users`);
 }
 
-export function leaveRoom(teamId, virtualUser) {
+export function leaveTeam(teamId, virtualUser) {
     if (virtualUser) return axios.delete(`${API_URL}/${teamId}/users/${virtualUser.virtual_id}`);
     return axios.delete(`${API_URL}/${teamId}/users`);
 }

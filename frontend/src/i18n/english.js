@@ -25,6 +25,7 @@ export default {
         en: 'English',
     },
     errors: {
+        somethingWrong: 'Something went wrong',
         back: 'Go back',
         notFound: 'Sorry, this page was not found',
         internalserror: 'An unexpected server error occurred',
@@ -60,6 +61,7 @@ export default {
         },
     },
     game: {
+        virtualUser: 'Local user',
         team: 'Team',
         teamName: 'Team name',
         enemy: 'Enemy',
@@ -81,11 +83,14 @@ export default {
         activity: 'Activity',
         winnerTeam: 'Winning team',
         messages: {
+            youHaveBeenKicked: 'You have been kicked by the host.',
             roomCreateSuccess: 'Room was created successfully',
             roomAlreadyFull: 'Room is already full',
             youJoinedRoom: 'You joined the room successfully',
+            youLeftGame: 'Game left',
             roomRemoved: 'The Room was deleted by the host.',
-            userJoined: ' joined',
+            userJoined: '{userName} joined',
+            userLeft: '{userName} left',
             userJoinedTeam: 'joined the Team',
             userLeftTeam: 'left the Team',
             userExists: '{username} already exists',
@@ -108,11 +113,15 @@ export default {
             validatePoints: 'Please validate points',
             beingValidated: 'The points are being validated',
             lookUpTheTerm: 'go look up the term!',
+            resultConfirmed: 'Result confirmed successfully',
+            resultRejected: 'Rule violation reported',
         },
         rollTheDice: 'Please roll the dice',
         maxPoints: 'Max points',
         guessedTerm: 'Term guessed',
         notGuessedTerm: 'Term not guessed',
+        ruleViolation: 'Rule violation',
+        currentlySpectating: 'You are currently spectating',
     },
     login: {
         login: 'Login',
@@ -176,6 +185,8 @@ export default {
         totalNumGamesPlayed: 'Total number of games played',
     },
     room: {
+        spectate: 'Spectate',
+        virtualUser: 'Virtual User',
         playersNeedToJoin: 'Players yet to join a team',
         createTeam: 'Create new team',
         createVirtualUser: 'Create new virtual player',
@@ -186,5 +197,10 @@ export default {
         selectPiList: 'Select PI',
         noPiFound: 'No PIs found',
         connectedWithPi: 'Connected with {connectedPi}!',
+    },
+    copyButton: {
+        copyButtonText: 'Copy Invite URL',
+        copySuccess: 'URL successfully copied to clipboard',
+        copyError: 'URL could not be copied',
     },
 };
