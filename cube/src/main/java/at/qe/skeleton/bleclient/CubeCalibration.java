@@ -15,7 +15,6 @@ public class CubeCalibration {
     private static final Logger logger = LoggerFactory.getLogger(CubeCalibration.class);
     private final char[] listOfActivities = new char[4];
     private HashMap<Integer, Integer> internalFacetToExternalFacetMapping;
-    private boolean connectedWithCube;
     private boolean skippedCalibration = true;
     private Scanner scanner;
     private TimeCubeService timeCubeService;
@@ -29,15 +28,11 @@ public class CubeCalibration {
 
     public CubeCalibration() {
         internalFacetToExternalFacetMapping = new HashMap<Integer, Integer>();
-        connectedWithCube = false;
         scanner = new Scanner(System.in);
         listOfActivities[0] = 'P';
         listOfActivities[1] = 'S';
         listOfActivities[2] = 'R';
         listOfActivities[3] = 'Z';
-        //for (int i = 0; i < 12; i++) {
-        //    internalFacetToExternalFacetMapping.put(i, null);
-        //}
     }
 
     //Constructor used for testing
@@ -53,7 +48,6 @@ public class CubeCalibration {
             logger.info("Searching cube...");
             timeCubeService = new TimeCubeService();
             timeCubeService.setPassword();
-            connectedWithCube = true;
             logger.info("If an error occurs with 'assertion 'G_IS_DBUS_INTERFACE', this can be ignored.");
             logger.info("Cube with " + timeCubeService.getBatteryLevel() + "% battery connected.");
             return true;
@@ -129,10 +123,7 @@ public class CubeCalibration {
                 }
             }
         }
-
         System.out.println("Cube successfully configured.");
-        //TODO remove
-        //internalFacetToExternalFacetMapping.values().stream().forEach(s -> System.out.println(s));
     }
 
     public void setPiName() {
@@ -183,7 +174,6 @@ public class CubeCalibration {
             for (int i = 1; i < 13; i++) {
                 internalFacetToExternalFacetMapping.put(i, Integer.parseInt(properties.getProperty("CALIBRATION"+i)));
             }
-            //internalFacetToExternalFacetMapping = properties.getProperty("CALIBRATION");
             in.close();
             return true;
 
@@ -194,10 +184,6 @@ public class CubeCalibration {
     }
 
     public void storeCalibration() throws IOException {
-        /*if (!Files.exists(Paths.get("/tmp/.config/g6t3/settings.json"))) {
-            Files.createDirectories(Paths.get("/tmp/.config/g6t3/"));
-            Files.createFile(Paths.get("/tmp/.config/g6t3/settings.json"));
-        }*/
         try {
 
             properties.setProperty("PORT", Integer.toString(this.port));
@@ -207,7 +193,6 @@ public class CubeCalibration {
             for (int i = 1; i < 13; i++) {
                 properties.setProperty("CALIBRATION"+i, String.valueOf(internalFacetToExternalFacetMapping.get(i)));
             }
-            //System.out.println(internalFacetToExternalFacetMapping.toString());
             FileOutputStream out = new FileOutputStream(PROPERTIES_FILE_NAME);
             properties.store(out, "Configuration for Timeflip g6t3");
         } catch (Exception e) {
