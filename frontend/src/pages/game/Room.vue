@@ -352,8 +352,6 @@ export default {
                 console.error(error);
             });
         subChannel(`/rooms/${this.$route.params.id}`, (message) => {
-            console.log('You got a message:');
-            console.log(message);
             switch (message.type) {
             case 'ROOM_DELETED':
                 this.$notify({

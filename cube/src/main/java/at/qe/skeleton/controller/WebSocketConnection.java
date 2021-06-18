@@ -37,13 +37,10 @@ public class WebSocketConnection {
     private final ObjectMapper mapper = new ObjectMapper();
     //each Pi gets own Name
     private final String piName;
-    private CubeCalibration cubeCalibration;
     //used to only accept / process messages for me / my cube.
-    //private Cube cube;
 
     public WebSocketConnection(CubeCalibration cubeCalibration) throws ExecutionException, InterruptedException, TimeoutException {
         logger.info("Connecting to Backend...");
-        this.cubeCalibration = cubeCalibration;
         piName = cubeCalibration.getPiName();
         URL = cubeCalibration.getUrl();
         PORT = cubeCalibration.getPort();
@@ -101,7 +98,7 @@ public class WebSocketConnection {
     }
 
 
-    void sendWebsocketRequest(WebsocketResponse request) {
+    private void sendWebsocketRequest(WebsocketResponse request) {
         logger.debug("Sending this request: " + request);
         session.send("/cube", request.toString());
     }

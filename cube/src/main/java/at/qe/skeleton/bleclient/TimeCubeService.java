@@ -8,6 +8,8 @@ import tinyb.BluetoothException;
 import tinyb.BluetoothGattCharacteristic;
 import tinyb.BluetoothGattService;
 
+import javax.annotation.PreDestroy;
+import java.net.StandardSocketOptions;
 import java.util.List;
 import java.util.Set;
 

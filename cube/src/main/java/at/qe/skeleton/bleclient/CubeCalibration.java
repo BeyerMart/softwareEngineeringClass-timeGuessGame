@@ -24,6 +24,7 @@ public class CubeCalibration {
     private Properties properties = new Properties();
 
 
+
     public CubeCalibration() {
         internalFacetToExternalFacetMapping = new HashMap<Integer, Integer>();
         scanner = new Scanner(System.in);
