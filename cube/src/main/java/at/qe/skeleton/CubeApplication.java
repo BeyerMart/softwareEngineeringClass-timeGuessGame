@@ -26,14 +26,15 @@ public class CubeApplication {
         cubeCalibration.calibrate();
 
         WebSocketConnection webSocketConnection = null;
+        int counter = 0;
         while (webSocketConnection == null) {
-            int counter = 0;
             try {
                 webSocketConnection = new WebSocketConnection(cubeCalibration);
-            } catch (TimeoutException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 counter++;
                 if (counter > WEBSOCKET_CONNECTION_TRIES) {
+                    System.out.println("Shutting down. No Connection to Websocket possible.");
                     System.exit(1);
                 }
                 System.out.println("A Timeout Error occurred. Trying again to connect...");
