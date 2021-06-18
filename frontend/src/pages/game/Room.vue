@@ -174,7 +174,7 @@
                         </button>
 
                         <button
-                            v-if="gameIsStarted && room.cube"
+                            v-if="gameIsStarted && room.cube && !teamlessPlayers.some(player => player.id && player.id === getUser.id)"
                             class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
                             @click="joinGame"
                         >
@@ -183,6 +183,18 @@
                                 class="text-l cursor-pointer"
                             />
                             {{ $t('room.joinGame') }}
+                        </button>
+
+                        <button
+                            v-if="gameIsStarted && room.cube"
+                            class="flex items-center gap-3 bg-green-600 hover:bg-gray-600 text-white p-2 rounded"
+                            @click="$emit('joinedGame', gameId, true)"
+                        >
+                            <font-awesome-icon
+                                icon="eye"
+                                class="text-l cursor-pointer"
+                            />
+                            {{ $t('room.spectate') }}
                         </button>
 
                         <CreateTeamForm

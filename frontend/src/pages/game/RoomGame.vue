@@ -7,6 +7,7 @@
         <Game
             v-else
             :game-id="gameId"
+            :spectator="spectator"
             @leftGame="leftGameHandler"
         />
     </div>
@@ -24,6 +25,7 @@ export default {
         return {
             gameId: null,
             roomId: this.$route.params.id,
+            spectator: false,
         };
     },
     created() {
@@ -34,8 +36,9 @@ export default {
         window.removeEventListener('beforeunload', this.leaveRoom);
     },
     methods: {
-        joinedGameHandler(gameId) {
+        joinedGameHandler(gameId, spectator) {
             this.gameId = gameId;
+            this.spectator = !!spectator;
         },
         leftGameHandler() {
             this.gameId = null;
