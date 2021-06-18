@@ -297,8 +297,6 @@ export default {
             console.error(error);
         });
         subChannel(`/rooms/${this.$route.params.id}`, (message) => {
-            console.log('You got a room message:');
-            console.log(message);
             switch (message.type) {
             case 'ROOM_CHANGED':
                 this.room = (message.data);
@@ -311,8 +309,6 @@ export default {
             }
         });
         subChannel(`/game/${this.gameId}`, (message) => {
-            console.log('You got a games message:');
-            console.log(message);
             switch (message.type) {
             case 'GAME_DELETED':
                 this.gameOver = true;
