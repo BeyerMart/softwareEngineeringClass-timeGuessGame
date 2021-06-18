@@ -39,12 +39,11 @@ public class WebSocketConnection {
     private final String piName;
     private CubeCalibration cubeCalibration;
     //used to only accept / process messages for me / my cube.
-    //private Cube cube;
 
     public WebSocketConnection(CubeCalibration cubeCalibration) throws ExecutionException, InterruptedException, TimeoutException {
         logger.info("Connecting to Backend...");
         this.cubeCalibration = cubeCalibration;
-        this.logicController = new LogicController(this, cubeCalibration);
+
         piName = cubeCalibration.getPiName();
         URL = cubeCalibration.getUrl();
         PORT = cubeCalibration.getPort();
@@ -54,6 +53,7 @@ public class WebSocketConnection {
         this.client.setMessageConverter(new StringMessageConverter());
         session = client.connect(String.format("ws://%s:%d/websocket", URL, PORT), new StompSessionHandlerAdapter() {
         }).get(3, TimeUnit.SECONDS);
+        this.logicController = new LogicController(this, cubeCalibration);
     }
 
     public void subscribeToChannel(String channel) {
@@ -128,4 +128,13 @@ public class WebSocketConnection {
     public void destroy() {
         close();
     }
+
+    public StompSession getSession() {
+        return session;
+    }
+
+    public LogicController getLogicController() {
+        return logicController;
+    }
+
 }
