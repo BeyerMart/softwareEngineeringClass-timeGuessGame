@@ -3,6 +3,7 @@ import * as RoomService from '@/services/room.service';
 export const roomModule = {
     state: {
         rooms: [],
+        creatorMode: false,
     },
     actions: {
         async fetchRooms({ commit }) {
@@ -33,10 +34,17 @@ export const roomModule = {
             if (state.rooms.some((oldRoom) => (oldRoom.room_id === room.roomn_id ? room : oldRoom))) state.rooms.map((oldRoom) => (oldRoom.room_id === room.roomn_id ? room : oldRoom));
             else state.rooms.unshift(room);
         },
+        creatorOff: (state) => {
+            state.creatorMode = false;
+        },
+        creatorOn: (state) => {
+            state.creatorMode = true;
+        },
     },
 
     getters: {
         roomsList: (state) => state.rooms,
         roomById: (state) => (id) => state.rooms.find((roomElement) => roomElement.room_id === id),
+        creator: (state) => state.creatorMode,
     },
 };

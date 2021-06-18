@@ -199,7 +199,7 @@ public class RoomService {
             throw new UserNotFoundException(virtualUser.getCreator_id());
         if (room.getHost_id() != userService.getAuthenticatedUser().get().getId() && !userService.getAuthenticatedUser().get().getId().equals(parentUser.getUser_id()))
             throw new AccessDeniedException("Only the host can force a user leave");
-        if (!parentUser.getVirtualUsers().values().removeIf(virtualUserValue -> virtualUserValue.getVirtual_id().equals(virtualUser.getVirtual_id()) && virtualUserValue.getCreator_id() == virtualUser.getCreator_id()))
+        if (!parentUser.getVirtualUsers().values().removeIf(virtualUserValue -> virtualUserValue.getVirtual_id().equals(virtualUser.getVirtual_id()) && virtualUserValue.getCreator_id().equals(virtualUser.getCreator_id())))
             throw new UserNotFoundException(virtualUser.getVirtual_id());
         roomController.roomChanged(room);
         roomController.userLeftRoom(virtualUser, room);
@@ -259,7 +259,7 @@ public class RoomService {
             }
             if (removedUser != null)
                 roomController.userLeftTeam(removedUser, virtualTeam, room);
-            if (virtualTeam.getPlayers().isEmpty()) {
+            if (virtualTeam.getPlayers().isEmpty() && room.getGame_id() < 0) {
                 iterator.remove();
                 roomController.roomChanged(room);
             }
@@ -305,7 +305,7 @@ public class RoomService {
         Long userId = userService.getAuthenticatedUser().get().getId();
         UserIdVirtualUser user = room.getPlayers().get(userId);
         if (team.getPlayers().removeIf(userIdVirtualUser -> userIdVirtualUser.getUser_id().equals(userId))) {
-            if (team.getPlayers().isEmpty())
+            if (team.getPlayers().isEmpty() && room.getGame_id() >= 0)
                 room.getTeams().remove(teamName);
             roomController.roomChanged(room);
             roomController.userLeftTeam(user, team, room);
@@ -327,10 +327,10 @@ public class RoomService {
         @PreAuthorize("hasAuthority('ROLE_USER')")
     public void connectRoomAndPi(Long roomId, String piName) {
         User authenticatedUser = userService.getAuthenticatedUser().get();
-        if (authenticatedUser.getId() != getRoomById(roomId).get().getHost_id() && authenticatedUser.getRole() != UserRole.ROLE_ADMIN){
+        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
+        if (authenticatedUser.getId() != room.getHost_id() && authenticatedUser.getRole() != UserRole.ROLE_ADMIN){
             throw new AccessDeniedException("Only the Host (or an admin) can connect the pi to a room");
         }
-        Room room = getRoomById(roomId).orElseThrow(() -> new RoomNotFoundException(roomId));
         room.setPi_name(piName);
         roomController.roomChanged(room);
     }
