@@ -15,7 +15,11 @@ import * as AuthService from '@/services/auth.service';
 // Icon font
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-    faEllipsisV, faExclamation, faUpload, faChevronLeft, faPlus, faTimesCircle, faPen, faTrash, faFileImport, faSignOutAlt, faSync, faPlayCircle, faCheck, faSkullCrossbones, faDiceD6, faBolt,
+    faEllipsisV, faExclamation, faUpload, faChevronLeft,
+    faPlus, faTimesCircle, faPen, faTrash, faFileImport,
+    faSignOutAlt, faSync, faPlayCircle, faCheck,
+    faSkullCrossbones, faDiceD6, faBolt, faShare, faUserMinus,
+    faEye,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -36,6 +40,9 @@ library.add(faCheck);
 library.add(faSkullCrossbones);
 library.add(faDiceD6);
 library.add(faBolt);
+library.add(faUserMinus);
+library.add(faShare);
+library.add(faEye);
 
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 // End of icon font

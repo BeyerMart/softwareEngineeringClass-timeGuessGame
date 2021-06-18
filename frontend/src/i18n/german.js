@@ -25,6 +25,7 @@ export default {
         en: 'Englisch',
     },
     errors: {
+        somethingWrong: 'Etwas ist schief gegangen',
         back: 'Zurück',
         notFound: 'Entschuldigung, diese Seite existiert nicht',
         internalserror: 'Ein unerwarteter Fehler ist aufgetreten',
@@ -60,6 +61,7 @@ export default {
         },
     },
     game: {
+        virtualUser: 'Lokaler Spieler',
         team: 'Team',
         teamName: 'Teamname',
         enemy: 'Gegner',
@@ -81,11 +83,14 @@ export default {
         activity: 'Aktivität',
         winnerTeam: 'Gewinnerteam',
         messages: {
+            youHaveBeenKicked: 'Der Host hat dich aus dem Raum entfernt!',
             roomCreateSuccess: 'Raum wurde erfolgreich erstellt',
             roomAlreadyFull: 'Der Raum ist bereits voll',
             youJoinedRoom: 'Raum erfolgreich beigetreten',
+            youLeftGame: 'Spiel erfolgreich verlassen',
             roomRemoved: 'Der Raum wurde vom Host gelöscht.',
-            userJoined: ' ist beigetreten',
+            userJoined: '{userName} ist beigetreten',
+            userLeft: '{userName} hat den Raum verlassen',
             userJoinedTeam: 'ist dem Team beigetreten',
             userLeftTeam: 'hat das Team verlassen',
             userExists: '{username} ist bereits vorhanden',
@@ -108,13 +113,15 @@ export default {
             validatePoints: 'Bitte validieren Sie die Punkte',
             beingValidated: 'Die Punkte werden validiert',
             lookUpTheTerm: 'schauen Sie den Begriff an!',
-
+            resultConfirmed: 'Ergebnis bestätigt',
+            resultRejected: 'Regelverstoß gemeldet',
         },
         rollTheDice: 'Bitte würfeln Sie',
         maxPoints: 'Maximale Punkte',
         guessedTerm: 'Begriff erraten',
         notGuessedTerm: 'Begriff nicht erraten',
-
+        ruleViolation: 'Regelverstoß',
+        currentlySpectating: 'Sie sind gerade Zuschauer',
     },
 
     login: {
@@ -179,9 +186,10 @@ export default {
         totalNumGamesPlayed: 'Gesamtzahl gespielter Spiele',
     },
     room: {
+        spectate: 'Zuschauen',
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
         createTeam: 'Neues Team erstellen',
-        createVirtualUser: 'Virtuellen Spieler erstellen',
+        createVirtualUser: 'Lokalen Spieler erstellen',
         leaveRoom: 'Diesen Raum verlassen',
         startGame: 'Spiel starten',
         joinGame: 'Spiel beitreten',
@@ -189,5 +197,10 @@ export default {
         selectPiList: 'PI auswählen',
         noPiFound: 'Keine PIs gefunden',
         connectedWithPi: 'Mit {connectedPi} verbunden!',
+    },
+    copy2clipboard: {
+        copyButtonText: 'Invite URL kopieren',
+        copySuccess: 'URL erfolgreich in die Zwischenablage kopiert',
+        copyError: 'URL konnte nicht kopiert werden',
     },
 };

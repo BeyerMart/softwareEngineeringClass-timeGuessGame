@@ -1,5 +1,6 @@
 package at.qe.skeleton.controller;
 
+import at.qe.skeleton.exceptions.RoomNotFoundException;
 import at.qe.skeleton.exceptions.TeamNotFoundException;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.payload.response.websocket.WSResponseType;
@@ -154,8 +155,14 @@ public class GameplayController {
         template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.POINT_VALIDATION_STOP)).toString());
     }
 
-    public void pointValidationStart(Game game) {
-        template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(gameController.convertToGameDto(game), WSResponseType.POINT_VALIDATION_START)).toString());
+    public void pointValidationStart(Game game, boolean timeOver) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+
+        node.set("game", mapper.valueToTree(gameController.convertToGameDto(game)));
+        node.set("timeOver", mapper.valueToTree(timeOver));
+
+        template.convertAndSend("/game/" + game.getId(), (new WebsocketResponse(node, WSResponseType.POINT_VALIDATION_START)).toString());
     }
 
     public void updatePoints(Team currentTeam) {
@@ -285,6 +292,9 @@ public class GameplayController {
              */
             timerStartMessage(game, availableTime);
 
+            //check whether time was over (0 points) or facet was changed
+            boolean timeOver = false;
+
             //Either time is over or word is guessed (i.e. cube is turned)
             rolledFacet = room.getCube().getFacet();
             while (endTime.after(currentTime) && rolledFacet == room.getCube().getFacet()) {
@@ -292,17 +302,23 @@ public class GameplayController {
                 currentTime = new Timestamp(System.currentTimeMillis());
             }
 
+
+            // check whether time was over or facet changed
+            if(!endTime.after(currentTime)){
+                timeOver = true;
+            }
+
             /*
              * Time to vote whether the round was fair or not
              */
             gameService.addGamePoints(game, currentTeam);
-            pointValidationStart(game);
+            pointValidationStart(game, timeOver);
             currentTime = new Timestamp(System.currentTimeMillis());
 
             endTime = new Timestamp(System.currentTimeMillis() + (VOTE_TIME * 1000));
             GamePoints gamePoints = gameService.getGamePoints(game);
 
-            while(endTime.after((currentTime)) && ((gamePoints.getRejections() + gamePoints.getConfirmations()) != (allUsersInGame.size() - currentTeam.getUsers().size()))){
+            while (endTime.after((currentTime)) && ((gamePoints.getRejections() + gamePoints.getConfirmations()) != (allUsersInGame.size() - currentTeam.getUsers().size()))) {
                 TimeUnit.SECONDS.sleep(1);
                 currentTime = new Timestamp(System.currentTimeMillis());
                 gamePoints = gameService.getGamePoints(game);
@@ -315,11 +331,13 @@ public class GameplayController {
              * Add points if voting claims that the round was fair
              */
             if (gamePoints.getConfirmations() > gamePoints.getRejections()) {
-                currentTeam.setPoints(currentTeam.getPoints() + potentialPoints);
+                currentTeam.setPoints(currentTeam.getPoints() + (timeOver ? 0 : potentialPoints));
             } else {
                 //-1 point for cheating
                 currentTeam.setPoints(currentTeam.getPoints() - 1);
             }
+
+
             teamRepository.save(currentTeam);
             updatePoints(currentTeam);
 
@@ -350,5 +368,7 @@ public class GameplayController {
          * Game over socket message
          */
         gameOverMessage(game, winner);
+        roomService.getRoomById(room.getId()).get().setGame_id(-1);
+        roomController.roomChanged(roomService.getRoomById(room.getId()).get());
     }
 }
