@@ -18,12 +18,10 @@ public class LogicController {
     private static final Logger logger = LoggerFactory.getLogger(LogicController.class);
     private static final int BACKEND_TIMEOUT_THRESHOLD = 4;
     private final ObjectMapper mapper = new ObjectMapper();
-    private final int CONNECTION_TIMEOUT = 6; //2 seconds
-    Instant dateOfCubeSend;
+    private Instant dateOfCubeSend;
     private Cube cube;
     private WebSocketConnection connection;
     private CubeCalibration cubeCalibration;
-    private boolean successfulReplyInTime;
 
     public LogicController(WebSocketConnection connection, CubeCalibration cubeCalibration) {
         this.connection = connection;
@@ -56,7 +54,6 @@ public class LogicController {
                 logger.error("Cube could not be connected. There might be a pi with the same name connected to the backend.");
 
             case CONNECTION_TEST_TO_PI:
-                //new TimeoutChecker().start();
                 if (dateOfCubeSend == null) {
                     dateOfCubeSend = Instant.parse(jsonResult.get("timestamp").asText());
                     startCheckingForTimeout();
@@ -80,9 +77,7 @@ public class LogicController {
         }
 
         room_id = data.get("id").asInt();
-        //if (data.asText().equals(connection.getPiName())) {
         if (room_id == cube.getRoomId()) {
-            //cube.setRoomId(room_id);
             switch (wsType) {
                 case START_BATTERY_NOTIFICATION:
                     cubeCalibration.getTimeCubeService().getBatteryCharacteristic().enableValueNotifications(new BatteryValueNotification(connection, cube));
