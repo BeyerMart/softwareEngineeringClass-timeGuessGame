@@ -113,6 +113,14 @@ public class RoomService {
         roomController.roomDeleted(rooms.remove(id));
     }
 
+    public void backendDeleteRoom(long id) {
+        Room room = rooms.get(id);
+        if (room == null)
+            throw new RoomNotFoundException(id);
+        roomController.roomDeleted(rooms.remove(id));
+    }
+
+
     /**
      * Removes a user and its virtual Users from all rooms.
      */

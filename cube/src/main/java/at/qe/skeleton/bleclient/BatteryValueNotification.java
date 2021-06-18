@@ -13,7 +13,7 @@ public class BatteryValueNotification implements BluetoothNotification<byte[]> {
     private WebSocketConnection connection;
     private Cube cube;
 
-    public BatteryValueNotification(WebSocketConnection connection, Cube cube){
+    public BatteryValueNotification(WebSocketConnection connection, Cube cube) {
         this.connection = connection;
         this.cube = cube;
     }
