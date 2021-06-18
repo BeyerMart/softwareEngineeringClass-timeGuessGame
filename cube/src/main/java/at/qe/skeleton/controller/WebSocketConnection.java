@@ -3,7 +3,6 @@ package at.qe.skeleton.controller;
 import at.qe.skeleton.bleclient.CubeCalibration;
 import at.qe.skeleton.model.Cube;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
@@ -31,10 +30,8 @@ public class WebSocketConnection {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConnection.class);
     private final LogicController logicController;
     private final String URL;
-    //private final String URL = "localhost";
     private final int PORT;
     private final ConcurrentLinkedQueue blockingQueue = new ConcurrentLinkedQueue();
-    // private final BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(1);
     private final WebSocketStompClient client;
     private final StompSession session;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -49,15 +46,14 @@ public class WebSocketConnection {
         this.cubeCalibration = cubeCalibration;
         this.logicController = new LogicController(this, cubeCalibration);
         piName = cubeCalibration.getPiName();
-        URL = cubeCalibration.getURL();
-        PORT = cubeCalibration.getPORT();
+        URL = cubeCalibration.getUrl();
+        PORT = cubeCalibration.getPort();
         ArrayList list = new ArrayList();
         list.add(new WebSocketTransport(new StandardWebSocketClient()));
         this.client = new WebSocketStompClient(new SockJsClient(list));
         this.client.setMessageConverter(new StringMessageConverter());
         session = client.connect(String.format("ws://%s:%d/websocket", URL, PORT), new StompSessionHandlerAdapter() {
         }).get(3, TimeUnit.SECONDS);
-        //subscribeToChannel("register");
     }
 
     public void subscribeToChannel(String channel) {
@@ -79,43 +75,10 @@ public class WebSocketConnection {
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
-                        //logicController.respondingToBackendRequest((String) payload, piName, blockingQueue);
                     }
                 }
         );
     }
-
-    public String handleBackendResponse(String request) throws InterruptedException, JsonProcessingException {
-        //String response = blockingQueue.poll(2, TimeUnit.SECONDS);
-        String response = (String) blockingQueue.poll();
-
-        while (request.equals(response)) {
-            response = (String) blockingQueue.poll();
-        }
-        logger.debug("response " + response);
-        JsonNode jsonResult = mapper.readTree(response);
-        WSResponseType wsType = WSResponseType.valueOf(jsonResult.get("type").asText());
-        JsonNode data = jsonResult.get("data");
-        if (wsType == WSResponseType.OK || wsType == WSResponseType.PI_CONNECTED || wsType == WSResponseType.PI_DISCONNECTING) {
-            return response;
-        } else {
-            if (wsType == WSResponseType.VERSION || data.get("piName").asText() == piName) {
-            }
-        }
-        return response;
-    }
-
-    public void sendRequestForVersion(String input) throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(input, WSResponseType.VERSION);
-        session.send("/version", request.toString());
-        String response = handleBackendResponse(request.toString());
-    }
-
-    /*public void sendPiConnected() throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.PI_CONNECTED);
-        sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-    }*/
 
     private ObjectNode preProcessMessage(Cube cube) throws JsonProcessingException {
         String sessionId = session.getSessionId();
@@ -129,48 +92,20 @@ public class WebSocketConnection {
         ObjectNode message = preProcessMessage(cube);
         WebsocketResponse request = new WebsocketResponse(message, WSResponseType.FACET_NOTIFICATION);
         sendWebsocketRequest(request);
-        //String response = handleBackendResponse(request.toString());
-        //return response;
     }
 
     public void sendBatteryNotification(Cube cube) throws InterruptedException, JsonProcessingException {
         ObjectNode message = preProcessMessage(cube);
         WebsocketResponse request = new WebsocketResponse(message, WSResponseType.BATTERY_NOTIFICATION);
         sendWebsocketRequest(request);
-        //String response = handleBackendResponse(request.toString());
-        //return response;
     }
 
-
-    public String sendPiDisconnected(Cube cube) throws InterruptedException, JsonProcessingException {
-        WebsocketResponse request = new WebsocketResponse(cube, WSResponseType.PI_DISCONNECTING);
-        sendWebsocketRequest(request);
-        String response = handleBackendResponse(request.toString());
-        return response;
-    }
-
-    public void sendAck() {
-        WebsocketResponse message = new WebsocketResponse("ACK", WSResponseType.OK);
-        logger.info("Sending this request: " + message);
-        session.send("/cube", message.toString());
-    }
-
-    /*public void sendCubeAck(Cube cube) {
-        this.cube = cube;
-        WebsocketResponse message = new WebsocketResponse(cube, WSResponseType.OK);
-        sendWebsocketRequest(message);
-    }*/
 
     private void sendWebsocketRequest(WebsocketResponse request) {
         logger.debug("Sending this request: " + request);
         session.send("/cube", request.toString());
     }
 
-    public void emptyQueue() {
-        while (!blockingQueue.isEmpty()) {
-            blockingQueue.poll();
-        }
-    }
 
     public void sendRegistration() {
         String sessionId = session.getSessionId();
@@ -185,26 +120,8 @@ public class WebSocketConnection {
         WebsocketResponse wsMessage = new WebsocketResponse(piName, WSResponseType.PI_DISCONNECTING);
         session.send("/cube", wsMessage.toString());
 
-        try {
-            handleBackendResponse(wsMessage.toString());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            logger.error("A read on the channel was requested, but nothing was sent to the channel");
-        }
         if (session.isConnected()) session.disconnect();
         if (client.isRunning()) client.start();
-    }
-
-    /*public void setCube(Cube cube) {
-        this.cube = cube;
-    }*/
-
-    public String getPiName() {
-        return piName;
     }
 
     @PreDestroy
