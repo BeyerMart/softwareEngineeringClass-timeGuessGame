@@ -45,14 +45,17 @@ public class LogicController {
         JsonNode data = jsonResult.get("data");
         switch (wsType) {
             case OK:
-            case PI_CONNECTED:
+
             case PI_DISCONNECTING:
             case NOT_FOUND:
             case CONNECTION_TEST_TO_BACKEND:
                 return;
+            case PI_CONNECTED:
+                logger.info("Pi connected with backend");
+                return;
             case NOT_CONNECTED:
                 logger.error("Cube could not be connected. There might be a pi with the same name connected to the backend.");
-
+                return;
             case CONNECTION_TEST_TO_PI:
                 if (dateOfCubeSend == null) {
                     dateOfCubeSend = Instant.parse(jsonResult.get("timestamp").asText());
