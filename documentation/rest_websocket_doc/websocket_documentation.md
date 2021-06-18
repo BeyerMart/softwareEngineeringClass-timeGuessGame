@@ -64,4 +64,8 @@ Below is a table containing all available message types. `TYPE` equals the messa
 | STOP_BATTERY_NOTIFICATION  | The backend does not need any notifications on battery anymore | The Pi corresponding to a room |
 | CUBE_ERROR          | Unhandled Error with the cube     | The Backend                 |
 | CUBE_DISCONNECTED   | TimeFlip disconnected             | The Backend                 |
+| OK                    | A success response | The Backend + All Pis |
+| FACET_REQUEST | A request for the current facet | All Pis |
+| POINT_VALIDATION_START | Round validation started | All players |
+| POINT_VALIDATION_STOP | Round validation stopped | All players |
 | PI_DISCONNECTING    | Pi is disconnecting / shutting down | The Backend               |
