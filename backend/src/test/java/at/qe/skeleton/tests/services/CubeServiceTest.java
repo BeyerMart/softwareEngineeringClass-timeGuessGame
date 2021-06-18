@@ -1,12 +1,20 @@
 package at.qe.skeleton.tests.services;
 
+import at.qe.skeleton.controller.CubeController;
 import at.qe.skeleton.model.Activity;
+import at.qe.skeleton.payload.response.websocket.WSResponseType;
+import at.qe.skeleton.payload.response.websocket.WebsocketResponse;
 import at.qe.skeleton.services.CubeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.time.Instant;
+
+import static org.mockito.Mockito.doNothing;
 
 @SpringBootTest
 
@@ -14,6 +22,8 @@ public class CubeServiceTest {
 
 	@Autowired
 	private CubeService cubeService;
+	@MockBean
+	private CubeController cubeController;
 
 	/**
 	 * Test unregistering a non existing Pi
@@ -31,6 +41,7 @@ public class CubeServiceTest {
 	public void testRegisterPi() {
 		cubeService.addPiName("MyPi", "1234");
 		Assert.isTrue(!cubeService.getAllPis().isEmpty());
+		Assert.isTrue(!cubeService.getLastUpdates().isEmpty());
 		Assert.isTrue(cubeService.removePi("MyPi"));
 	}
 
@@ -57,6 +68,27 @@ public class CubeServiceTest {
 		Assert.isTrue(!cubeService.getConnectedPis().get("MyPi").equals("2345"));
 
 		Assert.isTrue(cubeService.removePi("MyPi"));
+	}
+
+	@Test
+	public void testGetAllPis() {
+		Assert.isTrue(cubeService.addPiName("MyPi", "1234"));
+		Assert.isTrue(cubeService.addPiName("NotMyPi", "2345"));
+		Assertions.assertEquals(2, cubeService.getAllPis().size());
+		Assertions.assertEquals("MyPi", cubeService.getAllPis().get(0));
+		Assertions.assertEquals("NotMyPi", cubeService.getAllPis().get(1));
+		Assert.isTrue(cubeService.removePi("MyPi"));
+		Assert.isTrue(cubeService.removePi("NotMyPi"));
+
+	}
+
+	@Test
+	public void testGetConnectedPis() {
+		Assert.isTrue(cubeService.addPiName("MyPi", "1234"));
+		Assert.isTrue(cubeService.addPiName("NotMyPi", "2345"));
+		Assertions.assertEquals(2, cubeService.getConnectedPis().size());
+		Assert.isTrue(cubeService.removePi("MyPi"));
+		Assert.isTrue(cubeService.removePi("NotMyPi"));
 	}
 
 	@Test
@@ -95,6 +127,30 @@ public class CubeServiceTest {
 				Assertions.assertEquals(Activity.DRAW, cubeService.getActivityFromFacet(i));
 			}
 		}
+	}
+
+	@Test
+	public void testUpdateAndGetTimeouts() {
+		Instant now = Instant.now();
+		cubeService.updateTimeouts("123", now.toString());
+		cubeService.updateTimeouts("345", Instant.now().plusSeconds(5).toString());
+		Assertions.assertEquals(2, cubeService.getLastUpdates().size());
+		Assertions.assertEquals(now.toString(), cubeService.getLastUpdates().get("123"));
+	}
+
+	@Test
+	public void testTimeoutChecker() {
+		cubeService.addPiName("myTimoutPI", "123");
+		cubeService.updateTimeouts("123", Instant.now().toString());
+		doNothing().when(cubeController).cubeSendConnectionTest(new WebsocketResponse(null, WSResponseType.CONNECTION_TEST_TO_PI));
+		//Mockito.when(cubeController.cubeSendConnectionTest(new WebsocketResponse(null, WSResponseType.CONNECTION_TEST_TO_PI))).thenReturn(true);
+		cubeService.startCheckingForTimeouts("123");
+		try {
+			Thread.sleep((cubeService.getTIMEOUT_THRESHOLD() * 3 + 1) * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Assertions.assertEquals(0, cubeService.getConnectedPis().size());
 	}
 
 }

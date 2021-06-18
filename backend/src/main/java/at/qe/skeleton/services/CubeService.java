@@ -161,4 +161,7 @@ public class CubeService {
 
 		}
 	}
+	public long getTIMEOUT_THRESHOLD(){
+		return TIMEOUT_THRESHOLD;
+	}
 }
