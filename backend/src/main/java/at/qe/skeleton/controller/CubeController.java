@@ -53,19 +53,27 @@ public class CubeController {
 		JsonNode input = mapper.readTree(requestMessage);
 		JsonNode data = input.get("data");
 		WSResponseType wsType = WSResponseType.valueOf(input.get("type").asText());
+		String sessionId;
 		switch (wsType) {
 			case VERSION:
 				logger.error("Ask for the Version at /version");
 				return "";
+			case CONNECTION_TEST_TO_BACKEND:
+				sessionId = data.get("sessionId").asText();
+				cubeService.updateTimeouts(sessionId, input.get("timestamp").asText());
+
+				return "";
+
 			case PI_CONNECTED:
 				JsonNode registration = mapper.readTree(requestMessage);
 				String piName = registration.get("data").get("piName").asText();
-				String sessionId = registration.get("data").get("sessionId").asText();
+				sessionId = registration.get("data").get("sessionId").asText();
 				if (cubeService.addPiName(piName, sessionId)) {
 					logger.info("Pi " + piName + " has registered");
-					response = new WebsocketResponse(piName, WSResponseType.OK);
+					response = new WebsocketResponse(piName, WSResponseType.PI_CONNECTED);
 				} else {
 					response = new WebsocketResponse(registration.get("data"), WSResponseType.NOT_CONNECTED);
+					cubeService.startCheckingForTimeouts(sessionId);
 				}
 				break;
 
@@ -117,8 +125,6 @@ public class CubeController {
 
 			case CUBE_ERROR:
 				cube = mapper.convertValue(data, Cube.class);
-				//TODO call frontEnd an say unrecognized Cube Error (RunTimeException)
-
 				Optional<Room> roomOptional5 = roomService.getRoomById(cube.getRoomId());
 				if (roomOptional5.isPresent()) {
 					response = new WebsocketResponse(roomOptional5.get(), WSResponseType.ROOM_CHANGED);
@@ -171,6 +177,10 @@ public class CubeController {
 	public void cubeGetCurrentFacet(Room room) {
 		WebsocketResponse request = new WebsocketResponse(room, WSResponseType.FACET_REQUEST);
 		template.convertAndSend("/cube", request.toString());
+	}
+
+	public void cubeSendConnectionTest(WebsocketResponse websocketResponse) {
+		template.convertAndSend("/cube", websocketResponse.toString());
 	}
 
 
