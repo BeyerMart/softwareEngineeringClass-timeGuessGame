@@ -3,6 +3,20 @@
         <div
             class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8"
         >
+            <div
+                v-show="spectator"
+                class="max-w-full mx-auto text-l shadow-xl text-center rounded bg-green-500"
+            >
+                <div class="text-xl p-4 inline-flex flex-col items-center">
+                    <font-awesome-icon
+                        icon="eye"
+                        class="text-3xl text-white opacity-75 mb-2"
+                    />
+                    <span class="mt-2 text-white">
+                        {{ $t('game.currentlySpectating') }}
+                    </span>
+                </div>
+            </div>
             <Message
                 v-show="isWaitingForNextRound"
                 :title="$t('generic.pleaseWait')"
@@ -52,8 +66,8 @@
                         class="waiting-icon text-5xl text-green-400 opacity-75 mb-2"
                     />
                     <span class="mt-2 text-white">
-                        <span v-show="!showTerm">{{ $t('game.messages.validatePoints') }}</span>
-                        <span v-show="showTerm">
+                        <span v-show="!showTerm && !spectator">{{ $t('game.messages.validatePoints') }}</span>
+                        <span v-show="showTerm || spectator">
                             {{ $t('game.messages.beingValidated') }}
                             <p class="mt-2 italic">{{ $t('generic.pleaseWait') }}</p>
                         </span>
@@ -115,7 +129,7 @@
                 <div class="inline-flex flex-col justify-center gap-3 md:flex-row text-base shadow p-5 bg-gray-100">
                     <button
                         class="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white p-2 rounded disabled:opacity-70"
-                        :disabled="showTerm || timeOver || !isValidating"
+                        :disabled="showTerm || timeOver || !isValidating || spectator"
                         @click="confirmPointsHandler"
                     >
                         <font-awesome-icon
@@ -126,7 +140,7 @@
                     </button>
                     <button
                         class="flex items-center gap-3 bg-red-500 hover:bg-red-600 text-white p-2 rounded  disabled:opacity-70"
-                        :disabled="showTerm || !timeOver || !isValidating"
+                        :disabled="showTerm || !timeOver || !isValidating || spectator"
                         @click="confirmPointsHandler"
                     >
                         <font-awesome-icon
@@ -137,7 +151,7 @@
                     </button>
 
                     <button
-                        :disabled="showTerm || !isValidating"
+                        :disabled="showTerm || !isValidating || spectator"
                         class="flex items-center gap-3 bg-black hover:bg-gray-600 text-white p-2 rounded disabled:opacity-70"
                         @click="rejectPointsHandlerHandler"
                     >
@@ -185,6 +199,11 @@ export default {
             type: Number,
             required: true,
         },
+        spectator: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
     },
     data() {
         return {
@@ -216,7 +235,7 @@ export default {
             topicList: 'topicList',
         }),
         showTerm() {
-            return this.currentUser && this.currentTeam && this.game.teams.find((team) => this.currentTeam.id === team.id).players.some((player) => player.id === this.getUser.id);
+            return !this.spectator && this.currentUser && this.currentTeam && this.game.teams.find((team) => this.currentTeam.id === team.id).players.some((player) => player.id === this.getUser.id);
         },
         getTimer() {
             const mins = Math.floor(this.timer.remainingTime / 60);
@@ -246,7 +265,7 @@ export default {
         fetchTopics: 'fetchTopics',
     }),
     mounted() {
-        window.addEventListener('beforeunload', this.leaveGame);
+        if (!this.spectator) window.addEventListener('beforeunload', this.leaveGame);
         if (!this.topicList) this.fetchTopics();
         RoomService.fetchRoomById(this.$route.params.id).then((response) => {
             this.room = response.data;
@@ -373,8 +392,10 @@ export default {
     beforeDestroy() {
         unsubChannel(`/game/${this.gameId}`);
         unsubChannel(`/rooms/${this.room.id}`);
-        this.leaveGame();
-        window.removeEventListener('beforeunload', this.leaveGame);
+        if (!this.spectator) {
+            this.leaveGame();
+            window.removeEventListener('beforeunload', this.leaveGame);
+        }
     },
     methods: {
         ...mapMutations({

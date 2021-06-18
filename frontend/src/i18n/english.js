@@ -61,6 +61,7 @@ export default {
         },
     },
     game: {
+        virtualUser: 'Local user',
         team: 'Team',
         teamName: 'Team name',
         enemy: 'Enemy',
@@ -120,6 +121,7 @@ export default {
         guessedTerm: 'Term guessed',
         notGuessedTerm: 'Term not guessed',
         ruleViolation: 'Rule violation',
+        currentlySpectating: 'You are currently spectating',
     },
     login: {
         login: 'Login',
@@ -183,6 +185,7 @@ export default {
         totalNumGamesPlayed: 'Total number of games played',
     },
     room: {
+        spectate: 'Spectate',
         virtualUser: 'Virtual User',
         playersNeedToJoin: 'Players yet to join a team',
         createTeam: 'Create new team',

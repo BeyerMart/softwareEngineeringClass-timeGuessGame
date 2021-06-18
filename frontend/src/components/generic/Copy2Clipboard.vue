@@ -8,7 +8,7 @@
             icon="share"
             class="text-l cursor-pointer"
         />
-        {{ $t('copy2clipboard.copyButtonText') }}
+        {{ $t('copyButton.copyButtonText') }}
     </button>
 </template>
 

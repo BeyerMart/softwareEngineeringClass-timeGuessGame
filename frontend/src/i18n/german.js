@@ -113,16 +113,15 @@ export default {
             validatePoints: 'Bitte validieren Sie die Punkte',
             beingValidated: 'Die Punkte werden validiert',
             lookUpTheTerm: 'schauen Sie den Begriff an!',
-
+            resultConfirmed: 'Ergebnis bestätigt',
+            resultRejected: 'Regelverstoß gemeldet',
         },
         rollTheDice: 'Bitte würfeln Sie',
         maxPoints: 'Maximale Punkte',
         guessedTerm: 'Begriff erraten',
         notGuessedTerm: 'Begriff nicht erraten',
         ruleViolation: 'Regelverstoß',
-        resultConfirmed: 'Ergebnis bestätigt',
-        resultRejected: 'Regelverstoß gemeldet',
-
+        currentlySpectating: 'Sie sind gerade Zuschauer',
     },
 
     login: {
@@ -187,6 +186,7 @@ export default {
         totalNumGamesPlayed: 'Gesamtzahl gespielter Spiele',
     },
     room: {
+        spectate: 'Zuschauen',
         playersNeedToJoin: 'Spieler müssen noch Teams beitreten',
         createTeam: 'Neues Team erstellen',
         createVirtualUser: 'Lokalen Spieler erstellen',
