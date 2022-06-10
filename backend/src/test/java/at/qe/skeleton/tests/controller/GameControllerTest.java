@@ -5,6 +5,7 @@ import at.qe.skeleton.Main;
 import at.qe.skeleton.model.*;
 import at.qe.skeleton.services.GameService;
 import at.qe.skeleton.services.RoomService;
+import at.qe.skeleton.services.TeamService;
 import at.qe.skeleton.services.TopicService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +46,10 @@ public class GameControllerTest {
     @MockBean
     private TopicService topicService;
 
+    @MockBean
+    private TeamService teamService;
+
+
     User testAdmin = new User("testAdmin", "password","mail@test.com");
 
     Topic testTopic = new Topic();
@@ -77,9 +82,29 @@ public class GameControllerTest {
     @Test
     @WithMockUser(roles = {"ADMIN", "MANAGER", "USER"})
     public void testCreateGame() throws Exception {
+        Mockito.when(teamService.addTeam(Mockito.any(Team.class))).thenAnswer(AdditionalAnswers.returnsFirstArg());
+        Mockito.doAnswer((i) -> null).when(teamService).addVirtualUser(Mockito.any(Team.class),Mockito.any(VirtualUser.class));
+
         Room room = new Room(0, -1);
         room.setName("Hell yeah");
         room.setTopic_id(testTopic.getId());
+        room.setCube(new Cube());
+
+        Map<String, VirtualTeam> teamMap = new HashMap<>();
+        VirtualTeam a = new VirtualTeam();
+        VirtualTeam b = new VirtualTeam();
+
+        //Construct virtual users
+        Set<UserIdVirtualUser> users = new HashSet<>();
+        users.add(new UserIdVirtualUser(1L));
+        users.add(new UserIdVirtualUser(2L));
+
+        a.setPlayers(users);
+        b.setPlayers(users);
+        teamMap.put("a", a);
+        teamMap.put("b", b);
+        room.setTeams(teamMap);
+
         Mockito.when(roomService.getRoomById(room.getId())).thenReturn(Optional.of(room));
         Mockito.when(gameService.addGame(Mockito.any(Game.class), Mockito.any())).thenReturn(testGame);
 

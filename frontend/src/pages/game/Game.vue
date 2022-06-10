@@ -3,6 +3,20 @@
         <div
             class="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8"
         >
+            <div
+                v-show="spectator"
+                class="max-w-full mx-auto text-l shadow-xl text-center rounded bg-green-500"
+            >
+                <div class="text-xl p-4 inline-flex flex-col items-center">
+                    <font-awesome-icon
+                        icon="eye"
+                        class="text-3xl text-white opacity-75 mb-2"
+                    />
+                    <span class="mt-2 text-white">
+                        {{ $t('game.currentlySpectating') }}
+                    </span>
+                </div>
+            </div>
             <Message
                 v-show="isWaitingForNextRound"
                 :title="$t('generic.pleaseWait')"
@@ -52,8 +66,8 @@
                         class="waiting-icon text-5xl text-green-400 opacity-75 mb-2"
                     />
                     <span class="mt-2 text-white">
-                        <span v-show="!showTerm">{{ $t('game.messages.validatePoints') }}</span>
-                        <span v-show="showTerm">
+                        <span v-show="!showTerm && !spectator">{{ $t('game.messages.validatePoints') }}</span>
+                        <span v-show="showTerm || spectator">
                             {{ $t('game.messages.beingValidated') }}
                             <p class="mt-2 italic">{{ $t('generic.pleaseWait') }}</p>
                         </span>
@@ -115,7 +129,7 @@
                 <div class="inline-flex flex-col justify-center gap-3 md:flex-row text-base shadow p-5 bg-gray-100">
                     <button
                         class="flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white p-2 rounded disabled:opacity-70"
-                        :disabled="showTerm"
+                        :disabled="showTerm || timeOver || !isValidating || spectator"
                         @click="confirmPointsHandler"
                     >
                         <font-awesome-icon
@@ -126,8 +140,8 @@
                     </button>
                     <button
                         class="flex items-center gap-3 bg-red-500 hover:bg-red-600 text-white p-2 rounded  disabled:opacity-70"
-                        :disabled="showTerm"
-                        @click="rejectPointsHandlerHandler"
+                        :disabled="showTerm || !timeOver || !isValidating || spectator"
+                        @click="confirmPointsHandler"
                     >
                         <font-awesome-icon
                             icon="times-circle"
@@ -136,16 +150,17 @@
                         {{ $t('game.notGuessedTerm') }}
                     </button>
 
-                    <!--                    <button-->
-                    <!--                        :disabled="showTerm"-->
-                    <!--                        class="flex items-center gap-3 bg-black hover:bg-gray-600 text-white p-2 rounded disabled:opacity-70"-->
-                    <!--                    >-->
-                    <!--                        <font-awesome-icon-->
-                    <!--                            icon="skull-crossbones"-->
-                    <!--                            class="text-xl cursor-pointer"-->
-                    <!--                        />-->
-                    <!--                        Regelverstoß-->
-                    <!--                    </button>-->
+                    <button
+                        :disabled="showTerm || !isValidating || spectator"
+                        class="flex items-center gap-3 bg-black hover:bg-gray-600 text-white p-2 rounded disabled:opacity-70"
+                        @click="rejectPointsHandlerHandler"
+                    >
+                        <font-awesome-icon
+                            icon="skull-crossbones"
+                            class="text-xl cursor-pointer"
+                        />
+                        {{ $t('game.ruleViolation') }}
+                    </button>
 
                     <button
                         class="flex items-center gap-3 bg-gray-900 hover:bg-gray-600 text-white p-2 rounded"
@@ -165,7 +180,7 @@
 
 <script>
 import { subChannel, unsubChannel } from '@/services/websocket.service';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import * as GameService from '@/services/game.service';
 import * as RoomService from '@/services/room.service';
 import * as TeamService from '@/services/team.service';
@@ -183,6 +198,11 @@ export default {
         gameId: {
             type: Number,
             required: true,
+        },
+        spectator: {
+            type: Boolean,
+            required: false,
+            default: false,
         },
     },
     data() {
@@ -204,6 +224,8 @@ export default {
             display: {
                 waitingForPlayers: true,
             },
+            gameOver: false,
+            timeOver: false,
         };
     },
     computed: {
@@ -213,7 +235,7 @@ export default {
             topicList: 'topicList',
         }),
         showTerm() {
-            return this.currentUser && this.currentTeam && (this.getUser.id === this.currentUser.id || this.getUser.id === this.currentUser.creator_id || !this.game.teams.find((team) => this.currentTeam.id === team.id).players.some((player) => player.id === this.currentUser.creator_id || player.id === this.currentUser.id));
+            return !this.spectator && this.currentUser && this.currentTeam && this.game.teams.find((team) => this.currentTeam.id === team.id).players.some((player) => player.id === this.getUser.id);
         },
         getTimer() {
             const mins = Math.floor(this.timer.remainingTime / 60);
@@ -243,6 +265,7 @@ export default {
         fetchTopics: 'fetchTopics',
     }),
     mounted() {
+        if (!this.spectator) window.addEventListener('beforeunload', this.leaveGame);
         if (!this.topicList) this.fetchTopics();
         RoomService.fetchRoomById(this.$route.params.id).then((response) => {
             this.room = response.data;
@@ -274,8 +297,6 @@ export default {
             console.error(error);
         });
         subChannel(`/rooms/${this.$route.params.id}`, (message) => {
-            console.log('You got a room message:');
-            console.log(message);
             switch (message.type) {
             case 'ROOM_CHANGED':
                 this.room = (message.data);
@@ -288,10 +309,9 @@ export default {
             }
         });
         subChannel(`/game/${this.gameId}`, (message) => {
-            console.log('You got a games message:');
-            console.log(message);
             switch (message.type) {
             case 'GAME_DELETED':
+                this.gameOver = true;
                 this.$emit('leftGame');
                 break;
             case 'ROLL_DICE':
@@ -309,11 +329,13 @@ export default {
                 this.setCountDown(message.data.time);
                 break;
             case 'GAME_OVER':
+                this.gameOver = true;
                 // eslint-disable-next-line no-alert
                 alert(`${message.data.winner.name} won!`);
-                this.$router.push('/');
+                this.$emit('leftGame');
                 break;
             case 'ROOM_DELETED':
+                this.gameOver = true;
                 this.$router.push('/');
                 break;
             case 'GAMEPLAY_CUBE_INFORMATION':
@@ -330,6 +352,7 @@ export default {
                 this.status = 'WAIT_FOR_NEXT_ROUND';
                 break;
             case 'POINT_VALIDATION_START':
+                this.timeOver = message.data.timeOver;
                 this.status = 'POINT_VALIDATION_START';
                 break;
             case 'TEAM_POINTS_CHANGED':
@@ -343,16 +366,19 @@ export default {
                 break;
             case 'VIRTUAL_USER_JOINED':
             case 'USER_JOINED_TEAM':
-                if (this.game.teams) this.game.teams.find((team) => team.id === message.data.team.id).players.push(message.data.user);
+                if (this.game.teams) {
+                    const team = this.game.teams.find((loopTeam) => loopTeam.id === message.data.team.id);
+                    if (!team.players.some((player) => (player.id && message.data.user.id && player.id === message.data.user.id) || (player.virtual_id && message.data.user.virtual_id && player.virtual_id === message.data.user.virtual_id))) team.players.push(message.data.user);
+                }
                 break;
             case 'TEAM_DELETED':
-                this.game.teams.filter((team) => team.id !== message.data.id);
+                this.game.teams = this.game.teams.filter((team) => team.id !== message.data.id);
                 break;
             case 'USER_LEFT_TEAM':
-                this.game.teams.find((team) => team.id === message.data.team.id).players.filter((user) => user.creator_id !== message.data.user.id && user.id !== message.data.user.id);
+                this.removeUser(this.game.teams.findIndex((team) => team.id === message.data.team.id), message.data.user);
                 break;
             case 'VIRTUAL_USER_LEFT':
-                this.game.teams.find((team) => team.id === message.data.team.id).players.filter((user) => user.id || user.virtual_id !== message.data.user.virtual_id);
+                this.removeVirtualUser(this.game.teams.findIndex((team) => team.id === message.data.team.id), message.data.user);
                 break;
             default:
                 break;
@@ -360,10 +386,17 @@ export default {
         });
     },
     beforeDestroy() {
-        unsubChannel(`game/${this.gameId}`);
-        unsubChannel(`rooms/${this.$route.params.id}`);
+        unsubChannel(`/game/${this.gameId}`);
+        unsubChannel(`/rooms/${this.room.id}`);
+        if (!this.spectator) {
+            this.leaveGame();
+            window.removeEventListener('beforeunload', this.leaveGame);
+        }
     },
     methods: {
+        ...mapMutations({
+            creatorOn: 'creatorOn',
+        }),
         setCountDown(duration) {
             this.timer.remainingTime = duration;
             this.timer.nonce = Math.random();
@@ -383,22 +416,19 @@ export default {
                 }
             }, 1000);
         },
-        rejectPointsHandlerHandler() { // TODO: Only during validation
+        rejectPointsHandlerHandler() {
             GameService.rejectPoints(this.gameId).then(() => {
-                this.notifySuccess('Voted: Points rejected'); // TODO: Translate
+                this.notifySuccess(this.$t('game.message.resultConfirmed'));
             }).catch((error) => console.error(error));
         },
-        confirmPointsHandler() { // TODO: Only during validation
+        confirmPointsHandler() {
             GameService.confirmPoints(this.gameId).then(() => {
-                this.notifySuccess('Voted: Points confirmed'); // TODO: Translate
+                this.notifySuccess(this.$t('game.message.resultConfirmed'));
             }).catch((error) => console.error(error));
         },
         leaveGameHandler() {
-            const myTeam = this.game.teams.find((team) => team.players.some((player) => player.id && player.id === this.getUser.id));
-            TeamService.leaveRoom(myTeam.id).then(() => {
-                this.notifySuccess('successfully left Room'); // TODO: translate
-                this.$router.push('/');
-            });
+            this.creatorOn();
+            this.$emit('leftGame');
         },
         notifyError(message) {
             this.$notify({
@@ -411,6 +441,22 @@ export default {
                 title: message,
                 type: 'success',
             });
+        },
+        removeVirtualUser(teamIndex, virtualUser) {
+            const team = this.game.teams[teamIndex];
+            if (team) team.players = team.players.filter((player) => player.id || player.virtual_id !== virtualUser.virtual_id);
+        },
+        removeUser(teamIndex, user) {
+            const team = this.game.teams[teamIndex];
+            if (team) team.players = team.players.filter((player) => player.creator_id !== user.id && player.id !== user.id);
+        },
+        leaveGame() {
+            if (!this.gameOver) {
+                const myTeam = this.game.teams.find((team) => team.players.some((player) => player.id && player.id === this.getUser.id));
+                TeamService.leaveTeam(myTeam.id).then(() => {
+                    this.notifySuccess(this.$t('game.message.youLeftGame'));
+                });
+            }
         },
     },
 };
